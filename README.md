@@ -1,6 +1,6 @@
 # Mapotempo QGis Plugin
 
-Mapotempo QGis Plugin (MapotempoPlugin) is a plugin which can access to Mapotempo data through GGis software
+Mapotempo QGis Plugin (MapotempoPlugin) is a plugin which can access to Mapotempo data through QGis software
 
 Mapotempo is a planning and optimization web software for delivery tours. Effective for light and heavy vehicles (+ 3.5t)
 
