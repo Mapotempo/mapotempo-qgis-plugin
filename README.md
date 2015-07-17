@@ -16,12 +16,16 @@ This plugin uses python and some library :
 * [Geojson python library] 
 * [PyQt] - UI for python and QGis
 
+### Dependencies
+
+```sh
+apt-get install pyqt4-dev-tools
+```
+
 ### Compiling
 
 ```sh
-pyrcc4 -o resources_rc.py resources.qrc
-cd i18n
-lrelease PluginMapotempo_*
+make
 ```
 
 ### Installation
