@@ -22,6 +22,12 @@ This plugin uses python and some library :
 apt-get install pyqt4-dev-tools
 ```
 
+Also all python dependencies must be installed in order to use this plugin.
+
+```sh
+pip install polyline geojson
+```
+
 ### Compiling
 
 ```sh
