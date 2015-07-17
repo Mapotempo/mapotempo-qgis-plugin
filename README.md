@@ -1,6 +1,6 @@
 # Mapotempo QGis Plugin
 
-[Mapotempo] QGis Plugin (MapotempoPlugin) is a plugin which can access to [Mapotempo] data through QGis software
+[Mapotempo] QGis Plugin (MapotempoPlugin) is a plugin which can access to [Mapotempo] data through [QGis] software
 
 [Mapotempo] is a planning and optimization web software for delivery tours. Effective for light and heavy vehicles (+ 3.5t)
 
@@ -14,7 +14,7 @@ This plugin uses python and some library :
 * [SwaggerCodeGen] - generates some code which can connect to [Mapotempo] API
 * [Polyline python library]
 * [Geojson python library] 
-* [PyQt] - UI for python and QGis
+* [PyQt] - UI for python and [QGis]
 
 ### Dependencies
 
@@ -30,8 +30,8 @@ make
 
 ### Installation
 
-Copy the entire directory containing your new plugin to the QGIS plugin directory.
-Then activate your plugin in QGis
+Copy the entire directory containing your new plugin to the [QGis] plugin directory.
+Then activate your plugin in [QGis]
 
 ### Usage
 
@@ -53,3 +53,4 @@ Want to contribute? Great!
 [Polyline python library]:https://pypi.python.org/pypi/polyline/
 [Geojson python library]:https://pypi.python.org/pypi/geojson/
 [PyQt]:https://wiki.python.org/moin/PyQt
+[QGis]:http://qgis.org
