@@ -119,6 +119,12 @@ class Widget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
         self.pushButton_4.setIcon(icon3)
+        self.listWidget = QtGui.QListWidget(self)
+        self.listWidget.setGeometry(QtCore.QRect(0, 160, 201, 101))
+        self.listWidget.setObjectName(_fromUtf8("listWidget"))
+        self.label = QtGui.QLabel(self)
+        self.label.setGeometry(QtCore.QRect(0, 140, 171, 17))
+        self.label.setObjectName(_fromUtf8("label"))
 
         self.retranslateUi(self)
 
@@ -129,6 +135,8 @@ class Widget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.label_5.setText(_translate("DockWidget", "", None))
         self.pushButton.setText(_translate("DockWidget", "Connection", None))
         self.pushButton_4.setText(_translate("DockWidget", "Parameter", None))
+        self.label.setText(_translate("DockWidget", "Unplanned", None))
+        
     def resolve(self, name, basepath=None):
         if not basepath:
             basepath = os.path.dirname(os.path.realpath(__file__))
