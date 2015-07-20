@@ -96,7 +96,7 @@ class Widget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.label_4.setGeometry(QtCore.QRect(0, 50, 151, 17))
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.label_5 = QtGui.QLabel(self)
-        self.label_5.setGeometry(QtCore.QRect(0, 190, 271, 17))
+        self.label_5.setGeometry(QtCore.QRect(110, 110, 271, 17))
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.comboBox = QtGui.QComboBox(self)
         self.comboBox.setGeometry(QtCore.QRect(0, 70, 201, 27))
