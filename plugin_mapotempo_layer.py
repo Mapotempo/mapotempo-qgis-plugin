@@ -278,6 +278,7 @@ class PluginMapotempoLayer:
 
     def refresh(self):
         self.dock.comboBox.clear()
+        self.dock.listWidget.clear()
         self.clearLayer()
         self.handler.listPlannings()
 
@@ -438,3 +439,15 @@ class PluginMapotempoLayer:
         renderer = QgsCategorizedSymbolRendererV2(field, categories)
         destinationLayer.setRendererV2(renderer)
         destinationLayer.triggerRepaint()
+
+    def unplannedStop(self):
+        layers = self.iface.legendInterface().layers()
+        destinationLayer = None
+        for layer in layers:
+            if layer.name() == self.translate.tr('destinations'):
+                destinationLayer = layer
+        for feature in destinationLayer.getFeatures():
+            index = feature.attribute(self.translate.tr("Stops") + '_index')
+            if index == None:
+                self.dock.listWidget.addItem(feature.attribute('name'))
+                
