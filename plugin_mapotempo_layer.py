@@ -147,7 +147,9 @@ class PluginMapotempoLayer:
             iteration += 1
             feature.setAttributes(r)
 
-            pointList = PolylineCodec().decode(i['trace'])
+            pointList = []
+            if i['active']:
+                pointList = PolylineCodec().decode(i['trace'])
             pointListFinal = []
 
             for point in pointList:
