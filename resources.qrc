@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/PluginMapotempo" >
+    <qresource prefix="/plugins/mapotempo-qgis-plugin" >
         <file>icons/icon.png</file>
     </qresource>
 </RCC>
