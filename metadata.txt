@@ -24,9 +24,9 @@ email=darius.matboo@mapotempo.com
 # Tags are comma separated with spaces allowed
 tags=
 
-homepage=
-tracker=
-repository=
+homepage=https://github.com/Mapotempo/mapotempo-qgis-plugin
+tracker=https://github.com/Mapotempo/mapotempo-qgis-plugin/issues
+repository=https://github.com/Mapotempo/mapotempo-qgis-plugin
 category=Plugins
 icon=icons/icon.png
 # experimental flag
