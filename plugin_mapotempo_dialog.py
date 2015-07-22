@@ -149,6 +149,15 @@ class Widget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.treeView.setGeometry(QtCore.QRect(0, 271, 241, 581))
         self.treeView.setObjectName(_fromUtf8("treeView"))
         self.treeView.setHeaderHidden(True)
+        self.listWidget = QtGui.QListWidget(self)
+        self.listWidget.setGeometry(QtCore.QRect(0, 160, 201, 101))
+        self.listWidget.setObjectName(_fromUtf8("listWidget"))
+        self.listWidget.setDragEnabled(True)
+        self.listWidget.setDragDropOverwriteMode(True)
+        self.listWidget.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+        self.label = QtGui.QLabel(self)
+        self.label.setGeometry(QtCore.QRect(0, 140, 171, 17))
+        self.label.setObjectName(_fromUtf8("label"))
 
         self.retranslateUi(self)
 

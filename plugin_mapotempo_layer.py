@@ -448,6 +448,7 @@ class PluginMapotempoLayer:
             if layer.name() == self.translate.tr('destinations'):
                 destinationLayer = layer
                 break
+
         for feature in destinationLayer.getFeatures():
             index = feature.attribute(self.translate.tr("Stops") + '_index')
             if index == None:
