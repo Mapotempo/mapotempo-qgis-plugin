@@ -456,7 +456,7 @@ class PluginMapotempoLayer:
             if index == None:
                 self.dock.listWidget.addItem(feature.attribute('name'))
 
-    def vehiclesStop(self):
+    def vehiclesStop(self):#missing total km and total time. when the API will allow it
         layers = self.iface.legendInterface().layers()
         destinationLayer, vehiclesLayer = None, None
         for layer in layers:
