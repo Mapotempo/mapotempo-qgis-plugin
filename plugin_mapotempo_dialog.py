@@ -155,11 +155,11 @@ class Widget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
 
         self.retranslateUi(self)
 
-    def addVehicles(self, data, color):
-        self.addItems(self.model, data.items(), color)
+    def addVehicles(self, data, color, activeTab):
+        self.addItems(self.model, data.items(),activeTab,  color)
         self.treeView.setModel(self.model)
 
-    def addItems(self, parent, elements, color, bool=False):
+    def addItems(self, parent, elements, activeTab, color, bool=False):
 
         for text, children in elements:
             item = QtGui.QStandardItem(text)
@@ -167,6 +167,8 @@ class Widget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
             if bool:
                 item.setCheckable(True)
                 item.setCheckState(QtCore.Qt.Checked)
+                if text in activeTab:
+                    item.setCheckState(QtCore.Qt.Unchecked)
             else:
                 colorV = color[text]
                 icon = QtGui.QIcon()
@@ -179,7 +181,7 @@ class Widget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                     QtGui.QIcon.Off)
                 item.setIcon(icon)
             if children:
-                self.addItems(item, children, color=None, bool=True)
+                self.addItems(item, children, activeTab, color=None, bool=True)
 
     def retranslateUi(self, DockWidget):
         DockWidget.setWindowTitle(_translate("DockWidget", "Mapotempo", None))

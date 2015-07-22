@@ -469,7 +469,7 @@ class PluginMapotempoLayer:
             color = feature.attribute('color')
             colorVehicle[feature.attribute('name')] = color
         listFeature = []
-
+        activeTab = []
         for feature in destinationLayer.getFeatures():
             index = feature.attribute(self.translate.tr("Stops") + '_index')
             name = feature.attribute('name')
@@ -480,10 +480,11 @@ class PluginMapotempoLayer:
                 '_' +
                 self.translate.tr('vehicles') +
                 '_name')
-
+            if feature.attribute(self.translate.tr("Stops") + '_active') == False:
+                activeTab.append(name)
             if index:
                 listFeature.append((index, name, vehicle))
         sorted_by_first = sorted(listFeature, key=lambda tup: tup[0])
         for v in sorted_by_first:
             listVehicle[v[2]].append((v[1], []))
-        self.dock.addVehicles(listVehicle, colorVehicle)
+        self.dock.addVehicles(listVehicle, colorVehicle, activeTab)
