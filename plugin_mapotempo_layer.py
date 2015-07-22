@@ -9,6 +9,8 @@ from qgis.core import (
     QgsRendererCategoryV2, QgsCategorizedSymbolRendererV2)
 import tempfile
 import csv
+import datetime
+import time
 
 import os.path
 import ast
@@ -483,7 +485,15 @@ class PluginMapotempoLayer:
             if feature.attribute(self.translate.tr("Stops") + '_active') == False:
                 activeTab.append(name)
             if index:
-                listFeature.append((index, name, vehicle))
+                date = feature.attribute(self.translate.tr("Stops") + '_time')
+                if date:
+                    date = time.strptime(date, '%Y-%m-%dT%H:%M:%S')
+                    listFeature.append((index, 
+                        str(date.tm_hour) + 
+                        ":" + str(date.tm_min)
+                         + " " +name, vehicle))
+                else:
+                    listFeature.append((index, name, vehicle))
         sorted_by_first = sorted(listFeature, key=lambda tup: tup[0])
         for v in sorted_by_first:
             listVehicle[v[2]].append((v[1], []))
