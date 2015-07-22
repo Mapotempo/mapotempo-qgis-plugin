@@ -125,6 +125,10 @@
         <source>Parameter</source>
         <translation>Paramètres</translation>
     </message>
+    <message>
+        <source>Unplanned</source>
+        <translation>Non planifié</translation>
+    </message>
     
 </context>
 

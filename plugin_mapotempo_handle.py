@@ -132,6 +132,7 @@ class PluginMapotempoHandle:
             if self.client:
                 self.dock.label_5.setText(self.translate.tr("Processing"))
                 self.dock.listWidget.clear()
+                self.dock.model.clear()
                 self.handleButtonTags()
                 self.handleButtonProd()
                 self.handleButtonDest()
@@ -149,6 +150,7 @@ class PluginMapotempoHandle:
                 root = QgsProject.instance().layerTreeRoot()
                 self.layer_inst.collapseTree(root)
                 self.layer_inst.unplannedStop()
+                self.layer_inst.vehiclesStop()
                 self.dock.label_5.setText(self.translate.tr("Done"))
             else:
                 self.dock.label_5.setText(self.translate.tr("No connection"))

@@ -279,6 +279,7 @@ class PluginMapotempoLayer:
     def refresh(self):
         self.dock.comboBox.clear()
         self.dock.listWidget.clear()
+        self.dock.model.clear()
         self.clearLayer()
         self.handler.listPlannings()
 
@@ -446,8 +447,42 @@ class PluginMapotempoLayer:
         for layer in layers:
             if layer.name() == self.translate.tr('destinations'):
                 destinationLayer = layer
+                break
         for feature in destinationLayer.getFeatures():
             index = feature.attribute(self.translate.tr("Stops") + '_index')
             if index == None:
                 self.dock.listWidget.addItem(feature.attribute('name'))
-                
+
+    def vehiclesStop(self):
+        layers = self.iface.legendInterface().layers()
+        destinationLayer, vehiclesLayer = None, None
+        for layer in layers:
+            if layer.name() == self.translate.tr('destinations'):
+                destinationLayer = layer
+            elif layer.name() == self.translate.tr("vehicles"):
+                vehiclesLayer = layer
+        listVehicle = {}
+        colorVehicle = {}
+        for feature in vehiclesLayer.getFeatures():
+            listVehicle[feature.attribute('name')] = []
+            color = feature.attribute('color')
+            colorVehicle[feature.attribute('name')] = color
+        listFeature = []
+
+        for feature in destinationLayer.getFeatures():
+            index = feature.attribute(self.translate.tr("Stops") + '_index')
+            name = feature.attribute('name')
+            vehicle = feature.attribute(
+                self.translate.tr("Stops") +
+                '_' +
+                self.translate.tr('routes') +
+                '_' +
+                self.translate.tr('vehicles') +
+                '_name')
+
+            if index:
+                listFeature.append((index, name, vehicle))
+        sorted_by_first = sorted(listFeature, key=lambda tup: tup[0])
+        for v in sorted_by_first:
+            listVehicle[v[2]].append((v[1], []))
+        self.dock.addVehicles(listVehicle, colorVehicle)
