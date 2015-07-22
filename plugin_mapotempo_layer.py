@@ -488,10 +488,7 @@ class PluginMapotempoLayer:
                 date = feature.attribute(self.translate.tr("Stops") + '_time')
                 if date:
                     date = time.strptime(date, '%Y-%m-%dT%H:%M:%S')
-                    listFeature.append((index, 
-                        str(date.tm_hour) + 
-                        ":" + str(date.tm_min)
-                         + " " +name, vehicle))
+                    listFeature.append((index, str(time.strftime('%H:%M', date)) + " - " +name, vehicle))
                 else:
                     listFeature.append((index, name, vehicle))
         sorted_by_first = sorted(listFeature, key=lambda tup: tup[0])
