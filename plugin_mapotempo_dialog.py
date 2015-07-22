@@ -149,12 +149,6 @@ class Widget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.treeView.setGeometry(QtCore.QRect(0, 271, 241, 581))
         self.treeView.setObjectName(_fromUtf8("treeView"))
         self.treeView.setHeaderHidden(True)
-        self.listWidget = QtGui.QListWidget(self)
-        self.listWidget.setGeometry(QtCore.QRect(0, 160, 201, 101))
-        self.listWidget.setObjectName(_fromUtf8("listWidget"))
-        self.listWidget.setDragEnabled(True)
-        self.listWidget.setDragDropOverwriteMode(True)
-        self.listWidget.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
         self.label = QtGui.QLabel(self)
         self.label.setGeometry(QtCore.QRect(0, 140, 171, 17))
         self.label.setObjectName(_fromUtf8("label"))
@@ -179,11 +173,6 @@ class Widget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                 pixmap = QtGui.QPixmap(20, 20)
                 pixmap.fill(QtGui.QColor(str(colorV)))
                 path = QtGui.QPainterPath()
-                # painter = QtGui.QPainter()
-                # path.addEllipse(20, 20, 0, 0)
-                # painter.setClipPath(path)
-                # painter.drawPixmap(20, 20, 0, 0, pixmap)
-                # icon.paint(painter, 0, 10 ,10 ,10)
                 icon.addPixmap(
                     pixmap,
                     QtGui.QIcon.Normal,
