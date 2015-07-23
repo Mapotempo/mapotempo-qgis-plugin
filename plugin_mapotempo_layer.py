@@ -6,7 +6,8 @@ from qgis.core import (
     QgsGeometry, QgsPoint, QgsProject, QgsSvgMarkerSymbolLayerV2,
     QgsSimpleMarkerSymbolLayerV2, QgsSimpleLineSymbolLayerV2,
     QgsSimpleFillSymbolLayerV2, QgsVectorJoinInfo, QgsSymbolV2,
-    QgsRendererCategoryV2, QgsCategorizedSymbolRendererV2)
+    QgsRendererCategoryV2, QgsCategorizedSymbolRendererV2,
+    QgsPalLayerSettings, QgsRasterLayer)
 import tempfile
 import csv
 import datetime
@@ -256,8 +257,6 @@ class PluginMapotempoLayer:
         elif typeIcon == 'zone':
             properties = {'color': '#bfbfbf'}
             symbol_layer = QgsSimpleFillSymbolLayerV2.create(properties)
-            #transparency = layer.layerTransparency()
-            layer.setLayerTransparency(60)
         else:
             return
         layer.rendererV2().symbols()[0].changeSymbolLayer(0, symbol_layer)
@@ -290,7 +289,7 @@ class PluginMapotempoLayer:
         zoneLayers, vehiclesLayer = [], None
         for layer in layers:
             try:
-                tmp = layer.name().split(' ', 1)
+                tmp = layer.name().split(' ')
                 if int(tmp[len(tmp) - 1]) in self.handler.id_zones_tab:
                     zoneLayers.append(layer)
             except ValueError:
@@ -319,6 +318,7 @@ class PluginMapotempoLayer:
                     alreadyHere.append(vehicle_name)
                     sym = QgsSymbolV2.defaultSymbol(zoneLayer.geometryType())
                     sym.setColor(QColor(color))
+                    sym.setAlpha(0.5)
                     category = QgsRendererCategoryV2(
                         vehicle_name, sym, vehicle_name)
                     categories.append(category)
@@ -384,7 +384,8 @@ class PluginMapotempoLayer:
                     '_name')
                 sym = QgsSymbolV2.defaultSymbol(stopLayer.geometryType())
                 sym.setColor(QColor(color))
-                sym.setWidth(1)
+                sym.setWidth(1.5)
+                sym.setAlpha(0.6)
                 category = QgsRendererCategoryV2(route_id, sym, route_name)
                 categories.append(category)
         field = "route_id"
@@ -495,3 +496,24 @@ class PluginMapotempoLayer:
         for v in sorted_by_first:
             listVehicle[v[2]].append((v[1], []))
         self.dock.addVehicles(listVehicle, colorVehicle, activeTab)
+
+    def setLabel(self):
+        layers = self.iface.legendInterface().layers()
+        destinationLayer, vehiclesLayer = None, None
+        for layer in layers:
+            if layer.name() == self.translate.tr('destinations'):
+                destinationLayer = layer
+            elif layer.name() == self.translate.tr('store'):
+                storeLayer = layer
+
+        label, label_1 = QgsPalLayerSettings(), QgsPalLayerSettings()
+        label.readFromLayer(destinationLayer)
+        label_1.readFromLayer(storeLayer)
+        label.enabled = True
+        label_1.enabled = True
+        label.fieldName = self.translate.tr("Stops") +'_index'
+        label_1.fieldName = 'name'
+        label.writeToLayer(destinationLayer)
+        label_1.writeToLayer(storeLayer)
+        destinationLayer.triggerRepaint()
+        storeLayer.triggerRepaint()
