@@ -12,3 +12,4 @@ $(TRAD_DIR)/%.qm: $(TRAD_DIR)/%.ts
 
 clean:
 	rm resources_rc.py $(TRAD_DIR)/*.qm
+	find . -name "*.pyc" -type f -delete
