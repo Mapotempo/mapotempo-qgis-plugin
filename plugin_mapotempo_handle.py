@@ -95,9 +95,9 @@ class PluginMapotempoHandle:
             if not self.keyConnection:
                 #label
                 return
-        configuration.host = self.hostConnection
+        configuration.host = self.hostConnection + "/api/"
         configuration.api_key['api_key'] = self.keyConnection
-        self.client = SwaggerMapo.api_client.ApiClient(self.hostConnection)
+        self.client = SwaggerMapo.api_client.ApiClient(self.hostConnection + "/api/")
         self.layer_inst.setClient(self.client)
         try:
             self.layer_inst.refresh()
@@ -121,10 +121,12 @@ class PluginMapotempoHandle:
         if self.keyConnection:
             self.dlg.lineEdit.setText(self.keyConnection)
             self.dlg.lineEdit_2.setText(self.hostConnection)
+        else:
+            self.dlg.lineEdit_2.setText('https://app.mapotempo.com')
         self.dlg.show()
 
     def HandleSelect(self):
-        tmp = self.dock.comboBox.currentText().split(' ', 1)
+        tmp = self.dock.comboBox.currentText().split(' ')
         self.id_plan = tmp[len(tmp) - 1]
         if self.id_plan:
             self.layer_inst.clearLayer()
@@ -151,6 +153,7 @@ class PluginMapotempoHandle:
                 self.layer_inst.collapseTree(root)
                 self.layer_inst.unplannedStop()
                 self.layer_inst.vehiclesStop()
+                self.layer_inst.setLabel()
                 self.dock.label_5.setText(self.translate.tr("Done"))
             else:
                 self.dock.label_5.setText(self.translate.tr("No connection"))
