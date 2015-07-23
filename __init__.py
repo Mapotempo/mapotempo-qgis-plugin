@@ -29,9 +29,6 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    #
-    # import sys
-    # sys.path.append('/home/darius/.qgis2/python/plugins/mapotempo-qgis-plugin/')
 
     import sys
     path = resolve('')
