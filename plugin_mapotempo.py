@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- PluginMapotempo
+ PluginMapotempoDialog
                                  A QGIS plugin
- test
-                              -------------------
+ Plugin for Mapotempo API
+                             -------------------
         begin                : 2015-06-19
         git sha              : $Format:%H$
         copyright            : (C) 2015 by Darius Matboo

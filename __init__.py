@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- PluginMapotempo
+ PluginMapotempoDialog
                                  A QGIS plugin
- test
+ Plugin for Mapotempo API
                              -------------------
         begin                : 2015-06-19
-        copyright            : (C) 2015 by me
-        email                : azazaz@æzaz.fe
         git sha              : $Format:%H$
+        copyright            : (C) 2015 by Darius Matboo
+        email                : dariusmatboo@mapotempo.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -19,7 +19,6 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
- This script initializes the plugin, making it known to QGIS.
 """
 
 
@@ -35,7 +34,7 @@ def classFactory(iface):  # pylint: disable=invalid-name
     from .plugin_mapotempo_layer import PluginMapotempoLayer
     from .plugin_mapotempo_handle import PluginMapotempoHandle
     __all__ = [
-       'SwaggerPetstore', 'apis'
+       'SwaggerPetstore', 'apis', 'polyline', 'geojson'
        ]
 
     return PluginMapotempo(iface)

@@ -3,7 +3,7 @@
 /***************************************************************************
  PluginMapotempoDialog
                                  A QGIS plugin
- test
+ Plugin for Mapotempo API
                              -------------------
         begin                : 2015-06-19
         git sha              : $Format:%H$
@@ -72,7 +72,7 @@ class PluginMapotempoDialogBase(QtGui.QDialog, FORM_CLASS):
 
     def retranslateUi(self, PluginMapotempoDialogBase):
         PluginMapotempoDialogBase.setWindowTitle(
-            _translate("PluginMapotempoDialogBase", "Plugin Mapotempo", None))
+            _translate("PluginMapotempoDialogBase", "Parameters", None))
         self.pushButton.setText(
             _translate("PluginMapotempoDialogBase", "Save", None))
         self.label.setText(_translate("PluginMapotempoDialogBase", "Key", None))

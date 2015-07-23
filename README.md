@@ -12,20 +12,16 @@
 This plugin uses python and some library :
 
 * [SwaggerCodeGen] - generates some code which can connect to [Mapotempo] API
-* [Polyline python library]
-* [Geojson python library] 
+* [Polyline python library] v1.1
+* [Geojson python library] v1.2.1
 * [PyQt] - UI for python and [QGis]
 
 ### Dependencies
 
+For developers
+
 ```sh
 apt-get install pyqt4-dev-tools
-```
-
-Also all python dependencies must be installed in order to use this plugin.
-
-```sh
-pip install polyline geojson
 ```
 
 ### Compiling

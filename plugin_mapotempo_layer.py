@@ -16,7 +16,7 @@ import os.path
 import ast
 
 from polyline.codec import PolylineCodec
-import geojson
+from geojson.utils import coords
 
 import SwaggerMapo
 from PyQt4.QtGui import QColor
@@ -201,7 +201,7 @@ class PluginMapotempoLayer:
 
             a = ast.literal_eval(i['polygon'])
 
-            polygon = list(geojson.utils.coords(a))
+            polygon = list(coords(a))
             polygonFinal = []
             for point in polygon:
                 polygonFinal.append(QgsPoint(point[0], point[1]))

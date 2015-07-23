@@ -3,8 +3,8 @@
 <context>
     <name>PluginMapotempoDialogBase</name>
     <message>
-        <source>Plugin Mapotempo</source>
-        <translation>Plugin Mapotempo</translation>
+        <source>Parameters</source>
+        <translation>Parameters</translation>
     </message>
     <message>
           <source>Connection</source>
