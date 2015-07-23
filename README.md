@@ -5,7 +5,7 @@
 [Mapotempo] is a planning and optimization web software for delivery tours. Effective for light and heavy vehicles (+ 3.5t)
 
 ### Version
-0.1
+0.2
 
 ### Tech
 
