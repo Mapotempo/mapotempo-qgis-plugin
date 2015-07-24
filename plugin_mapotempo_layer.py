@@ -461,7 +461,7 @@ class PluginMapotempoLayer:
             if index == None:
                 self.dock.listWidget.addItem(feature.attribute('name'))
 
-    def vehiclesStop(self):#missing total km and total time. when the API will allow it
+    def vehiclesStop(self):
         layers = self.iface.legendInterface().layers()
         destinationLayer, vehiclesLayer = None, None
         for layer in layers:
@@ -483,7 +483,7 @@ class PluginMapotempoLayer:
             if feature.attribute('vehicle_id'):
                 km = feature.attribute('distance')
                 if km:
-                    km /=1000
+                    km /= 1000
                 timeBegin = feature.attribute('start')
                 timeEnd = feature.attribute('end')
                 timeTot = 0
@@ -491,7 +491,11 @@ class PluginMapotempoLayer:
                     timeBegin = time.strptime(timeBegin, '%Y-%m-%dT%H:%M:%S')
                     timeEnd = time.strptime(timeEnd, '%Y-%m-%dT%H:%M:%S')
                     timeTot = (time.mktime(timeEnd) - time.mktime(timeBegin))
-                infoVehicle[feature.attribute(self.translate.tr('vehicles') + '_name')] = ' - ' + str(time.strftime("%H:%M", time.gmtime(timeTot))) + ' - ' + str(km) + 'Km'
+                infoVehicle[feature.attribute(
+                    self.translate.tr('vehicles') + '_name')] = (
+                        ' - ' +
+                        str(time.strftime("%H:%M", time.gmtime(timeTot))) +
+                        ' - ' + str(km) + 'Km')
         listFeature = []
         activeTab = []
 
@@ -511,7 +515,10 @@ class PluginMapotempoLayer:
                 date = feature.attribute(self.translate.tr("Stops") + '_time')
                 if date:
                     date = time.strptime(date, '%Y-%m-%dT%H:%M:%S')
-                    listFeature.append((index, str(time.strftime('%H:%M', date)) + " - " +name, vehicle))
+                    listFeature.append((
+                        index,
+                        str(time.strftime('%H:%M', date)) + " - " +name,
+                        vehicle))
                 else:
                     listFeature.append((index, name, vehicle))
         sorted_by_first = sorted(listFeature, key=lambda tup: tup[0])

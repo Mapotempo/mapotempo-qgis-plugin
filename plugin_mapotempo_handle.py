@@ -97,7 +97,8 @@ class PluginMapotempoHandle:
                 return
         configuration.host = self.hostConnection + "/api/"
         configuration.api_key['api_key'] = self.keyConnection
-        self.client = SwaggerMapo.api_client.ApiClient(self.hostConnection + "/api/")
+        self.client = SwaggerMapo.api_client.ApiClient(
+            self.hostConnection + "/api/")
         self.layer_inst.setClient(self.client)
         try:
             self.layer_inst.refresh()

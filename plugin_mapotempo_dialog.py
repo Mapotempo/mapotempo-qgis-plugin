@@ -158,8 +158,11 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.retranslateUi(self)
 
     def addVehicles(self, data, color, infoVehicle, activeTab):
-        self.addItems(self.model, data.items(),activeTab, infoVehicle,  color)
-        self.model.setHeaderData (0, QtCore.Qt.Horizontal, _translate("PluginMapotempo", "routes", None))
+        self.addItems(self.model, data.items(), activeTab, infoVehicle, color)
+        self.model.setHeaderData(
+            0,
+            QtCore.Qt.Horizontal,
+            _translate("PluginMapotempo", "routes", None))
         self.treeView.setModel(self.model)
 
     def addItems(self, parent, elements, activeTab, infoVehicle, color, bool=False):
@@ -185,7 +188,13 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                     QtGui.QIcon.Off)
                 item.setIcon(icon)
             if children:
-                self.addItems(item, children, activeTab, infoVehicle, color=None, bool=True)
+                self.addItems(
+                    item,
+                    children,
+                    activeTab,
+                    infoVehicle,
+                    color=None,
+                    bool=True)
 
     def retranslateUi(self, DockWidget):
         DockWidget.setWindowTitle(_translate("DockWidget", "Mapotempo", None))
