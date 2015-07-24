@@ -37,7 +37,7 @@ except AttributeError:
 
 import resources_rc
 
-from plugin_mapotempo_dialog import PluginMapotempoDialogBase, Widget
+from plugin_mapotempo_dialog import PluginMapotempoDialogBase, DockWidget
 
 from plugin_mapotempo_handle import PluginMapotempoHandle
 from plugin_mapotempo_layer import PluginMapotempoLayer
@@ -66,7 +66,7 @@ class PluginMapotempo:
 
         self.dlg = PluginMapotempoDialogBase()
 
-        self.dock = Widget()
+        self.dock = DockWidget()
 
         #instance
         self.layer_inst = PluginMapotempoLayer(

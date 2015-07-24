@@ -79,109 +79,113 @@ class PluginMapotempoDialogBase(QtGui.QDialog, FORM_CLASS):
         self.label_2.setText(
             _translate("PluginMapotempoDialogBase", "Host", None))
 
-class Widget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
+class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
 
     def __init__(self, parent=None):
         """Constructor."""
-        super(Widget, self).__init__(parent)
+        super(DockWidget, self).__init__(parent)
 
         self.vehicleTab = {}
-        self.label_4 = QtGui.QLabel(self)
-        self.label_4.setGeometry(QtCore.QRect(0, 50, 151, 17))
-        self.label_4.setObjectName(_fromUtf8("label_4"))
-        self.comboBox = QtGui.QComboBox(self)
-        self.comboBox.setGeometry(QtCore.QRect(0, 70, 241, 27))
-        self.comboBox.setObjectName(_fromUtf8("comboBox"))
-        self.listWidget = QtGui.QListWidget(self)
-        self.listWidget.setGeometry(QtCore.QRect(0, 160, 241, 101))
-        self.listWidget.setDragEnabled(True)
-        self.listWidget.setDragDropOverwriteMode(True)
-        self.listWidget.setDragDropMode(QtGui.QAbstractItemView.NoDragDrop)
-        self.listWidget.setObjectName(_fromUtf8("listWidget"))
-        self.label = QtGui.QLabel(self)
-        self.label.setGeometry(QtCore.QRect(0, 140, 171, 17))
-        self.label.setObjectName(_fromUtf8("label"))
-        self.widget = QtGui.QWidget(self)
-        self.widget.setGeometry(QtCore.QRect(0, 20, 241, 29))
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.horizontalLayout = QtGui.QHBoxLayout(self.widget)
-        self.horizontalLayout.setMargin(0)
+
+        self.setObjectName(_fromUtf8("DockWidget"))
+        self.resize(383, 887)
+        self.dockWidgetContents = QtGui.QWidget()
+        self.dockWidgetContents.setObjectName(_fromUtf8("dockWidgetContents"))
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.dockWidgetContents)
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.pushButton = QtGui.QPushButton(self.widget)
+        self.pushButton = QtGui.QPushButton(self.dockWidgetContents)
         self.pushButton.setObjectName(_fromUtf8("pushButton"))
-        self.horizontalLayout.addWidget(self.pushButton)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(
             QtGui.QPixmap(self.resolve('icons/connection.png')),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
         self.pushButton.setIcon(icon2)
-        self.pushButton_4 = QtGui.QPushButton(self.widget)
+        self.horizontalLayout.addWidget(self.pushButton)
+        self.pushButton_4 = QtGui.QPushButton(self.dockWidgetContents)
         self.pushButton_4.setObjectName(_fromUtf8("pushButton_4"))
-        self.horizontalLayout.addWidget(self.pushButton_4)
         icon3 = QtGui.QIcon()
         icon3.addPixmap(
             QtGui.QPixmap(self.resolve('icons/parameter.png')),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
         self.pushButton_4.setIcon(icon3)
-        self.widget1 = QtGui.QWidget(self)
-        self.widget1.setGeometry(QtCore.QRect(0, 100, 241, 29))
-        self.widget1.setObjectName(_fromUtf8("widget1"))
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.widget1)
-        self.horizontalLayout_2.setMargin(0)
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.pushButton_2 = QtGui.QPushButton(self.widget1)
+        self.horizontalLayout.addWidget(self.pushButton_4)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.pushButton_2 = QtGui.QPushButton(self.dockWidgetContents)
         self.pushButton_2.setObjectName(_fromUtf8("pushButton_2"))
-        self.horizontalLayout_2.addWidget(self.pushButton_2)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(
             QtGui.QPixmap(self.resolve('icons/refresh.png')),
             QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
         self.pushButton_2.setIcon(icon1)
-        self.label_5 = QtGui.QLabel(self.widget1)
+        self.verticalLayout.addWidget(self.pushButton_2)
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.label_4 = QtGui.QLabel(self.dockWidgetContents)
+        self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.horizontalLayout_2.addWidget(self.label_4)
+        self.label_5 = QtGui.QLabel(self.dockWidgetContents)
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.horizontalLayout_2.addWidget(self.label_5)
-        self.treeView = QtGui.QTreeView(self)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.comboBox = QtGui.QComboBox(self.dockWidgetContents)
+        self.comboBox.setObjectName(_fromUtf8("comboBox"))
+        self.verticalLayout.addWidget(self.comboBox)
+        self.label = QtGui.QLabel(self.dockWidgetContents)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.verticalLayout.addWidget(self.label)
+        self.listWidget = QtGui.QListWidget(self.dockWidgetContents)
+        self.listWidget.setMaximumSize(QtCore.QSize(16777215, 100))
+        self.listWidget.setDragEnabled(True)
+        self.listWidget.setDragDropOverwriteMode(True)
+        self.listWidget.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
+        self.listWidget.setObjectName(_fromUtf8("listWidget"))
+        self.verticalLayout.addWidget(self.listWidget)
+        self.treeView = QtGui.QTreeView(self.dockWidgetContents)
+        self.treeView.setObjectName(_fromUtf8("treeView"))
         self.model = QtGui.QStandardItemModel()
 
-        self.treeView.setGeometry(QtCore.QRect(0, 271, 241, 581))
-        self.treeView.setObjectName(_fromUtf8("treeView"))
-        self.treeView.setHeaderHidden(True)
-        self.label = QtGui.QLabel(self)
-        self.label.setGeometry(QtCore.QRect(0, 140, 171, 17))
-        self.label.setObjectName(_fromUtf8("label"))
+        self.verticalLayout.addWidget(self.treeView)
+        self.verticalLayout_2.addLayout(self.verticalLayout)
+        self.setWidget(self.dockWidgetContents)
 
         self.retranslateUi(self)
 
-    def addVehicles(self, data, color, activeTab):
-        self.addItems(self.model, data.items(),activeTab,  color)
+    def addVehicles(self, data, color, infoVehicle, activeTab):
+        self.addItems(self.model, data.items(),activeTab, infoVehicle,  color)
+        self.model.setHeaderData (0, QtCore.Qt.Horizontal, _translate("PluginMapotempo", "routes", None))
         self.treeView.setModel(self.model)
 
-    def addItems(self, parent, elements, activeTab, color, bool=False):
+    def addItems(self, parent, elements, activeTab, infoVehicle, color, bool=False):
 
         for text, children in elements:
-            item = QtGui.QStandardItem(text)
-            parent.appendRow(item)
             if bool:
+                item = QtGui.QStandardItem(text)
+                parent.appendRow(item)
                 item.setCheckable(True)
                 item.setCheckState(QtCore.Qt.Checked)
                 if text in activeTab:
                     item.setCheckState(QtCore.Qt.Unchecked)
             else:
+                item = QtGui.QStandardItem(text + infoVehicle[text])
+                parent.appendRow(item)
                 colorV = color[text]
                 icon = QtGui.QIcon()
                 pixmap = QtGui.QPixmap(20, 20)
                 pixmap.fill(QtGui.QColor(str(colorV)))
-                path = QtGui.QPainterPath()
                 icon.addPixmap(
                     pixmap,
                     QtGui.QIcon.Normal,
                     QtGui.QIcon.Off)
                 item.setIcon(icon)
             if children:
-                self.addItems(item, children, activeTab, color=None, bool=True)
+                self.addItems(item, children, activeTab, infoVehicle, color=None, bool=True)
 
     def retranslateUi(self, DockWidget):
         DockWidget.setWindowTitle(_translate("DockWidget", "Mapotempo", None))
@@ -196,29 +200,3 @@ class Widget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         if not basepath:
             basepath = os.path.dirname(os.path.realpath(__file__))
         return os.path.join(basepath, name)
-
-# class Vehicle(QtGui.QWidget):
-#     def __init__( self, name, parent=None):
-#         super(Vehicle, self).__init__(parent)
-#
-#         # self.pushButton = QtGui.QPushButton('I am in Test widget')
-#         self.widget = QtGui.QWidget()
-#         self.widget.setGeometry(QtCore.QRect(30, 50, 241, 151))
-#         self.widget.setObjectName(_fromUtf8("widget"))
-#         self.verticalLayout = QtGui.QVBoxLayout(self.widget)
-#         self.verticalLayout.setMargin(0)
-#         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-#         self.label = QtGui.QLabel(self.widget)
-#         self.label.setObjectName(_fromUtf8("label"))
-#         self.verticalLayout.addWidget(self.label)
-#         self.listWidget = QtGui.QListWidget(self.widget)
-#         self.listWidget.setDragEnabled(True)
-#         self.listWidget.setDragDropOverwriteMode(True)
-#         self.listWidget.setDragDropMode(QtGui.QAbstractItemView.NoDragDrop)
-#         self.listWidget.setObjectName(_fromUtf8("listWidget"))
-#         self.verticalLayout.addWidget(self.listWidget)
-#         self.label.setText(_translate("Form", name, None))
-#
-#         layout = QtGui.QHBoxLayout()
-#         layout.addWidget(self.widget)
-#         self.setLayout(layout)

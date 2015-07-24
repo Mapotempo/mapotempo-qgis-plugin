@@ -113,7 +113,9 @@ class PluginMapotempoLayer:
         keys = types.keys()
         attributes = []
         for i in keys:
-            if types[i] == 'int':
+            if i == 'trace':
+                continue
+            elif types[i] == 'int':
                 attributes.append(QgsField(i, QVariant.Int))
             elif types[i] == 'float':
                 attributes.append(QgsField(i, QVariant.Double))
@@ -177,7 +179,9 @@ class PluginMapotempoLayer:
         keys = types.keys()
         attributes = []
         for i in keys:
-            if types[i] == 'int':
+            if i == 'polygon':
+                continue
+            elif types[i] == 'int':
                 attributes.append(QgsField(i, QVariant.Int))
             elif types[i] == 'float':
                 attributes.append(QgsField(i, QVariant.Double))
@@ -465,24 +469,42 @@ class PluginMapotempoLayer:
                 destinationLayer = layer
             elif layer.name() == self.translate.tr("vehicles"):
                 vehiclesLayer = layer
+            elif layer.name() == self.translate.tr("routes"):
+                routesLayer = layer
         listVehicle = {}
         colorVehicle = {}
+
         for feature in vehiclesLayer.getFeatures():
             listVehicle[feature.attribute('name')] = []
             color = feature.attribute('color')
             colorVehicle[feature.attribute('name')] = color
+        infoVehicle = {}
+        for feature in routesLayer.getFeatures():
+            if feature.attribute('vehicle_id'):
+                km = feature.attribute('distance')
+                if km:
+                    km /=1000
+                timeBegin = feature.attribute('start')
+                timeEnd = feature.attribute('end')
+                timeTot = 0
+                if timeBegin:
+                    timeBegin = time.strptime(timeBegin, '%Y-%m-%dT%H:%M:%S')
+                    timeEnd = time.strptime(timeEnd, '%Y-%m-%dT%H:%M:%S')
+                    timeTot = (time.mktime(timeEnd) - time.mktime(timeBegin))
+                infoVehicle[feature.attribute(self.translate.tr('vehicles') + '_name')] = ' - ' + str(time.strftime("%H:%M", time.gmtime(timeTot))) + ' - ' + str(km) + 'Km'
         listFeature = []
         activeTab = []
+
         for feature in destinationLayer.getFeatures():
             index = feature.attribute(self.translate.tr("Stops") + '_index')
             name = feature.attribute('name')
-            vehicle = feature.attribute(
+            vehicle = unicode(feature.attribute(
                 self.translate.tr("Stops") +
                 '_' +
                 self.translate.tr('routes') +
                 '_' +
                 self.translate.tr('vehicles') +
-                '_name')
+                '_name'))
             if feature.attribute(self.translate.tr("Stops") + '_active') == False:
                 activeTab.append(name)
             if index:
@@ -495,7 +517,7 @@ class PluginMapotempoLayer:
         sorted_by_first = sorted(listFeature, key=lambda tup: tup[0])
         for v in sorted_by_first:
             listVehicle[v[2]].append((v[1], []))
-        self.dock.addVehicles(listVehicle, colorVehicle, activeTab)
+        self.dock.addVehicles(listVehicle, colorVehicle, infoVehicle, activeTab)
 
     def setLabel(self):
         layers = self.iface.legendInterface().layers()
