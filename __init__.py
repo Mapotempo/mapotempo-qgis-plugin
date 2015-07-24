@@ -40,7 +40,7 @@ def classFactory(iface):  # pylint: disable=invalid-name
 
 
     __all__ = [
-       'SwaggerPetstore', 'apis', 'geojson', 'polyline'
+       'SwaggerMapo', 'apis', 'geojson', 'polyline'
        ]
 
     return PluginMapotempo(iface)
