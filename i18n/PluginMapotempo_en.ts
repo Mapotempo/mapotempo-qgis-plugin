@@ -23,16 +23,16 @@
           <translation>Host</translation>
     </message>
     <message>
-          <source>Clic to choose a planning</source>
-          <translation>Clic to choose a planning</translation>
-    </message>
-    <message>
           <source>label_5</source>
           <translation> </translation>
     </message>
 </context>
 <context>
     <name>PluginMapotempo</name>
+    <message>
+          <source>Clic to choose a planning</source>
+          <translation>Clic to choose a planning</translation>
+    </message>
     <message>
           <source>Zoning</source>
           <translation>zoning</translation>
