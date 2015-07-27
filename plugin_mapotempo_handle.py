@@ -90,11 +90,8 @@ class PluginMapotempoHandle:
     def handleButtonConnect(self):
         """action after Connection clic"""
         if not self.keyConnection:
-            self.keyConnection = self.s.value("PluginMapotempo/key")
-            self.hostConnection = self.s.value("PluginMapotempo/host")
-            if not self.keyConnection:
-                #label
-                return
+            self.dock.label_5.setText(self.translate.tr("No connection"))
+            return
         configuration.host = self.hostConnection + "/api/"
         configuration.api_key['api_key'] = self.keyConnection
         self.client = SwaggerMapo.api_client.ApiClient(
@@ -110,8 +107,6 @@ class PluginMapotempoHandle:
             print ae
         except TypeError as te:
             print te
-        else:
-            self.saveConnectionData()
 
     def handleButtonSave(self):
         self.keyConnection = self.dlg.lineEdit.text()
@@ -120,8 +115,8 @@ class PluginMapotempoHandle:
 
     def HandleParam(self):
         if self.keyConnection:
-            self.dlg.lineEdit.setText(self.keyConnection)
-            self.dlg.lineEdit_2.setText(self.hostConnection)
+            self.dlg.lineEdit.setText(self.s.value("PluginMapotempo/key"))
+            self.dlg.lineEdit_2.setText(self.s.value("PluginMapotempo/host"))
         else:
             self.dlg.lineEdit_2.setText('https://app.mapotempo.com')
         self.dlg.show()
@@ -166,7 +161,7 @@ class PluginMapotempoHandle:
                 self.layer_inst.setLabel()
                 self.dock.label_5.setText(self.translate.tr("Done"))
             else:
-                self.dock.label_5.setText(self.translate.tr("No connection"))
+                self.dock.label_5.setText(self.translate.tr("Connection problem"))
 
 
     def getPlanningsId(self, id_plan):
@@ -240,8 +235,9 @@ class PluginMapotempoHandle:
             print lve
         except ApiException as ae:
             print ae
-            self.dock.label_5.setText(self.translate.tr("No connection"))
+            self.dock.label_5.setText(self.translate.tr("Connection problem"))
         else:
+            self.saveConnectionData()
             jsondata = self.client.sanitize_for_serialization(data)
 
             self.dock.comboBox.clear()

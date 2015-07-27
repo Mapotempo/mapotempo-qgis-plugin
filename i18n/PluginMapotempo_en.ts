@@ -30,6 +30,10 @@
 <context>
     <name>PluginMapotempo</name>
     <message>
+          <source>Connection problem</source>
+          <translation>Connection problem</translation>
+    </message>
+    <message>
           <source>Clic to choose a planning</source>
           <translation>Clic to choose a planning</translation>
     </message>

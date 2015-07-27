@@ -82,6 +82,8 @@ class PluginMapotempo:
         self.dock.pushButton_4.clicked.connect(self.handle.HandleParam)
         self.dock.comboBox.activated.connect(self.handle.HandleSelect)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dock)
+        self.handle.keyConnection = self.handle.s.value("PluginMapotempo/key")
+        self.handle.hostConnection = self.handle.s.value("PluginMapotempo/host")
 
     def add_action(
             self,

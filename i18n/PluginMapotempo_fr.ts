@@ -30,6 +30,10 @@
 <context>
     <name>PluginMapotempo</name>
     <message>
+          <source>Connection problem</source>
+          <translation>Problème de connexion</translation>
+    </message>
+    <message>
           <source>No connection</source>
           <translation>Aucune connexion</translation>
     </message>
