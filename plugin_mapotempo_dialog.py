@@ -127,9 +127,6 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.verticalLayout.addWidget(self.pushButton_2)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.label_4 = QtGui.QLabel(self.dockWidgetContents)
-        self.label_4.setObjectName(_fromUtf8("label_4"))
-        self.horizontalLayout_2.addWidget(self.label_4)
         self.label_5 = QtGui.QLabel(self.dockWidgetContents)
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.horizontalLayout_2.addWidget(self.label_5)
@@ -199,7 +196,6 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
     def retranslateUi(self, DockWidget):
         DockWidget.setWindowTitle(_translate("DockWidget", "Mapotempo", None))
         self.pushButton_2.setText(_translate("DockWidget", "Refresh", None))
-        self.label_4.setText(_translate("DockWidget", "Planning choice", None))
         self.label_5.setText(_translate("DockWidget", "", None))
         self.pushButton.setText(_translate("DockWidget", "Connection", None))
         self.pushButton_4.setText(_translate("DockWidget", "Parameter", None))

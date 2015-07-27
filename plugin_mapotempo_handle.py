@@ -128,8 +128,17 @@ class PluginMapotempoHandle:
 
     def HandleSelect(self):
         tmp = self.dock.comboBox.currentText().split(' ')
-        self.id_plan = tmp[len(tmp) - 1]
-        if self.id_plan:
+        try:
+            self.id_plan = int(tmp[len(tmp) - 1])
+        except:
+            return
+        else:
+            if len(self.layer_inst.layerTab) > 0:
+                for layer in self.layer_inst.layerTab:
+                    if layer.name() == self.translate.tr("planning"):
+                        for feature in layer.getFeatures():
+                            if feature.attribute('id') == self.id_plan:
+                                return
             self.layer_inst.clearLayer()
             self.dock.label_5.repaint()
             if self.client:
@@ -236,7 +245,7 @@ class PluginMapotempoHandle:
             jsondata = self.client.sanitize_for_serialization(data)
 
             self.dock.comboBox.clear()
-            self.dock.comboBox.addItem(None)
+            self.dock.comboBox.addItem(self.translate.tr("Clic to choose a planning"))
             for row in jsondata:
                 self.dock.comboBox.addItem(
                     str(row['name']) + " " + str(row['id']))

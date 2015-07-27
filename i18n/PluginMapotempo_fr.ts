@@ -23,8 +23,8 @@
           <translation>Hôte</translation>
     </message>
     <message>
-          <source>Planning choice</source>
-          <translation>Choix Planning</translation>
+          <source>Clic to choose a planning</source>
+          <translation>Cliquez pour choisir un planning</translation>
     </message>
     <message>
           <source>label_5</source>

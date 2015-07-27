@@ -23,8 +23,8 @@
           <translation>Host</translation>
     </message>
     <message>
-          <source>Planning choice</source>
-          <translation>Planning choice</translation>
+          <source>Clic to choose a planning</source>
+          <translation>Clic to choose a planning</translation>
     </message>
     <message>
           <source>label_5</source>
