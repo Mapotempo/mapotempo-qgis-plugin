@@ -25,6 +25,7 @@ from PyQt4.QtGui import QColor
 class PluginMapotempoLayer:
 
     def __init__(self, dlg, dock, iface, translate):
+        self.layerTab = []
         self.dlg = dlg
         self.dock = dock
         self.translate = translate
@@ -42,6 +43,7 @@ class PluginMapotempoLayer:
         """Create a Layer"""
 
         layer = QgsVectorLayer("Point?crs=epsg:4326", name, "memory")
+        self.layerTab.append(layer)
         pr = layer.dataProvider()
         types = model().swagger_types
         keys = types.keys()
@@ -108,6 +110,7 @@ class PluginMapotempoLayer:
         """Create a Layer"""
 
         layer = QgsVectorLayer("LineString?crs=epsg:4326", name, "memory")
+        self.layerTab.append(layer)
         pr = layer.dataProvider()
         types = model().swagger_types
         keys = types.keys()
@@ -174,6 +177,7 @@ class PluginMapotempoLayer:
             "Polygon?crs=epsg:4326",
             self.translate.tr("Zoning") + "_" + str(name)+ " " + str(idToDraw),
             "memory")
+        self.layerTab.append(layer)
         pr = layer.dataProvider()
         types = SwaggerMapo.models.V01Zone().swagger_types
         keys = types.keys()
@@ -243,6 +247,7 @@ class PluginMapotempoLayer:
 
         uri = "file://"+ tmp.name +"?delimiter=%s" % (",")
         layer = QgsVectorLayer(uri, name, "delimitedtext")
+        self.layerTab.append(layer)
         QgsMapLayerRegistry.instance().addMapLayer(layer)
 
     def addIcon(self, layer, typeIcon):
@@ -275,10 +280,10 @@ class PluginMapotempoLayer:
         self.dock.label_5.setText(self.translate.tr("Processing"))
         self.dock.label_5.repaint()
         layers = self.iface.legendInterface().layers()
-        if len(layers) > 0:
-            layers.pop()
         for layer in layers: #a little bit long
-            QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
+            if layer in self.layerTab:
+                QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
+        self.layerTab = []
         self.dock.label_5.setText(self.translate.tr("Done"))
 
     def refresh(self):
