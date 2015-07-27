@@ -1,5 +1,6 @@
 # from PyQt4.QtCore import *
 from PyQt4.QtCore import Qt, QVariant
+from qgis.gui import QgsMessageBar
 # from qgis.core import *
 from qgis.core import (
     QgsMapLayerRegistry, QgsVectorLayer, QgsField, QgsFeature,

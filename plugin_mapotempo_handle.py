@@ -1,6 +1,7 @@
 from PyQt4.QtCore import QSettings
 from qgis.core import QgsProject
 from urllib3.exceptions import MaxRetryError, LocationValueError
+from qgis.gui import QgsMessageBar
 
 
 import SwaggerMapo
@@ -122,6 +123,7 @@ class PluginMapotempoHandle:
         self.dlg.show()
 
     def HandleSelect(self):
+
         tmp = self.dock.comboBox.currentText().split(' ')
         try:
             self.id_plan = int(tmp[len(tmp) - 1])
@@ -134,10 +136,11 @@ class PluginMapotempoHandle:
                         for feature in layer.getFeatures():
                             if feature.attribute('id') == self.id_plan:
                                 return
+            self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Processing"), level=QgsMessageBar.INFO)
+            self.dock.label_5.setText(self.translate.tr("Processing"))
             self.layer_inst.clearLayer()
             self.dock.label_5.repaint()
             if self.client:
-                self.dock.label_5.setText(self.translate.tr("Processing"))
                 self.dock.listWidget.clear()
                 self.dock.model.clear()
                 self.handleButtonTags()
@@ -159,9 +162,11 @@ class PluginMapotempoHandle:
                 self.layer_inst.unplannedStop()
                 self.layer_inst.vehiclesStop()
                 self.layer_inst.setLabel()
+                self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Done"), level=QgsMessageBar.INFO)
                 self.dock.label_5.setText(self.translate.tr("Done"))
             else:
                 self.dock.label_5.setText(self.translate.tr("Connection problem"))
+                self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Connection problem"), level=QgsMessageBar.WARNING)
 
 
     def getPlanningsId(self, id_plan):
