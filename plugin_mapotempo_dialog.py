@@ -222,34 +222,21 @@ class QCustomTreeView (QtGui.QTreeView):
 
     def dragEnterEvent (self, eventQDragEnterEvent):
         sourceQCustomTreeView = eventQDragEnterEvent.source()
+        index = self.selectedIndexes()[0]
+        crawler = index.model().itemFromIndex(index)
         if isinstance(sourceQCustomTreeView, QCustomTreeView):
-            if self != sourceQCustomTreeView:
-                sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
-                eventQDragEnterEvent.accept()
-            else:
-                sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+            print '4'
+            sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+            if crawler.parent():
                 QtGui.QTreeView.dragEnterEvent(self, eventQDragEnterEvent)
         else:
-            QtGui.QTreeView.dragEnterEvent(self, eventQDragEnterEvent)
+            print '5'
+            if crawler.parent():
+                QtGui.QTreeView.dragEnterEvent(self, eventQDragEnterEvent)
 
     def dropEvent (self, eventQDropEvent):
         sourceQCustomTreeView = eventQDropEvent.source()
-        if isinstance(sourceQCustomTreeView, QCustomTreeView):
-            if self != sourceQCustomTreeView:
-                sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
-                sourceQTreeViewItem = sourceQCustomTreeView.currentItem()
-                isFound = False
-                for column in range(0, self.columnCount()):
-                    sourceQString = sourceQTreeViewItem.text(column)
-                    listsFoundQTreeViewItem = self.findItems(sourceQString, QtCore.Qt.MatchExactly, column)
-                    if listsFoundQTreeViewItem:
-                        isFound = True
-                        break
-                if not isFound:
-                    (sourceQTreeViewItem.parent() or sourceQCustomTreeView.invisibleRootItem()).removeChild(sourceQTreeViewItem)
-                    self.invisibleRootItem().addChild(sourceQTreeViewItem)
-            else:
-                sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
-                QtGui.QTreeView.dropEvent(self, eventQDropEvent)
-        else:
-            QtGui.QTreeView.dropEvent(self, eventQDropEvent)
+
+        sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+        QtGui.QTreeView.dropEvent(self, eventQDropEvent)
+
