@@ -546,6 +546,14 @@ class PluginMapotempoLayer:
         label.placement = QgsPalLayerSettings.OverPoint
         label.setDataDefinedProperty(
             QgsPalLayerSettings.Size, True, True, '8', '')
+        label.setDataDefinedProperty(
+            QgsPalLayerSettings.Bold, True, True, '8', '')
+        label.setDataDefinedProperty(
+            QgsPalLayerSettings.ScaleVisibility, True, True, '1', '')
+        label.setDataDefinedProperty(
+            QgsPalLayerSettings.MinScale, True, True, '1', '')
+        label.setDataDefinedProperty(
+            QgsPalLayerSettings.MaxScale, True, True, '2000000', '')
         label_1.readFromLayer(storeLayer)
         label.enabled = True
         label_1.enabled = True
