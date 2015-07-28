@@ -166,6 +166,11 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         for text, children in elements:
             if bool:
                 item = QtGui.QStandardItem(text)
+                client =  text.split(' - ')
+                if len(client) == 2:
+                    item.setData(client[1])
+                else:
+                    item.setData(client[0])
                 parent.appendRow(item)
                 item.setCheckable(True)
                 item.setCheckState(QtCore.Qt.Checked)
@@ -173,6 +178,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                     item.setCheckState(QtCore.Qt.Unchecked)
             else:
                 item = QtGui.QStandardItem(text + infoVehicle[text])
+                item.setData(text)
                 parent.appendRow(item)
                 colorV = color[text]
                 icon = QtGui.QIcon()
