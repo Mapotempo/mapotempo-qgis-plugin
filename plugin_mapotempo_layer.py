@@ -543,8 +543,9 @@ class PluginMapotempoLayer:
 
         label, label_1 = QgsPalLayerSettings(), QgsPalLayerSettings()
         label.readFromLayer(destinationLayer)
-        label.placement= QgsPalLayerSettings.OverPoint
-        label.setDataDefinedProperty(QgsPalLayerSettings.Size,True,True,'8','')
+        label.placement = QgsPalLayerSettings.OverPoint
+        label.setDataDefinedProperty(
+            QgsPalLayerSettings.Size, True, True, '8', '')
         label_1.readFromLayer(storeLayer)
         label.enabled = True
         label_1.enabled = True

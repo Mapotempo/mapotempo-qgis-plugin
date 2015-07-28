@@ -136,7 +136,8 @@ class PluginMapotempoHandle:
                         for feature in layer.getFeatures():
                             if feature.attribute('id') == self.id_plan:
                                 return
-            self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Processing"), level=QgsMessageBar.INFO)
+            self.layer_inst.iface.messageBar().pushMessage(
+                self.translate.tr("Processing"), level=QgsMessageBar.INFO)
             self.dock.label_5.setText(self.translate.tr("Processing"))
             self.layer_inst.clearLayer()
             self.dock.label_5.repaint()
@@ -162,11 +163,15 @@ class PluginMapotempoHandle:
                 self.layer_inst.unplannedStop()
                 self.layer_inst.vehiclesStop()
                 self.layer_inst.setLabel()
-                self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Done"), level=QgsMessageBar.INFO)
+                self.layer_inst.iface.messageBar().pushMessage(
+                    self.translate.tr("Done"), level=QgsMessageBar.INFO)
                 self.dock.label_5.setText(self.translate.tr("Done"))
             else:
-                self.dock.label_5.setText(self.translate.tr("Connection problem"))
-                self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Connection problem"), level=QgsMessageBar.WARNING)
+                self.dock.label_5.setText(
+                    self.translate.tr("Connection problem"))
+                self.layer_inst.iface.messageBar().pushMessage(
+                    self.translate.tr("Connection problem"),
+                    level=QgsMessageBar.WARNING)
 
 
     def getPlanningsId(self, id_plan):
@@ -246,7 +251,8 @@ class PluginMapotempoHandle:
             jsondata = self.client.sanitize_for_serialization(data)
 
             self.dock.comboBox.clear()
-            self.dock.comboBox.addItem(self.translate.tr("Clic to choose a planning"))
+            self.dock.comboBox.addItem(
+                self.translate.tr("Clic to choose a planning"))
             for row in jsondata:
                 self.dock.comboBox.addItem(
                     str(row['name']) + " " + str(row['id']))

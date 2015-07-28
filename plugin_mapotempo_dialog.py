@@ -163,7 +163,6 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.treeView.setModel(self.model)
 
     def addItems(self, parent, elements, activeTab, infoVehicle, color, bool=False):
-
         for text, children in elements:
             if bool:
                 item = QtGui.QStandardItem(text)
