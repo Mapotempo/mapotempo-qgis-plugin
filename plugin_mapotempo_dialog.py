@@ -144,8 +144,10 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.listWidget.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
         self.listWidget.setObjectName(_fromUtf8("listWidget"))
         self.verticalLayout.addWidget(self.listWidget)
-        self.treeView = QtGui.QTreeView(self.dockWidgetContents)
+        self.treeView = QCustomTreeView()
         self.treeView.setObjectName(_fromUtf8("treeView"))
+        self.treeView.setDragEnabled(True)
+        self.treeView.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
         self.model = QtGui.QStandardItemModel()
 
         self.verticalLayout.addWidget(self.treeView)
@@ -210,3 +212,44 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         if not basepath:
             basepath = os.path.dirname(os.path.realpath(__file__))
         return os.path.join(basepath, name)
+
+class QCustomTreeView (QtGui.QTreeView):
+    def __init__(self, parent = None):
+        super(QCustomTreeView, self).__init__(parent)
+        self.setDragEnabled(True)
+        self.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
+        self.resize(360,240)
+
+    def dragEnterEvent (self, eventQDragEnterEvent):
+        sourceQCustomTreeView = eventQDragEnterEvent.source()
+        if isinstance(sourceQCustomTreeView, QCustomTreeView):
+            if self != sourceQCustomTreeView:
+                sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
+                eventQDragEnterEvent.accept()
+            else:
+                sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+                QtGui.QTreeView.dragEnterEvent(self, eventQDragEnterEvent)
+        else:
+            QtGui.QTreeView.dragEnterEvent(self, eventQDragEnterEvent)
+
+    def dropEvent (self, eventQDropEvent):
+        sourceQCustomTreeView = eventQDropEvent.source()
+        if isinstance(sourceQCustomTreeView, QCustomTreeView):
+            if self != sourceQCustomTreeView:
+                sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
+                sourceQTreeViewItem = sourceQCustomTreeView.currentItem()
+                isFound = False
+                for column in range(0, self.columnCount()):
+                    sourceQString = sourceQTreeViewItem.text(column)
+                    listsFoundQTreeViewItem = self.findItems(sourceQString, QtCore.Qt.MatchExactly, column)
+                    if listsFoundQTreeViewItem:
+                        isFound = True
+                        break
+                if not isFound:
+                    (sourceQTreeViewItem.parent() or sourceQCustomTreeView.invisibleRootItem()).removeChild(sourceQTreeViewItem)
+                    self.invisibleRootItem().addChild(sourceQTreeViewItem)
+            else:
+                sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+                QtGui.QTreeView.dropEvent(self, eventQDropEvent)
+        else:
+            QtGui.QTreeView.dropEvent(self, eventQDropEvent)
