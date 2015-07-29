@@ -8,7 +8,7 @@ from qgis.core import (
     QgsSimpleMarkerSymbolLayerV2, QgsSimpleLineSymbolLayerV2,
     QgsSimpleFillSymbolLayerV2, QgsVectorJoinInfo, QgsSymbolV2,
     QgsRendererCategoryV2, QgsCategorizedSymbolRendererV2,
-    QgsPalLayerSettings, QgsRasterLayer)
+    QgsPalLayerSettings, QgsRasterLayer, QgsVectorSimplifyMethod)
 import tempfile
 import csv
 import datetime
@@ -44,6 +44,9 @@ class PluginMapotempoLayer:
         """Create a Layer"""
 
         layer = QgsVectorLayer("Point?crs=epsg:4326", name, "memory")
+        mSimplifyMethod = QgsVectorSimplifyMethod()
+        mSimplifyMethod.setSimplifyHints(QgsVectorSimplifyMethod.NoSimplification)
+        layer.setSimplifyMethod(mSimplifyMethod)
         self.layerTab.append(layer)
         pr = layer.dataProvider()
         types = model().swagger_types
@@ -111,6 +114,9 @@ class PluginMapotempoLayer:
         """Create a Layer"""
 
         layer = QgsVectorLayer("LineString?crs=epsg:4326", name, "memory")
+        mSimplifyMethod = QgsVectorSimplifyMethod()
+        mSimplifyMethod.setSimplifyHints(QgsVectorSimplifyMethod.NoSimplification)
+        layer.setSimplifyMethod(mSimplifyMethod)
         self.layerTab.append(layer)
         pr = layer.dataProvider()
         types = model().swagger_types
@@ -178,6 +184,9 @@ class PluginMapotempoLayer:
             "Polygon?crs=epsg:4326",
             self.translate.tr("Zoning") + "_" + str(name)+ " " + str(idToDraw),
             "memory")
+        mSimplifyMethod = QgsVectorSimplifyMethod()
+        mSimplifyMethod.setSimplifyHints(QgsVectorSimplifyMethod.NoSimplification)
+        layer.setSimplifyMethod(mSimplifyMethod)
         self.layerTab.append(layer)
         pr = layer.dataProvider()
         types = SwaggerMapo.models.V01Zone().swagger_types
