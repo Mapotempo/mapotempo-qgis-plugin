@@ -220,7 +220,8 @@ class PluginMapotempoHandle:
         else:
             json = self.client.sanitize_for_serialization(data)
             for row in json:
-                self.layer_inst.drawZone(row['zones'], row['name'], row['id'])
+                if 'zones' in row:
+                    self.layer_inst.drawZone(row['zones'], row['name'], row['id'])
 
     def getZoneId(self, id_plan):
         self.id_zones_tab = []

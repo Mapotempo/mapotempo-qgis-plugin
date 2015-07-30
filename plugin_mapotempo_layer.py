@@ -75,8 +75,9 @@ class PluginMapotempoLayer:
                     r.append(json[i][field.name()])
                 else:
                     r.append(None)
-            feature.setGeometry(
-                QgsGeometry.fromPoint(QgsPoint(json[i]['lng'], json[i]['lat'])))
+            if 'lng' in json[i]:
+                feature.setGeometry(
+                    QgsGeometry.fromPoint(QgsPoint(json[i]['lng'], json[i]['lat'])))
             feature.setAttributes(r)
             pr.addFeatures([feature])
 
