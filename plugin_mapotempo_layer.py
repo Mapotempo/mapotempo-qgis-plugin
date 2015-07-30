@@ -13,7 +13,11 @@ import tempfile
 import csv
 import datetime
 import time
+<<<<<<< HEAD
 
+=======
+import unicodedata
+>>>>>>> 438521f... win fix
 import os.path
 import ast
 
@@ -84,10 +88,12 @@ class PluginMapotempoLayer:
         QgsMapLayerRegistry.instance().addMapLayer(layer)
         layer.updateFields()
 
-    def json2csv(self, json, model):
+    def json2csv(self, json, model, name):
         """Convert json data in CSV file"""
 
-        tmp = tempfile.NamedTemporaryFile(suffix=".csv", delete=False)
+        f = self.resolve("csv/"+ name +".csv")
+        f = unicodedata.normalize('NFKD', f).encode('ascii','ignore')
+        tmp = open(f, "wb")
         writer = csv.writer(tmp)
         types = model().swagger_types
 
@@ -98,7 +104,7 @@ class PluginMapotempoLayer:
             r = []
             for field in types.keys():
                 if field in json[i]:
-                    try: #problem with encodage
+                    try:
                         r.append(json[i][field].encode("UTF-8"))
                     except AttributeError:
                         r.append(json[i][field])
@@ -109,7 +115,7 @@ class PluginMapotempoLayer:
             except UnicodeEncodeError as ue:
                 print ue
             tmp.flush()
-        return tmp
+        return f
 
     def createLayerLine(self, model, name, json):
         """Create a Layer"""
@@ -255,9 +261,8 @@ class PluginMapotempoLayer:
 
     def loadCSVLayer(self, name, tmp):
         """load a CSV file"""
-
-        uri = "file://"+ tmp.name +"?delimiter=%s" % (",")
-        layer = QgsVectorLayer(uri, name, "delimitedtext")
+        uri = "file://"+ tmp +"?delimiter=%s" % (",")
+        layer = QgsVectorLayer(unicode(uri), name, "delimitedtext")
         self.layerTab.append(layer)
         QgsMapLayerRegistry.instance().addMapLayer(layer)
 

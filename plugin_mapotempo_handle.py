@@ -69,7 +69,7 @@ class PluginMapotempoHandle:
             print lve
         else:
             jsondata = self.client.sanitize_for_serialization(data)
-            csv = self.layer_inst.json2csv(jsondata, model)
+            csv = self.layer_inst.json2csv(jsondata, model, name)
             self.layer_inst.loadCSVLayer(name, csv)
 
     def handleButtonGeoGeneric(self, get, model, name, typeIcon):
