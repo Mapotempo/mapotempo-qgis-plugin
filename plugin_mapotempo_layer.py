@@ -257,7 +257,7 @@ class PluginMapotempoLayer:
 
     def loadCSVLayer(self, name, tmp):
         """load a CSV file"""
-        uri = "file://"+ tmp +"?delimiter=%s" % (",")
+        uri = "file:///"+ tmp +"?delimiter=%s" % (",")
         layer = QgsVectorLayer(unicode(uri), name, "delimitedtext")
         self.layerTab.append(layer)
         QgsMapLayerRegistry.instance().addMapLayer(layer)
