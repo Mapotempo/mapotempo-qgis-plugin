@@ -13,11 +13,7 @@ import tempfile
 import csv
 import datetime
 import time
-<<<<<<< HEAD
-
-=======
 import unicodedata
->>>>>>> 438521f... win fix
 import os.path
 import ast
 
