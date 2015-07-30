@@ -226,6 +226,7 @@ class PluginMapotempoHandle:
     def getZoneId(self, id_plan):
         self.id_zones_tab = []
         layers = self.layer_inst.iface.legendInterface().layers()
+        planningLayer, zoningLayer = None, None
         for layer in layers:
             if layer.name() == self.translate.tr("planning"):
                 planningLayer = layer
