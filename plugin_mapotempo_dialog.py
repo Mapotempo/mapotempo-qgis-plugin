@@ -24,6 +24,7 @@
 import os
 
 from PyQt4 import QtCore, QtGui, uic
+from PyQt4.QtCore import Qt
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'plugin_mapotempo_dialog_base.ui'))
@@ -216,6 +217,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
 class QCustomTreeView (QtGui.QTreeView):
     def __init__(self, parent = None):
         super(QCustomTreeView, self).__init__(parent)
+        self.setAcceptDrops(True)
         self.setDragEnabled(True)
         self.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
         self.resize(360,240)
@@ -225,18 +227,62 @@ class QCustomTreeView (QtGui.QTreeView):
         index = self.selectedIndexes()[0]
         crawler = index.model().itemFromIndex(index)
         if isinstance(sourceQCustomTreeView, QCustomTreeView):
-            print '4'
             sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
             if crawler.parent():
                 QtGui.QTreeView.dragEnterEvent(self, eventQDragEnterEvent)
         else:
-            print '5'
             if crawler.parent():
                 QtGui.QTreeView.dragEnterEvent(self, eventQDragEnterEvent)
 
-    def dropEvent (self, eventQDropEvent):
-        sourceQCustomTreeView = eventQDropEvent.source()
+    def getQTreeWidgetItemDepth(self, item):
+        if(item==None):
+            return 0
+        if(item.parent()==None):
+            return 1
+        if(item.parent().parent()==None):
+            return 2
+        if(item.parent().parent().parent()==None):
+            return 3
+        if(item.parent().parent().parent().parent()==None):
+            return 4
 
-        sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
-        QtGui.QTreeView.dropEvent(self, eventQDropEvent)
+    def getDepth(self, item):
+        depth = 0
+        while ( item.parent().isValid()):
+            item = item.parent()
+            depth += 1
+        return depth
 
+    def mousePressEvent(self, event):
+        try:
+            index = self.selectedIndexes()[0]
+        except:
+            QtGui.QTreeView.mousePressEvent(self, event)
+        else:
+            crawler = index.model().itemFromIndex(index)
+            self.mParent = self.getQTreeWidgetItemDepth(crawler)
+            QtGui.QTreeView.mousePressEvent(self, event)
+
+    def dropEvent(self, event):
+        index = self.selectedIndexes()[0]
+        crawler = index.model().itemFromIndex(index)
+        print crawler.parent().text()
+        item = self.indexAt(event.pos())
+        depth = self.getDepth(item)
+        current = self.getDepth(self.currentIndex())
+        drop = self.dropIndicatorPosition()
+        if depth == 1 and current == 1 and drop == 0:
+            event.ignore()
+        elif depth == 0 and current == 1 and drop == 2:
+            event.ignore()
+        elif depth == 0 and current == 1 and drop == 3:
+            event.ignore()
+        elif depth == 0 and current == 1 and drop == 1:
+            event.ignore()
+        else:
+            QtGui.QTreeView.dropEvent(self, event)
+            
+    def rowsInserted(self, parent, start, end):
+        crawler = parent.model().itemFromIndex(parent)
+        print crawler.text()
+        super(QCustomTreeView, self).rowsInserted(parent, start, end)

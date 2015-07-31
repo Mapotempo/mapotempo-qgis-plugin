@@ -223,6 +223,7 @@ class PluginMapotempoLayer:
 
             a = ast.literal_eval(i['polygon'])
 
+            #print a attention multipol
             polygon = list(coords(a))
             polygonFinal = []
             for point in polygon:
