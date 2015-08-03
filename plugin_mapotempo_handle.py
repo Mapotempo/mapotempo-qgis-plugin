@@ -142,7 +142,6 @@ class PluginMapotempoHandle:
             self.layer_inst.clearLayer()
             self.dock.label_5.repaint()
             if self.client:
-                self.dock.listWidget.clear()
                 self.dock.model.clear()
                 self.handleButtonTags()
                 self.handleButtonProd()
@@ -160,7 +159,6 @@ class PluginMapotempoHandle:
                 self.layer_inst.joinDestinationVehicle()
                 root = QgsProject.instance().layerTreeRoot()
                 self.layer_inst.collapseTree(root)
-                self.layer_inst.unplannedStop()
                 self.layer_inst.vehiclesStop()
                 self.layer_inst.setLabel()
                 self.layer_inst.iface.messageBar().pushMessage(

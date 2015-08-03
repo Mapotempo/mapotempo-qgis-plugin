@@ -135,16 +135,6 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.comboBox = QtGui.QComboBox(self.dockWidgetContents)
         self.comboBox.setObjectName(_fromUtf8("comboBox"))
         self.verticalLayout.addWidget(self.comboBox)
-        self.label = QtGui.QLabel(self.dockWidgetContents)
-        self.label.setObjectName(_fromUtf8("label"))
-        self.verticalLayout.addWidget(self.label)
-        self.listWidget = QtGui.QListWidget(self.dockWidgetContents)
-        self.listWidget.setMaximumSize(QtCore.QSize(16777215, 100))
-        self.listWidget.setDragEnabled(True)
-        self.listWidget.setDragDropOverwriteMode(True)
-        self.listWidget.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
-        self.listWidget.setObjectName(_fromUtf8("listWidget"))
-        self.verticalLayout.addWidget(self.listWidget)
         self.treeView = QCustomTreeView()
         self.treeView.setObjectName(_fromUtf8("treeView"))
         self.treeView.setDragEnabled(True)
@@ -157,15 +147,18 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
 
         self.retranslateUi(self)
 
-    def addVehicles(self, data, color, infoVehicle, activeTab):
-        self.addItems(self.model, data.items(), activeTab, infoVehicle, color)
+    def setHandler(self, instance):
+        self.handler = instance
+
+    def addVehicles(self, data, color, infoVehicle, nonActiveTab):
+        self.addItems(self.model, data.items(), nonActiveTab, infoVehicle, color)
         self.model.setHeaderData(
             0,
             QtCore.Qt.Horizontal,
             _translate("PluginMapotempo", "routes", None))
         self.treeView.setModel(self.model)
 
-    def addItems(self, parent, elements, activeTab, infoVehicle, color, bool=False):
+    def addItems(self, parent, elements, nonActiveTab, infoVehicle, color, bool=False):
         for text, children in elements:
             if bool:
                 item = QtGui.QStandardItem(text)
@@ -177,9 +170,9 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                 parent.appendRow(item)
                 item.setCheckable(True)
                 item.setCheckState(QtCore.Qt.Checked)
-                if text in activeTab:
+                if text in nonActiveTab:
                     item.setCheckState(QtCore.Qt.Unchecked)
-            else:
+            elif text in infoVehicle:
                 item = QtGui.QStandardItem(text + infoVehicle[text])
                 item.setData(text)
                 parent.appendRow(item)
@@ -192,11 +185,15 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                     QtGui.QIcon.Normal,
                     QtGui.QIcon.Off)
                 item.setIcon(icon)
+            else:
+                item = QtGui.QStandardItem(text)
+                item.setData(text)
+                parent.appendRow(item)
             if children:
                 self.addItems(
                     item,
                     children,
-                    activeTab,
+                    nonActiveTab,
                     infoVehicle,
                     color=None,
                     bool=True)
@@ -207,7 +204,6 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.label_5.setText(_translate("DockWidget", "", None))
         self.pushButton.setText(_translate("DockWidget", "Connection", None))
         self.pushButton_4.setText(_translate("DockWidget", "Parameter", None))
-        self.label.setText(_translate("DockWidget", "Unplanned", None))
 
     def resolve(self, name, basepath=None):
         if not basepath:
@@ -285,4 +281,5 @@ class QCustomTreeView (QtGui.QTreeView):
     def rowsInserted(self, parent, start, end):
         crawler = parent.model().itemFromIndex(parent)
         print crawler.text()
+        print self.rowHeight(parent)
         super(QCustomTreeView, self).rowsInserted(parent, start, end)

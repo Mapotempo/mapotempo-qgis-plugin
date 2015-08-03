@@ -101,6 +101,10 @@
         <source>Done</source>
         <translation>Terminé</translation>
     </message>
+    <message>
+        <source>Unplanned</source>
+        <translation>Non planifié</translation>
+    </message>
     
 </context>
 <context>

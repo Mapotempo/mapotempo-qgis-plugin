@@ -301,7 +301,6 @@ class PluginMapotempoLayer:
 
     def refresh(self):
         self.dock.comboBox.clear()
-        self.dock.listWidget.clear()
         self.dock.model.clear()
         self.clearLayer()
         self.handler.listPlannings()
@@ -466,19 +465,6 @@ class PluginMapotempoLayer:
         destinationLayer.setRendererV2(renderer)
         destinationLayer.triggerRepaint()
 
-    def unplannedStop(self):
-        layers = self.iface.legendInterface().layers()
-        destinationLayer = None
-        for layer in layers:
-            if layer.name() == self.translate.tr('destinations'):
-                destinationLayer = layer
-                break
-
-        for feature in destinationLayer.getFeatures():
-            index = feature.attribute(self.translate.tr("Stops") + '_index')
-            if index == None:
-                self.dock.listWidget.addItem(feature.attribute('name'))
-
     def vehiclesStop(self):
         layers = self.iface.legendInterface().layers()
         destinationLayer, vehiclesLayer = None, None
@@ -496,6 +482,7 @@ class PluginMapotempoLayer:
             listVehicle[feature.attribute('name')] = []
             color = feature.attribute('color')
             colorVehicle[feature.attribute('name')] = color
+        listVehicle[self.translate.tr("Unplanned")] = []
         infoVehicle = {}
         for feature in routesLayer.getFeatures():
             if feature.attribute('vehicle_id'):
@@ -515,7 +502,7 @@ class PluginMapotempoLayer:
                         str(time.strftime("%H:%M", time.gmtime(timeTot))) +
                         ' - ' + str(km) + 'Km')
         listFeature = []
-        activeTab = []
+        nonActiveTab = []
 
         for feature in destinationLayer.getFeatures():
             index = feature.attribute(self.translate.tr("Stops") + '_index')
@@ -528,7 +515,7 @@ class PluginMapotempoLayer:
                 self.translate.tr('vehicles') +
                 '_name'))
             if feature.attribute(self.translate.tr("Stops") + '_active') == False:
-                activeTab.append(name)
+                nonActiveTab.append(name)
             if index:
                 date = feature.attribute(self.translate.tr("Stops") + '_time')
                 if date:
@@ -539,10 +526,12 @@ class PluginMapotempoLayer:
                         vehicle))
                 else:
                     listFeature.append((index, name, vehicle))
+            if not index:
+                listVehicle[self.translate.tr("Unplanned")].append((feature.attribute('name'), []))
         sorted_by_first = sorted(listFeature, key=lambda tup: tup[0])
         for v in sorted_by_first:
             listVehicle[v[2]].append((v[1], []))
-        self.dock.addVehicles(listVehicle, colorVehicle, infoVehicle, activeTab)
+        self.dock.addVehicles(listVehicle, colorVehicle, infoVehicle, nonActiveTab)
 
     def setLabel(self):
         layers = self.iface.legendInterface().layers()

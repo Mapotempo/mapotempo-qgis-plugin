@@ -74,6 +74,7 @@ class PluginMapotempo:
         self.handle = PluginMapotempoHandle(
             self.layer_inst, self.dlg, self.dock, self.translate)
         self.layer_inst.setHandler(self.handle)
+        self.dock.setHandler(self.handle)
 
         self.dlg.pushButton.clicked.connect(self.handle.handleButtonSave)
 
