@@ -151,12 +151,14 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.handler = instance
 
     def addVehicles(self, data, color, infoVehicle, nonActiveTab):
+        self.treeView.reset = True
         self.addItems(self.model, data.items(), nonActiveTab, infoVehicle, color)
         self.model.setHeaderData(
             0,
             QtCore.Qt.Horizontal,
             _translate("PluginMapotempo", "routes", None))
         self.treeView.setModel(self.model)
+        self.treeView.reset = False
 
     def addItems(self, parent, elements, nonActiveTab, infoVehicle, color, bool=False):
         for text, children in elements:
@@ -217,6 +219,7 @@ class QCustomTreeView (QtGui.QTreeView):
         self.setDragEnabled(True)
         self.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
         self.resize(360,240)
+        self.reset = False
 
     def dragEnterEvent (self, eventQDragEnterEvent):
         sourceQCustomTreeView = eventQDragEnterEvent.source()
@@ -279,7 +282,7 @@ class QCustomTreeView (QtGui.QTreeView):
             QtGui.QTreeView.dropEvent(self, event)
             
     def rowsInserted(self, parent, start, end):
-        crawler = parent.model().itemFromIndex(parent)
-        print crawler.text()
-        print self.rowHeight(parent)
-        super(QCustomTreeView, self).rowsInserted(parent, start, end)
+        if not self.reset:
+            crawler = parent.model().itemFromIndex(parent)
+            print crawler.text()
+            super(QCustomTreeView, self).rowsInserted(parent, start, end)
