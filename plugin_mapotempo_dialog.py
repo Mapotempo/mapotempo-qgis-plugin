@@ -87,7 +87,6 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         super(DockWidget, self).__init__(parent)
 
         self.vehicleTab = {}
-
         self.setObjectName(_fromUtf8("DockWidget"))
         self.resize(383, 887)
         self.dockWidgetContents = QtGui.QWidget()
@@ -148,7 +147,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.retranslateUi(self)
 
     def setHandler(self, instance):
-        self.handler = instance
+        self.treeView.handler = instance
 
     def addVehicles(self, data, color, infoVehicle, nonActiveTab):
         self.treeView.reset = True
@@ -163,22 +162,24 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
     def addItems(self, parent, elements, nonActiveTab, infoVehicle, color, bool=False):
         for text, children in elements:
             if bool:
-                item = QtGui.QStandardItem(text)
-                client =  text.split(' - ')
-                if len(client) == 2:
-                    item.setData(client[1])
-                else:
-                    item.setData(client[0])
+                item = QtGui.QStandardItem()
+                idClient =  text.split(' ')
+                item.setData(idClient.pop())
+                item.setText(' '.join(idClient))
                 parent.appendRow(item)
                 item.setCheckable(True)
                 item.setCheckState(QtCore.Qt.Checked)
                 if text in nonActiveTab:
                     item.setCheckState(QtCore.Qt.Unchecked)
             elif text in infoVehicle:
-                item = QtGui.QStandardItem(text + infoVehicle[text])
-                item.setData(text)
+                item = QtGui.QStandardItem() #text + infoVehicle[text]
+                idVehicle = infoVehicle[text].split(' ').pop()
+                item.setData(idVehicle)
                 parent.appendRow(item)
                 colorV = color[text]
+                infoV = infoVehicle[text].split(' ')
+                infoV.pop()
+                item.setText(text + ' '.join(infoV))
                 icon = QtGui.QIcon()
                 pixmap = QtGui.QPixmap(20, 20)
                 pixmap.fill(QtGui.QColor(str(colorV)))
@@ -188,9 +189,13 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                     QtGui.QIcon.Off)
                 item.setIcon(icon)
             else:
-                item = QtGui.QStandardItem(text)
-                item.setData(text)
+                item = QtGui.QStandardItem()
+                a = text.split(' ').pop()
+                idClient =  text.split(' ')
+                item.setData(idClient.pop())
+                item.setText(' '.join(idClient))
                 parent.appendRow(item)
+
             if children:
                 self.addItems(
                     item,
@@ -220,6 +225,8 @@ class QCustomTreeView (QtGui.QTreeView):
         self.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
         self.resize(360,240)
         self.reset = False
+        self.handler = None
+        self.idStop = None
 
     def dragEnterEvent (self, eventQDragEnterEvent):
         sourceQCustomTreeView = eventQDragEnterEvent.source()
@@ -265,7 +272,7 @@ class QCustomTreeView (QtGui.QTreeView):
     def dropEvent(self, event):
         index = self.selectedIndexes()[0]
         crawler = index.model().itemFromIndex(index)
-        print crawler.parent().text()
+        self.idStop = crawler.data()
         item = self.indexAt(event.pos())
         depth = self.getDepth(item)
         current = self.getDepth(self.currentIndex())
@@ -283,6 +290,7 @@ class QCustomTreeView (QtGui.QTreeView):
             
     def rowsInserted(self, parent, start, end):
         if not self.reset:
+            
             crawler = parent.model().itemFromIndex(parent)
-            print crawler.text()
+            self.handler.move_destinations(crawler.data(), self.idStop)
             super(QCustomTreeView, self).rowsInserted(parent, start, end)

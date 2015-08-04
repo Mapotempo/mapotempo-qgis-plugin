@@ -222,16 +222,18 @@ class PluginMapotempoLayer:
             feature.setAttributes(r)
 
             a = ast.literal_eval(i['polygon'])
+            if a['geometry']['type'] == 'Polygon':
+                polygon = list(coords(a))
+                polygonFinal = []
+                for point in polygon:
+                    polygonFinal.append(QgsPoint(point[0], point[1]))
+                form = QgsGeometry.fromPolygon([polygonFinal])
+                feature.setGeometry(form)
 
-            #print a attention multipol
-            polygon = list(coords(a))
-            polygonFinal = []
-            for point in polygon:
-                polygonFinal.append(QgsPoint(point[0], point[1]))
-            form = QgsGeometry.fromPolygon([polygonFinal])
-            feature.setGeometry(form)
+            elif a['geometry']['type'] == 'MultiPolygon':
+                feature.setGeometry(QgsGeometry.fromMultiPolygon([[[[QgsPoint(point[0],point[1]) for point in polygon ] for polygon in ring] for ring in a['coordinates']]][0]))
+
             pr.addFeatures([feature])
-
             layer.updateFields()
             layer.updateExtents()
             if not self.handler.id_zone == idToDraw:
@@ -482,8 +484,9 @@ class PluginMapotempoLayer:
             listVehicle[feature.attribute('name')] = []
             color = feature.attribute('color')
             colorVehicle[feature.attribute('name')] = color
-        listVehicle[self.translate.tr("Unplanned")] = []
+
         infoVehicle = {}
+        idRouteNull = None
         for feature in routesLayer.getFeatures():
             if feature.attribute('vehicle_id'):
                 km = feature.attribute('distance')
@@ -500,9 +503,14 @@ class PluginMapotempoLayer:
                     self.translate.tr('vehicles') + '_name')] = (
                         ' - ' +
                         str(time.strftime("%H:%M", time.gmtime(timeTot))) +
-                        ' - ' + str(km) + 'Km')
+                        ' - ' + str(km) + 'Km ' + str(feature.attribute('id')))
+            else:
+                idRouteNull = self.translate.tr("Unplanned") + " " + str(feature.attribute('id'))
+                listVehicle[idRouteNull] = []
         listFeature = []
         nonActiveTab = []
+
+        routeIdTab = {}
 
         for feature in destinationLayer.getFeatures():
             index = feature.attribute(self.translate.tr("Stops") + '_index')
@@ -514,6 +522,9 @@ class PluginMapotempoLayer:
                 '_' +
                 self.translate.tr('vehicles') +
                 '_name'))
+            destination_id = feature.attribute('id')
+            name = name + " " + str(destination_id)
+
             if feature.attribute(self.translate.tr("Stops") + '_active') == False:
                 nonActiveTab.append(name)
             if index:
@@ -527,7 +538,9 @@ class PluginMapotempoLayer:
                 else:
                     listFeature.append((index, name, vehicle))
             if not index:
-                listVehicle[self.translate.tr("Unplanned")].append((feature.attribute('name'), []))
+                listVehicle[idRouteNull].append((name, []))
+        
+
         sorted_by_first = sorted(listFeature, key=lambda tup: tup[0])
         for v in sorted_by_first:
             listVehicle[v[2]].append((v[1], []))
