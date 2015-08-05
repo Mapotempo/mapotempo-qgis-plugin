@@ -33,6 +33,7 @@ class PluginMapotempoLayer:
         self.iface = iface
         self.client = None
         self.handler = None
+        self.hashZone = {}
 
     def setClient(self, client):
         self.client = client
@@ -185,8 +186,9 @@ class PluginMapotempoLayer:
     def drawZone(self, json, name, idToDraw):
         layer = QgsVectorLayer(
             "Polygon?crs=epsg:4326",
-            self.translate.tr("Zoning") + "_" + str(name)+ " " + str(idToDraw),
+            self.translate.tr("Zoning") + "_" + str(name),
             "memory")
+        self.hashZone[layer.id()] = idToDraw
         mSimplifyMethod = QgsVectorSimplifyMethod()
         mSimplifyMethod.setSimplifyHints(QgsVectorSimplifyMethod.NoSimplification)
         layer.setSimplifyMethod(mSimplifyMethod)
@@ -311,13 +313,12 @@ class PluginMapotempoLayer:
         layers = self.iface.legendInterface().layers()
         zoneLayers, vehiclesLayer = [], None
         for layer in layers:
-            try:
-                tmp = layer.name().split(' ')
-                if int(tmp[len(tmp) - 1]) in self.handler.id_zones_tab:
+            if layer.id() in self.hashZone:
+                tmp = self.hashZone[layer.id()]
+                if tmp in self.handler.id_zones_tab:
                     zoneLayers.append(layer)
-            except ValueError:
-                if layer.name() == self.translate.tr("vehicles"):
-                    vehiclesLayer = layer
+            if layer.name() == self.translate.tr("vehicles"):
+                vehiclesLayer = layer
 
         for zoneLayer in zoneLayers:
             info = QgsVectorJoinInfo()
