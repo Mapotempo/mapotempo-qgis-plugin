@@ -63,7 +63,7 @@ class PluginMapotempo:
         self.menu = self.translate.tr(u'&Plugin Mapotempo')
         self.toolbar = self.iface.addToolBar(u'PluginMapotempo')
         self.toolbar.setObjectName(u'PluginMapotempo')
-
+        self.iface.addToolBarWidget(self.toolbar)
         self.dlg = PluginMapotempoDialogBase()
 
         self.dock = DockWidget()
@@ -178,6 +178,7 @@ class PluginMapotempo:
             self.iface.removeToolBarIcon(action)
         # remove the toolbar
         del self.toolbar
+        self.iface.removeDockWidget(self.dock)
 
     def run(self):
         """Run method that performs all the real work"""
