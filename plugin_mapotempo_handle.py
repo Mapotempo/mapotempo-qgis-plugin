@@ -124,9 +124,10 @@ class PluginMapotempoHandle:
 
     def HandleSelect(self):
 
-        tmp = self.dock.comboBox.currentText().split(' ')
+        index = self.dock.comboBox.currentIndex()
+        tmp = self.dock.comboBox.itemData(index)
         try:
-            self.id_plan = int(tmp[len(tmp) - 1])
+            self.id_plan = int(tmp)
         except:
             return
         else:
@@ -252,10 +253,11 @@ class PluginMapotempoHandle:
 
             self.dock.comboBox.clear()
             self.dock.comboBox.addItem(
-                self.translate.tr("Clic to choose a planning"))
+                self.translate.tr("Clic to choose a planning"), None)
+
             for row in jsondata:
                 self.dock.comboBox.addItem(
-                    str(row['name']) + " " + str(row['id']))
+                    str(row['name']), row['id'])
 
     def move_destinations(self, id_route, destinations):
         id_planning = self.dock.comboBox.currentText().split(' ').pop()
