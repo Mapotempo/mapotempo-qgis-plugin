@@ -260,7 +260,8 @@ class PluginMapotempoHandle:
                     str(row['name']), row['id'])
 
     def move_destinations(self, id_route, destinations):
-        id_planning = self.dock.comboBox.currentText().split(' ').pop()
+        index = self.dock.comboBox.currentIndex()
+        id_planning = self.dock.comboBox.itemData(index)
         PlanningsApi(self.client).move_destinations(planning_id=id_planning, id=id_route, destination_ids=[int(destinations)])
         self.layer_inst.refresh()
 
