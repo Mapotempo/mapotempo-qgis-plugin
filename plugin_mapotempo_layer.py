@@ -186,7 +186,7 @@ class PluginMapotempoLayer:
     def drawZone(self, json, name, idToDraw):
         layer = QgsVectorLayer(
             "Polygon?crs=epsg:4326",
-            self.translate.tr("Zoning") + "_" + str(name),
+            self.translate.tr("Zoning") + " " + str(name),
             "memory")
         self.hashZone[layer.id()] = idToDraw
         mSimplifyMethod = QgsVectorSimplifyMethod()

@@ -43,7 +43,7 @@
     </message>
     <message>
           <source>Zoning</source>
-          <translation>zonage</translation>
+          <translation>Zonage</translation>
     </message>
     <message>
         <source>tags</source>

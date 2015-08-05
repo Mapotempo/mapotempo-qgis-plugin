@@ -161,8 +161,11 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
 
     def on_item_changed(self,  item):
         if self.treeView.reset == False:
-            state = ['UNCHECKED', 'TRISTATE',  'CHECKED'][item.checkState()]
-            print "Item with text '%s', is at state %s\n" % ( item.text(),  state)
+            if not self.treeView.rowIns:
+                state = ['UNCHECKED', 'TRISTATE',  'CHECKED'][item.checkState()]
+                print "Item with text '%s', is at state %s\n" % ( item.text(),  state)
+            else:
+                self.treeView.rowIns = False
 
     def addItems(self, parent, elements, nonActiveTab, infoVehicle, color, bool=False):
         for text, children in elements:
@@ -232,6 +235,7 @@ class QCustomTreeView (QtGui.QTreeView):
         self.reset = False
         self.handler = None
         self.idStop = None
+        self.rowIns = False
 
     def dragEnterEvent (self, eventQDragEnterEvent):
         sourceQCustomTreeView = eventQDragEnterEvent.source()
@@ -267,7 +271,6 @@ class QCustomTreeView (QtGui.QTreeView):
     def mousePressEvent(self, event):
         try:
             index = self.selectedIndexes()[0]
-            print self.rowHeight(index)
         except:
             QtGui.QTreeView.mousePressEvent(self, event)
         else:
@@ -296,7 +299,8 @@ class QCustomTreeView (QtGui.QTreeView):
             
     def rowsInserted(self, parent, start, end):
         if not self.reset:
+            self.rowIns = True
             print 'position in route : ' + str(start)
             crawler = parent.model().itemFromIndex(parent)
-            self.handler.move_destinations(crawler.data(), self.idStop)
+            #self.handler.move_destinations(crawler.data(), self.idStop)
             super(QCustomTreeView, self).rowsInserted(parent, start, end)
