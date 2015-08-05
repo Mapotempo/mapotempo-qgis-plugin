@@ -139,7 +139,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.treeView.setDragEnabled(True)
         self.treeView.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
         self.model = QtGui.QStandardItemModel()
-
+        self.model.itemChanged.connect(self.on_item_changed)
         self.verticalLayout.addWidget(self.treeView)
         self.verticalLayout_2.addLayout(self.verticalLayout)
         self.setWidget(self.dockWidgetContents)
@@ -158,6 +158,11 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
             _translate("PluginMapotempo", "routes", None))
         self.treeView.setModel(self.model)
         self.treeView.reset = False
+
+    def on_item_changed(self,  item):
+        if self.treeView.reset == False:
+            state = ['UNCHECKED', 'TRISTATE',  'CHECKED'][item.checkState()]
+            print "Item with text '%s', is at state %s\n" % ( item.text(),  state)
 
     def addItems(self, parent, elements, nonActiveTab, infoVehicle, color, bool=False):
         for text, children in elements:
@@ -262,6 +267,7 @@ class QCustomTreeView (QtGui.QTreeView):
     def mousePressEvent(self, event):
         try:
             index = self.selectedIndexes()[0]
+            print self.rowHeight(index)
         except:
             QtGui.QTreeView.mousePressEvent(self, event)
         else:
@@ -290,7 +296,7 @@ class QCustomTreeView (QtGui.QTreeView):
             
     def rowsInserted(self, parent, start, end):
         if not self.reset:
-            
+            print 'position in route : ' + str(start)
             crawler = parent.model().itemFromIndex(parent)
             self.handler.move_destinations(crawler.data(), self.idStop)
             super(QCustomTreeView, self).rowsInserted(parent, start, end)
