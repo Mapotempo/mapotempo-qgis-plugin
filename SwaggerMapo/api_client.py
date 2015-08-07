@@ -240,11 +240,11 @@ class ApiClient(object):
     elif method == "HEAD":
       return RESTClient.HEAD(url, query_params=query_params, headers=headers)
     elif method == "POST":
-      return RESTClient.POST(url, headers=headers, post_params=post_params, body=body)
+      return RESTClient.POST(url, query_params=query_params, headers=headers, post_params=post_params, body=body)
     elif method == "PUT":
-      return RESTClient.PUT(url, headers=headers, post_params=post_params, body=body)
+      return RESTClient.PUT(url, query_params=query_params, headers=headers, post_params=post_params, body=body)
     elif method == "PATCH":
-      return RESTClient.PATCH(url, headers=headers, post_params=post_params, body=body)
+      return RESTClient.PATCH(url, query_params=query_params, headers=headers, post_params=post_params, body=body)
     elif method == "DELETE":
       return RESTClient.DELETE(url, query_params=query_params, headers=headers)
     else:
