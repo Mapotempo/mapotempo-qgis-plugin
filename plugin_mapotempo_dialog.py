@@ -208,6 +208,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                     QtGui.QIcon.Normal,
                     QtGui.QIcon.Off)
                 item.setIcon(icon)
+                self.comboBox_2.addItem(text, idVehicle)
             else:
                 item = QtGui.QStandardItem()
                 a = text.split(' ').pop()

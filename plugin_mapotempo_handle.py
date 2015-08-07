@@ -259,11 +259,18 @@ class PluginMapotempoHandle:
                 self.dock.comboBox.addItem(
                     str(row['name']), row['id'])
 
-    def move_destinations(self, id_route, destinations):
+    def move_stop(self, route_id, stop_id, position):
         index = self.dock.comboBox.currentIndex()
         id_planning = self.dock.comboBox.itemData(index)
-        PlanningsApi(self.client).move_destinations(planning_id=id_planning, id=id_route, destination_ids=[int(destinations)])
-        self.layer_inst.refresh()
+        response = PlanningsApi(self.client).move_stop(planning_id=id_planning, id=route_id, stop_id=stop_id, index=position)
+        #self.layer_inst.refresh() ask for a response ?
+
+    def optimize_route(self):
+        index = self.dock.comboBox.currentIndex()
+        id_planning = self.dock.comboBox.itemData(index)
+        index2 = self.dock.comboBox_2.currentIndex()
+        route_id = int(self.dock.comboBox_2.itemData(index2))
+        response = PlanningsApi(self.client).optimize_route(planning_id=id_planning, id=route_id)
 
     def saveConnectionData(self):
         """Save the connection details"""

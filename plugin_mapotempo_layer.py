@@ -144,7 +144,7 @@ class PluginMapotempoLayer:
 
         route_id = []
         for row in json:
-            if 'stops' in row and 'vehicle_id' in row:
+            if 'stops' in row: #and 'vehicle_id' in row:
                 jsontmp = row['stops']
                 for rowStop in jsontmp:
                     jsonstop.append(rowStop)
@@ -167,7 +167,7 @@ class PluginMapotempoLayer:
             feature.setAttributes(r)
 
             pointList = []
-            if i['active']:
+            if i['active'] and i['trace'] != 'None':
                 pointList = PolylineCodec().decode(i['trace'])
             pointListFinal = []
 
@@ -305,6 +305,7 @@ class PluginMapotempoLayer:
 
     def refresh(self):
         self.dock.comboBox.clear()
+        self.dock.comboBox_2.clear()
         self.dock.model.clear()
         self.clearLayer()
         self.handler.listPlannings()
@@ -383,35 +384,36 @@ class PluginMapotempoLayer:
         for feature in stopLayer.getFeatures():
             route_id = feature.attribute('route_id')
             if not route_id in alreadyEnd:
-                pointList = PolylineCodec().decode(feature.attribute(
-                    self.translate.tr("routes") +'_stop_trace'))
-                pointListFinal = []
-                for point in pointList:
-                    pointListFinal.append(QgsPoint(point[1]/10, point[0]/10))
-                line = QgsGeometry.fromPolyline(pointListFinal)
-                feature.setGeometry(line)
-                pr = stopLayer.dataProvider()
-                pr.addFeatures([feature])
-                stopLayer.updateExtents()
-                alreadyEnd.append(route_id)
+                if feature.attribute(self.translate.tr("routes") +'_stop_trace') != 'None':
+                    pointList = PolylineCodec().decode(feature.attribute(
+                        self.translate.tr("routes") +'_stop_trace'))
+                    pointListFinal = []
+                    for point in pointList:
+                        pointListFinal.append(QgsPoint(point[1]/10, point[0]/10))
+                    line = QgsGeometry.fromPolyline(pointListFinal)
+                    feature.setGeometry(line)
+                    pr = stopLayer.dataProvider()
+                    pr.addFeatures([feature])
+                    stopLayer.updateExtents()
+                    alreadyEnd.append(route_id)
 
-                alreadyRouteId.append(route_id)
-                color = feature.attribute(
-                    self.translate.tr("routes") +
-                    '_' +
-                    self.translate.tr("vehicles") +
-                    '_color')
-                route_name = feature.attribute(
-                    self.translate.tr("routes") +
-                    '_' +
-                    self.translate.tr("vehicles") +
-                    '_name')
-                sym = QgsSymbolV2.defaultSymbol(stopLayer.geometryType())
-                sym.setColor(QColor(color))
-                sym.setWidth(1.5)
-                sym.setAlpha(0.6)
-                category = QgsRendererCategoryV2(route_id, sym, route_name)
-                categories.append(category)
+                    alreadyRouteId.append(route_id)
+                    color = feature.attribute(
+                        self.translate.tr("routes") +
+                        '_' +
+                        self.translate.tr("vehicles") +
+                        '_color')
+                    route_name = feature.attribute(
+                        self.translate.tr("routes") +
+                        '_' +
+                        self.translate.tr("vehicles") +
+                        '_name')
+                    sym = QgsSymbolV2.defaultSymbol(stopLayer.geometryType())
+                    sym.setColor(QColor(color))
+                    sym.setWidth(1.5)
+                    sym.setAlpha(0.6)
+                    category = QgsRendererCategoryV2(route_id, sym, route_name)
+                    categories.append(category)
         field = "route_id"
         renderer = QgsCategorizedSymbolRendererV2(field, categories)
         stopLayer.setRendererV2(renderer)
@@ -439,16 +441,19 @@ class PluginMapotempoLayer:
             route_id = feature.attribute(
                 self.translate.tr("Stops") + '_route_id')
             if not route_id in alreadyHere:
-                if not route_id:
+                # if not route_id:
+                #     color = '#bfbfbf'
+                # else:
+                color = feature.attribute(
+                    self.translate.tr("Stops") +
+                    '_' +
+                    self.translate.tr('routes') +
+                    '_' +
+                    self.translate.tr('vehicles') +
+                    '_color')
+                if not color:
                     color = '#bfbfbf'
-                else:
-                    color = feature.attribute(
-                        self.translate.tr("Stops") +
-                        '_' +
-                        self.translate.tr('routes') +
-                        '_' +
-                        self.translate.tr('vehicles') +
-                        '_color')
+
                 alreadyHere.append(route_id)
                 route_name = feature.attribute(
                     self.translate.tr("Stops") +
@@ -523,12 +528,15 @@ class PluginMapotempoLayer:
                 '_' +
                 self.translate.tr('vehicles') +
                 '_name'))
-            destination_id = feature.attribute('id')
-            name = name + " " + str(destination_id)
+            stop_id = feature.attribute(self.translate.tr("Stops") +
+            '_id')
+            name = name + " " + str(stop_id)
 
             if feature.attribute(self.translate.tr("Stops") + '_active') == False:
                 nonActiveTab.append(name)
-            if index:
+            if vehicle == 'None':
+                listVehicle[idRouteNull].append((name, []))
+            else:
                 date = feature.attribute(self.translate.tr("Stops") + '_time')
                 if date:
                     date = time.strptime(date, '%Y-%m-%dT%H:%M:%S')
@@ -538,8 +546,7 @@ class PluginMapotempoLayer:
                         vehicle))
                 else:
                     listFeature.append((index, name, vehicle))
-            if not index:
-                listVehicle[idRouteNull].append((name, []))
+
         
 
         sorted_by_first = sorted(listFeature, key=lambda tup: tup[0])
