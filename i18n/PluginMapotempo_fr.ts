@@ -141,6 +141,14 @@
         <source>Unplanned</source>
         <translation>Non planifié</translation>
     </message>
+    <message>
+        <source>Optimize route</source>
+        <translation>Optimiser la tournée</translation>
+    </message>
+    <message>
+        <source>Optimize all</source>
+        <translation>Tout optimiser</translation>
+    </message>
     
 </context>
 

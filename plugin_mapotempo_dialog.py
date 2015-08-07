@@ -125,6 +125,18 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
             QtGui.QIcon.Off)
         self.pushButton_2.setIcon(icon1)
         self.verticalLayout.addWidget(self.pushButton_2)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.comboBox_2 = QtGui.QComboBox(self.dockWidgetContents)
+        self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
+        self.horizontalLayout.addWidget(self.comboBox_2)
+        self.pushButton_3 = QtGui.QPushButton(self.dockWidgetContents)
+        self.pushButton_3.setObjectName(_fromUtf8("pushButton_3"))
+        self.horizontalLayout.addWidget(self.pushButton_3)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.pushButton_5 = QtGui.QPushButton(self.dockWidgetContents)
+        self.pushButton_5.setObjectName(_fromUtf8("pushButton_5"))
+        self.verticalLayout.addWidget(self.pushButton_5)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.label_5 = QtGui.QLabel(self.dockWidgetContents)
@@ -219,6 +231,8 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.label_5.setText(_translate("DockWidget", "", None))
         self.pushButton.setText(_translate("DockWidget", "Connection", None))
         self.pushButton_4.setText(_translate("DockWidget", "Parameter", None))
+        self.pushButton_3.setText(_translate("DockWidget", "Optimize route", None))
+        self.pushButton_5.setText(_translate("DockWidget", "Optimize all", None))
 
     def resolve(self, name, basepath=None):
         if not basepath:
@@ -302,5 +316,5 @@ class QCustomTreeView (QtGui.QTreeView):
             self.rowIns = True
             print 'position in route : ' + str(start)
             crawler = parent.model().itemFromIndex(parent)
-            #self.handler.move_destinations(crawler.data(), self.idStop)
+            self.handler.move_stop(crawler.data(), self.idStop, start)
             super(QCustomTreeView, self).rowsInserted(parent, start, end)
