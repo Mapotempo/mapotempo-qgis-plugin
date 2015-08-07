@@ -268,9 +268,10 @@ class PluginMapotempoHandle:
     def optimize_route(self):
         index = self.dock.comboBox.currentIndex()
         id_planning = self.dock.comboBox.itemData(index)
-        index2 = self.dock.comboBox_2.currentIndex()
-        route_id = int(self.dock.comboBox_2.itemData(index2))
-        response = PlanningsApi(self.client).optimize_route(planning_id=id_planning, id=route_id)
+        if id_planning:
+            index2 = self.dock.comboBox_2.currentIndex()
+            route_id = int(self.dock.comboBox_2.itemData(index2))
+            response = PlanningsApi(self.client).optimize_route(planning_id=id_planning, id=route_id)
 
     def saveConnectionData(self):
         """Save the connection details"""
