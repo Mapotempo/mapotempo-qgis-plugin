@@ -31,6 +31,7 @@ class V01Stop(object):
         :param dict attributeMap: The key is attribute name and the value is json key in definition.
         """
         self.swagger_types = {
+            'id': 'int',
             'index': 'int',
             'active': 'bool',
             'distance': 'float',
@@ -44,6 +45,7 @@ class V01Stop(object):
         }
 
         self.attribute_map = {
+            'id': 'id',
             'index': 'index',
             'active': 'active',
             'distance': 'distance',
@@ -55,6 +57,9 @@ class V01Stop(object):
             'out_of_capacity': 'out_of_capacity',
             'out_of_drive_time': 'out_of_drive_time'
         }
+
+
+        self.id = None  # int
 
 
         self.index = None  # int

@@ -1164,7 +1164,7 @@ class PlanningsApi(object):
         body_params = None
 
         if 'destination_ids' in params:
-            body_params = params['destination_ids']
+            form_params['destination_ids'] = bytes(params['destination_ids'])
 
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept([])
@@ -1172,7 +1172,7 @@ class PlanningsApi(object):
             del header_params['Accept']
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type([])
+        header_params['Content-Type'] = self.api_client.select_header_content_type(['multipart/form-data'])
 
         # Authentication setting
         auth_settings = ['api_key']
@@ -1308,6 +1308,19 @@ class PlanningsApi(object):
         header_params = {}
 
         form_params = {}
+
+        if 'planning_id' in params:
+            form_params['planning_id'] = params['planning_id']
+
+        if 'id' in params:
+            form_params['id'] = params['id']
+
+        if 'stop_id' in params:
+            form_params['stop_id'] = params['stop_id']
+
+        if 'index' in params:
+            form_params['index'] = params['index']
+
         files = {}
 
         body_params = None
@@ -1318,7 +1331,7 @@ class PlanningsApi(object):
             del header_params['Accept']
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type([])
+        header_params['Content-Type'] = self.api_client.select_header_content_type(['application/x-www-form-urlencoded'])
 
         # Authentication setting
         auth_settings = ['api_key']
