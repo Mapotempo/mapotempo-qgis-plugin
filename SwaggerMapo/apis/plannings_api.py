@@ -1197,11 +1197,11 @@ class PlanningsApi(object):
         # verify the required parameter 'planning_id' is set
         if planning_id is None:
             raise ValueError("Missing the required parameter `planning_id` when calling `optimize_route`")
-
+        
         # verify the required parameter 'id' is set
         if id is None:
             raise ValueError("Missing the required parameter `id` when calling `optimize_route`")
-
+        
         all_params = ['planning_id', 'id']
 
         params = locals()
@@ -1212,23 +1212,30 @@ class PlanningsApi(object):
         del params['kwargs']
 
         resource_path = '/0.1/plannings/{planning_id}/routes/{id}/optimize.{format}'.replace('{format}', 'json')
-        method = 'GET'
+        method = 'PATCH'
 
         path_params = {}
 
         if 'planning_id' in params:
-            path_params['planning_id'] = params['planning_id']
+            path_params['planning_id'] = params['planning_id']  
 
         if 'id' in params:
-            path_params['id'] = params['id']
+            path_params['id'] = params['id']  
 
         query_params = {}
 
         header_params = {}
 
         form_params = {}
-        files = {}
 
+        if 'planning_id' in params:
+            form_params['planning_id'] = params['planning_id']
+
+        if 'id' in params:
+            form_params['id'] = params['id']
+
+        files = {}
+        
         body_params = None
 
         # HTTP header `Accept`
@@ -1237,7 +1244,7 @@ class PlanningsApi(object):
             del header_params['Accept']
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type([])
+        header_params['Content-Type'] = self.api_client.select_header_content_type(['application/x-www-form-urlencoded'])
 
         # Authentication setting
         auth_settings = ['api_key']
