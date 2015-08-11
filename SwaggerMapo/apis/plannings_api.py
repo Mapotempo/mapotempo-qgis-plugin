@@ -785,21 +785,32 @@ class PlanningsApi(object):
 
         return response
 
-    def update_stop(self, id, **kwargs):
+    def update_stop(self, planning_id, route_id, id, **kwargs):
         """
-        Set stop status.
+        Update stop.
+        
 
-
-        :param str id: Id or the ref field value, then use \"ref:[value]\". (required)
-
+        :param int planning_id:  (required)
+        :param int route_id:  (required)
+        :param int id:  (required)
+        :param bool active:  
+        
         :return: str
         """
-
+        
+        # verify the required parameter 'planning_id' is set
+        if planning_id is None:
+            raise ValueError("Missing the required parameter `planning_id` when calling `update_stop`")
+        
+        # verify the required parameter 'route_id' is set
+        if route_id is None:
+            raise ValueError("Missing the required parameter `route_id` when calling `update_stop`")
+        
         # verify the required parameter 'id' is set
         if id is None:
             raise ValueError("Missing the required parameter `id` when calling `update_stop`")
-
-        all_params = ['id']
+        
+        all_params = ['planning_id', 'route_id', 'id', 'active']
 
         params = locals()
         for key, val in iteritems(params['kwargs']):
@@ -808,30 +819,40 @@ class PlanningsApi(object):
             params[key] = val
         del params['kwargs']
 
-        resource_path = '/0.1/plannings/{id}/update_stop.{format}'.replace('{format}', 'json')
-        method = 'PATCH'
+        resource_path = '/0.1/plannings/{planning_id}/routes/{route_id}/stops/{id}.{format}'.replace('{format}', 'json')
+        method = 'PUT'
 
         path_params = {}
-
+        
+        if 'planning_id' in params:
+            path_params['planning_id'] = params['planning_id']  
+        
+        if 'route_id' in params:
+            path_params['route_id'] = params['route_id']  
+        
         if 'id' in params:
-            path_params['id'] = params['id']
-
+            path_params['id'] = params['id']  
+        
         query_params = {}
-
+        
         header_params = {}
-
+        
         form_params = {}
+
         files = {}
-
+        
+        if 'active' in params:
+            form_params['active'] = bytes(params['active'])
+        
         body_params = None
-
+        
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept([])
         if not header_params['Accept']:
             del header_params['Accept']
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type([])
+        header_params['Content-Type'] = self.api_client.select_header_content_type(['application/x-www-form-urlencoded'])
 
         # Authentication setting
         auth_settings = ['api_key']
@@ -839,7 +860,7 @@ class PlanningsApi(object):
         response = self.api_client.call_api(resource_path, method, path_params, query_params, header_params,
                                             body=body_params, post_params=form_params, files=files,
                                             response='str', auth_settings=auth_settings)
-
+        
         return response
 
     def get_routes(self, planning_id, **kwargs):
