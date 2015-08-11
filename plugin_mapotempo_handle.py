@@ -312,7 +312,6 @@ class PluginMapotempoHandle:
             worker.error.connect(self.workerError)
             worker.status.connect(self.layer_inst.iface.mainWindow().statusBar().showMessage)
             thread.started.connect(worker.run)
-            time.sleep(1)
             thread.start()
             self.thread = thread
             self.worker = worker
@@ -356,9 +355,7 @@ class OptimizeWorker(QtCore.QObject):
         try:
             self.status.emit('Task started!')
             PlanningsApi(self.client).optimize_route(planning_id=self.id_planning, id=self.route_id)
-            time.sleep(1)
             self.status.emit('Task ended!')
-            time.sleep(1)
             if self.killed is False:
                 ret = True
         except Exception, e:

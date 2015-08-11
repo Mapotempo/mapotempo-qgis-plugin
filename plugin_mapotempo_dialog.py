@@ -177,7 +177,6 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                 state = ['UNCHECKED', 'TRISTATE',  'CHECKED'][item.checkState()]
                 crawler = item.parent()
                 self.treeView.handler.update_stop(crawler.data(), item.data(), state)
-                print "Item with text '%s', is at state %s\n" % ( item.text(),  state)
             else:
                 self.treeView.rowIns = False
 
@@ -321,13 +320,10 @@ class QCustomTreeView (QtGui.QTreeView):
             if self.newParent == crawler.data():
                 if start < self.newPosition:
                     position = self.newPosition - 1
-                    print position
                 else:
                     position = self.newPosition
-                    print position
             else:
                 position = self.newPosition
-                print position
             self.handler.move_stop(self.newParent, self.idStop, position)
             super(QCustomTreeView, self).rowsAboutToBeRemoved(parent, start, end)
         
