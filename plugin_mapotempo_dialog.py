@@ -175,6 +175,8 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         if self.treeView.reset == False:
             if not self.treeView.rowIns:
                 state = ['UNCHECKED', 'TRISTATE',  'CHECKED'][item.checkState()]
+                crawler = item.parent()
+                self.treeView.handler.update_stop(crawler.data(), item.data(), state)
                 print "Item with text '%s', is at state %s\n" % ( item.text(),  state)
             else:
                 self.treeView.rowIns = False
@@ -311,11 +313,29 @@ class QCustomTreeView (QtGui.QTreeView):
             event.ignore()
         else:
             QtGui.QTreeView.dropEvent(self, event)
-            
+    
+    def rowsAboutToBeRemoved(self, parent, start, end):
+        if not self.reset:
+            position = None
+            crawler = parent.model().itemFromIndex(parent)
+            if self.newParent == crawler.data():
+                if start < self.newPosition:
+                    position = self.newPosition - 1
+                    print position
+                else:
+                    position = self.newPosition
+                    print position
+            else:
+                position = self.newPosition
+                print position
+            self.handler.move_stop(self.newParent, self.idStop, position)
+            super(QCustomTreeView, self).rowsAboutToBeRemoved(parent, start, end)
+        
+
     def rowsInserted(self, parent, start, end):
         if not self.reset:
             self.rowIns = True
-            print 'position in route : ' + str(start)
             crawler = parent.model().itemFromIndex(parent)
-            self.handler.move_stop(crawler.data(), self.idStop, start)
+            self.newParent = crawler.data()
+            self.newPosition = start
             super(QCustomTreeView, self).rowsInserted(parent, start, end)
