@@ -10,8 +10,6 @@ from qgis.core import (
     QgsRendererCategoryV2, QgsCategorizedSymbolRendererV2,
     QgsPalLayerSettings, QgsRasterLayer, QgsVectorSimplifyMethod,
     QgsDataSourceURI)
-import tempfile
-import csv
 import sqlite3
 import string
 import datetime

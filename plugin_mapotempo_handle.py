@@ -6,7 +6,6 @@ from qgis.gui import QgsMessageBar
 
 import json
 import SwaggerMapo
-import time
 from SwaggerMapo import configuration
 from SwaggerMapo.apis import TagsApi
 from SwaggerMapo.apis import ProductsApi
@@ -289,7 +288,6 @@ class PluginMapotempoHandle:
         index = self.dock.comboBox.currentIndex()
         id_planning = self.dock.comboBox.itemData(index)
         response = PlanningsApi(self.client).move_stop(planning_id=id_planning, id=route_id, stop_id=stop_id, index=position)
-        #time.sleep(2)
         self.layer_inst.littleRefresh()
 
     def update_stop(self, route_id, stop_id, state):
