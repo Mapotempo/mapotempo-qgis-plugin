@@ -326,7 +326,6 @@ class QCustomTreeView (QtGui.QTreeView):
                 position = self.newPosition
             self.handler.move_stop(self.newParent, self.idStop, position)
             super(QCustomTreeView, self).rowsAboutToBeRemoved(parent, start, end)
-        
 
     def rowsInserted(self, parent, start, end):
         if not self.reset:

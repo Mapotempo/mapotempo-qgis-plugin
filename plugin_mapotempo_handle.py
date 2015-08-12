@@ -6,6 +6,7 @@ from qgis.gui import QgsMessageBar
 
 import json
 import SwaggerMapo
+import time
 from SwaggerMapo import configuration
 from SwaggerMapo.apis import TagsApi
 from SwaggerMapo.apis import ProductsApi
@@ -69,8 +70,8 @@ class PluginMapotempoHandle:
             print lve
         else:
             jsondata = self.client.sanitize_for_serialization(data)
-            csv = self.layer_inst.json2csv(jsondata, model, name)
-            self.layer_inst.loadCSVLayer(name, csv)
+            sqlite = self.layer_inst.json2sqlite(jsondata, model, name)
+            self.layer_inst.loadSQLiteLayer(name, sqlite)
 
     def handleButtonGeoGeneric(self, get, model, name, typeIcon):
         """generic action after clic"""
@@ -178,21 +179,22 @@ class PluginMapotempoHandle:
         id_planning = self.dock.comboBox.itemData(index)
         self.layer_inst.iface.messageBar().pushMessage(
             self.translate.tr("Processing"), level=QgsMessageBar.INFO)
-        print 'coucou'
-        self.dock.label_5.setText(self.translate.tr("Processing"))
-        self.dock.label_5.repaint()
-        print 'coucou2'
-        self.dock.model.clear()
-        print 'coucou3'
-        self.handleButtonDest()
-        print 'coucou4'
-        self.getRoutes(id_planning)
-        print 'coucou5'
-        self.getStops(id_planning)
-        print 'coucou6'
-        # self.layer_inst.iface.messageBar().pushMessage(
-        #     self.translate.tr("Done"), level=QgsMessageBar.INFO)
-        # self.dock.label_5.setText(self.translate.tr("Done"))
+        self.layer_inst.littleRefresh()
+        # print 'coucou'
+        # self.dock.label_5.setText(self.translate.tr("Processing"))
+        # self.dock.label_5.repaint()
+        # print 'coucou2'
+        # self.dock.model.clear()
+        # print 'coucou3'
+        # self.handleButtonDest()
+        # print 'coucou4'
+        # self.getRoutes(id_planning)
+        # print 'coucou5'
+        # self.getStops(id_planning)
+        # print 'coucou6'
+        self.layer_inst.iface.messageBar().pushMessage(
+            self.translate.tr("Done"), level=QgsMessageBar.INFO)
+        self.dock.label_5.setText(self.translate.tr("Done"))
         
     def getPlanningsId(self, id_plan):
         self.handleButtonGeneric(
@@ -257,9 +259,9 @@ class PluginMapotempoHandle:
                 zoningLayer = layer
         for feature in planningLayer.getFeatures():
             if str(feature.attribute('id')) == str(id_plan):
-                self.id_zone = feature.attribute('zoning_id')
+                self.id_zone = int(feature.attribute('zoning_id'))
         for feature in zoningLayer.getFeatures():
-            self.id_zones_tab.append(feature.attribute('id'))
+            self.id_zones_tab.append(int(feature.attribute('id')))
 
     def listPlannings(self):
         try:
@@ -287,7 +289,8 @@ class PluginMapotempoHandle:
         index = self.dock.comboBox.currentIndex()
         id_planning = self.dock.comboBox.itemData(index)
         response = PlanningsApi(self.client).move_stop(planning_id=id_planning, id=route_id, stop_id=stop_id, index=position)
-        #self.layer_inst.littleRefresh() # ask for a response ?
+        #time.sleep(2)
+        self.layer_inst.littleRefresh()
 
     def update_stop(self, route_id, stop_id, state):
         index = self.dock.comboBox.currentIndex()

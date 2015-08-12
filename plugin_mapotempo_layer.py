@@ -8,9 +8,12 @@ from qgis.core import (
     QgsSimpleMarkerSymbolLayerV2, QgsSimpleLineSymbolLayerV2,
     QgsSimpleFillSymbolLayerV2, QgsVectorJoinInfo, QgsSymbolV2,
     QgsRendererCategoryV2, QgsCategorizedSymbolRendererV2,
-    QgsPalLayerSettings, QgsRasterLayer, QgsVectorSimplifyMethod)
+    QgsPalLayerSettings, QgsRasterLayer, QgsVectorSimplifyMethod,
+    QgsDataSourceURI)
 import tempfile
 import csv
+import sqlite3
+import string
 import datetime
 import time
 import unicodedata
@@ -85,33 +88,28 @@ class PluginMapotempoLayer:
         QgsMapLayerRegistry.instance().addMapLayer(layer)
         layer.updateFields()
 
-    def json2csv(self, json, model, name):
-        """Convert json data in CSV file"""
-
-        f = self.resolve("csv/"+ name +".csv")
+    def json2sqlite(self, json, model, name):
+        f = self.resolve("sqlite/"+ name +".sqlite")
         f = unicodedata.normalize('NFKD', f).encode('ascii','ignore')
         tmp = open(f, "wb")
-        writer = csv.writer(tmp)
+        db = sqlite3.connect(f)
+        c = db.cursor()
         types = model().swagger_types
-
-        writer.writerow(types.keys())
-
-        tmp.flush()
+        query = 'create table `' + name + '` ' +str(tuple(types.keys()))
+        c.execute(query)
+        
         for i in range(len(json)):
             r = []
             for field in types.keys():
                 if field in json[i]:
-                    try:
-                        r.append(json[i][field].encode("UTF-8"))
-                    except AttributeError:
-                        r.append(json[i][field])
+                    r.append(unicode(json[i][field]))
                 else:
                     r.append(None)
-            try:
-                writer.writerow(r)
-            except UnicodeEncodeError as ue:
-                print ue
-            tmp.flush()
+            query = 'insert into `' + name + '` ' + 'values ' + string.replace(str(tuple([bytes('?') for i in range(len(r))])), "'", '')
+            c = db.cursor()
+            c.execute(query, tuple(r))
+        db.commit()
+        db.close()
         return f
 
     def createLayerLine(self, model, name, json):
@@ -260,10 +258,9 @@ class PluginMapotempoLayer:
         for child in nodes:
             child.setExpanded(False)
 
-    def loadCSVLayer(self, name, tmp):
-        """load a CSV file"""
-        uri = "file:///"+ tmp +"?delimiter=%s" % (",")
-        layer = QgsVectorLayer(unicode(uri), name, "delimitedtext")
+    def loadSQLiteLayer(self, name, tmp):
+        """load a SQLite file"""
+        layer = QgsVectorLayer(tmp + '|layername='+name, name, "ogr")
         self.layerTab.append(layer)
         QgsMapLayerRegistry.instance().addMapLayer(layer)
 
@@ -303,12 +300,45 @@ class PluginMapotempoLayer:
         self.layerTab = []
         self.dock.label_5.setText(self.translate.tr("Done"))
 
+    def littleClearLayer(self):
+        self.dock.label_5.setText(self.translate.tr("Processing"))
+        self.dock.label_5.repaint()
+        layers = self.iface.legendInterface().layers()
+        for layer in layers: #a little bit long
+            if layer in self.layerTab:
+                if layer.name() == self.translate.tr("routes"):
+                    ids = [f.id() for f in layer.getFeatures()]
+                    layer.startEditing()
+                    layer.dataProvider().deleteFeatures( ids )
+                    layer.commitChanges()
+                elif layer.name() == self.translate.tr("vehicles"):
+                    ids = [f.id() for f in layer.getFeatures()]
+                    layer.startEditing()
+                    layer.dataProvider().deleteFeatures( ids )
+                    layer.commitChanges()
+                elif layer.name() == self.translate.tr("destinations"):
+                    ids = [f.id() for f in layer.getFeatures()]
+                    layer.startEditing()
+                    layer.dataProvider().deleteFeatures( ids )
+                    layer.commitChanges()
+                elif layer.name() == self.translate.tr("Stops"):
+                    ids = [f.id() for f in layer.getFeatures()]
+                    layer.startEditing()
+                    layer.dataProvider().deleteFeatures( ids )
+                    layer.commitChanges()
+        #self.dock.model.clear()
+        self.dock.label_5.setText(self.translate.tr("Done"))
+
     def refresh(self):
         self.dock.comboBox.clear()
         self.dock.comboBox_2.clear()
         self.dock.model.clear()
         self.clearLayer()
         self.handler.listPlannings()
+
+    def littleRefresh(self):
+        self.littleClearLayer()
+        #self.handler.HandleUpdate()
 
     def joinZoneVehicle(self):
         layers = self.iface.legendInterface().layers()
@@ -495,7 +525,7 @@ class PluginMapotempoLayer:
         idRouteNull = None
         for feature in routesLayer.getFeatures():
             if feature.attribute('vehicle_id'):
-                km = feature.attribute('distance')
+                km = float(feature.attribute('distance'))
                 if km:
                     km /= 1000
                 timeBegin = feature.attribute('start')
