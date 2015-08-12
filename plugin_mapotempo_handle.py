@@ -144,6 +144,7 @@ class PluginMapotempoHandle:
             self.dock.label_5.repaint()
             if self.client:
                 self.dock.model.clear()
+                self.dock.comboBox_2.clear()
                 self.handleButtonTags()
                 self.handleButtonProd()
                 self.handleButtonDest()
