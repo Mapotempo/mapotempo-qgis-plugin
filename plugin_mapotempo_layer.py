@@ -452,7 +452,7 @@ class PluginMapotempoLayer:
             route_id = feature.attribute('route_id')
             stopTrace = None
             if not route_id in alreadyEnd:
-                for feat in routeLayer.getFeatures():
+                for feat in routeLayer.getFeatures(): # problem with join have to do like this
                     if feat.attribute('id') == str(route_id):
                         stopTrace = feat.attribute('stop_trace')
                         break;
