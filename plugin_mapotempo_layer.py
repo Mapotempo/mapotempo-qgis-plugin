@@ -83,8 +83,27 @@ class PluginMapotempoLayer:
             feature.setAttributes(r)
             pr.addFeatures([feature])
 
-        QgsMapLayerRegistry.instance().addMapLayer(layer)
         layer.updateFields()
+        layer.commitChanges()
+        layer.updateExtents()
+        layer.triggerRepaint()
+
+    def fillField(self, json, layer):
+        pr = layer.dataProvider()
+        fields = layer.pendingFields()
+        for i in range(len(json)):
+            r = []
+            feature = QgsFeature()
+            for field in fields:
+                if field.name() in json[i]:
+                    r.append(json[i][field.name()])
+                else:
+                    r.append(None)
+            feature.setAttributes(r)
+            pr.addFeatures([feature])
+        layer.updateFields()
+        layer.commitChanges()
+        layer.triggerRepaint()
 
     def json2sqlite(self, json, model, name):
         f = self.resolve("sqlite/"+ name +".sqlite")
@@ -112,40 +131,46 @@ class PluginMapotempoLayer:
 
     def createLayerLine(self, model, name, json):
         """Create a Layer"""
-
-        layer = QgsVectorLayer("LineString?crs=epsg:4326", name, "memory")
-        mSimplifyMethod = QgsVectorSimplifyMethod()
-        mSimplifyMethod.setSimplifyHints(QgsVectorSimplifyMethod.NoSimplification)
-        layer.setSimplifyMethod(mSimplifyMethod)
-        self.layerTab.append(layer)
-        pr = layer.dataProvider()
-        types = model().swagger_types
-        keys = types.keys()
-        attributes = []
-        for i in keys:
-            if i == 'trace':
-                continue
-            elif types[i] == 'int':
-                attributes.append(QgsField(i, QVariant.Int))
-            elif types[i] == 'float':
-                attributes.append(QgsField(i, QVariant.Double))
-            else:
-                attributes.append(QgsField(i, QVariant.String))
-        attributes.append(QgsField('route_id', QVariant.Int))
-        pr.addAttributes(attributes)
-        QgsMapLayerRegistry.instance().addMapLayer(layer)
-        layer.updateFields()
+        layers = self.iface.legendInterface().layers()
+        layer = None
+        for l in layers: #a little bit long
+            if l.name() == self.translate.tr("Stops"):
+                layer = l
+                break
+        if not layer:
+            layer = QgsVectorLayer("LineString?crs=epsg:4326", name, "memory")
+            mSimplifyMethod = QgsVectorSimplifyMethod()
+            mSimplifyMethod.setSimplifyHints(QgsVectorSimplifyMethod.NoSimplification)
+            layer.setSimplifyMethod(mSimplifyMethod)
+            self.layerTab.append(layer)
+            pr = layer.dataProvider()
+            types = model().swagger_types
+            keys = types.keys()
+            attributes = []
+            for i in keys:
+                if i == 'trace':
+                    continue
+                elif types[i] == 'int':
+                    attributes.append(QgsField(i, QVariant.Int))
+                elif types[i] == 'float':
+                    attributes.append(QgsField(i, QVariant.Double))
+                else:
+                    attributes.append(QgsField(i, QVariant.String))
+            attributes.append(QgsField('route_id', QVariant.Int))
+            pr.addAttributes(attributes)
+            QgsMapLayerRegistry.instance().addMapLayer(layer)
+            layer.updateFields()
+            
         fields = layer.pendingFields()
         jsonstop = []
 
         route_id = []
         for row in json:
-            if 'stops' in row: #and 'vehicle_id' in row:
+            if 'stops' in row:
                 jsontmp = row['stops']
                 for rowStop in jsontmp:
                     jsonstop.append(rowStop)
                     route_id.append(row['id'])
-
         pr = layer.dataProvider()
 
         iteration = 0
@@ -156,9 +181,10 @@ class PluginMapotempoLayer:
             for field in fields:
                 if field.name() in i:
                     r.append(i[field.name()])
+                elif field.name() == 'route_id':
+                    r.append(route_id[iteration])
                 else:
                     r.append(None)
-            r[len(r) -1] = route_id[iteration] # moche
             iteration += 1
             feature.setAttributes(r)
 
@@ -171,11 +197,11 @@ class PluginMapotempoLayer:
                 pointListFinal.append(QgsPoint(point[1]/10, point[0]/10))
             line = QgsGeometry.fromPolyline(pointListFinal)
             feature.setGeometry(line)
-
             pr.addFeatures([feature])
             layer.updateExtents()
             layer.updateFields()
-
+        layer.triggerRepaint()
+        layer.commitChanges()
         QgsMapLayerRegistry.instance().addMapLayer(layer)
         self.addIcon(layer, 'line')
 
@@ -308,23 +334,20 @@ class PluginMapotempoLayer:
                     ids = [f.id() for f in layer.getFeatures()]
                     layer.startEditing()
                     layer.dataProvider().deleteFeatures( ids )
+                    layer.updateFields()
                     layer.commitChanges()
                 elif layer.name() == self.translate.tr("vehicles"):
                     ids = [f.id() for f in layer.getFeatures()]
                     layer.startEditing()
                     layer.dataProvider().deleteFeatures( ids )
-                    layer.commitChanges()
-                elif layer.name() == self.translate.tr("destinations"):
-                    ids = [f.id() for f in layer.getFeatures()]
-                    layer.startEditing()
-                    layer.dataProvider().deleteFeatures( ids )
+                    layer.updateFields()                    
                     layer.commitChanges()
                 elif layer.name() == self.translate.tr("Stops"):
                     ids = [f.id() for f in layer.getFeatures()]
                     layer.startEditing()
                     layer.dataProvider().deleteFeatures( ids )
+                    layer.updateFields()                    
                     layer.commitChanges()
-        #self.dock.model.clear()
         self.dock.label_5.setText(self.translate.tr("Done"))
 
     def refresh(self):
@@ -336,7 +359,12 @@ class PluginMapotempoLayer:
 
     def littleRefresh(self):
         self.littleClearLayer()
-        #self.handler.HandleUpdate()
+        self.handler.getRoutes(self.handler.id_plan)
+        self.handler.getStops(self.handler.id_plan)
+        self.handler.getVehicles()
+        self.paintStop()
+        self.paintDestination()
+        self.setLabel()
 
     def joinZoneVehicle(self):
         layers = self.iface.legendInterface().layers()
@@ -396,7 +424,7 @@ class PluginMapotempoLayer:
         info.joinLayerId = vehiclesLayer.id()
         info.joinFieldName = "id"
         info.targetFieldName = "vehicle_id"
-        info.memoryCache = True
+        info.memoryCache = False
         routeLayer.addJoin(info)
 
         info = QgsVectorJoinInfo()
@@ -405,16 +433,31 @@ class PluginMapotempoLayer:
         info.targetFieldName = "route_id"
         info.memoryCache = True
         stopLayer.addJoin(info)
+        self.paintStop()
 
+    def paintStop(self):
+        layers = self.iface.legendInterface().layers()
+        stopLayer, routeLayer, vehiclesLayer = None, None, None
+        for layer in layers:
+            if layer.name() == self.translate.tr("routes"):
+                routeLayer = layer
+            elif layer.name() == self.translate.tr("vehicles"):
+                vehiclesLayer = layer
+            elif layer.name() == self.translate.tr("Stops"):
+                stopLayer = layer
         categories = []
         alreadyRouteId = []
         alreadyEnd = []
         for feature in stopLayer.getFeatures():
             route_id = feature.attribute('route_id')
+            stopTrace = None
             if not route_id in alreadyEnd:
-                if feature.attribute(self.translate.tr("routes") +'_stop_trace') != 'None':
-                    pointList = PolylineCodec().decode(feature.attribute(
-                        self.translate.tr("routes") +'_stop_trace'))
+                for feat in routeLayer.getFeatures():
+                    if feat.attribute('id') == str(route_id):
+                        stopTrace = feat.attribute('stop_trace')
+                        break;
+                if stopTrace != 'None':
+                    pointList = PolylineCodec().decode(stopTrace)
                     pointListFinal = []
                     for point in pointList:
                         pointListFinal.append(QgsPoint(point[1]/10, point[0]/10))
@@ -446,7 +489,7 @@ class PluginMapotempoLayer:
         renderer = QgsCategorizedSymbolRendererV2(field, categories)
         stopLayer.setRendererV2(renderer)
         stopLayer.triggerRepaint()
-
+        
     def joinDestinationVehicle(self): #use after joinStopVehicle
         layers = self.iface.legendInterface().layers()
         stopLayer, destinationLayer = None, None
@@ -460,18 +503,24 @@ class PluginMapotempoLayer:
         info.joinLayerId = stopLayer.id()
         info.joinFieldName = "destination_id"
         info.targetFieldName = "id"
-        info.memoryCache = True
+        info.memoryCache = False
         destinationLayer.addJoin(info)
+        self.paintDestination()
 
+    def paintDestination(self):
+        layers = self.iface.legendInterface().layers()
+        stopLayer, destinationLayer = None, None
+        for layer in layers:
+            if layer.name() == self.translate.tr('destinations'):
+                destinationLayer = layer
+            elif layer.name() == self.translate.tr("Stops"):
+                stopLayer = layer        
         categories = []
         alreadyHere = []
         for feature in destinationLayer.getFeatures():
             route_id = feature.attribute(
                 self.translate.tr("Stops") + '_route_id')
             if not route_id in alreadyHere:
-                # if not route_id:
-                #     color = '#bfbfbf'
-                # else:
                 color = feature.attribute(
                     self.translate.tr("Stops") +
                     '_' +

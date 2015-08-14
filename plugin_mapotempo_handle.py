@@ -68,16 +68,32 @@ class PluginMapotempoHandle:
         except LocationValueError as lve:
             print lve
         else:
+            layers = self.layer_inst.iface.legendInterface().layers()
+            layer = None
+            for l in layers: #a little bit long
+                if l.name() == name:
+                    layer = l
+                    break
             jsondata = self.client.sanitize_for_serialization(data)
-            sqlite = self.layer_inst.json2sqlite(jsondata, model, name)
-            self.layer_inst.loadSQLiteLayer(name, sqlite)
+            if not layer:
+                sqlite = self.layer_inst.json2sqlite(jsondata, model, name)
+                self.layer_inst.loadSQLiteLayer(name, sqlite)
+            else:
+                self.layer_inst.fillField(jsondata, layer)
 
     def handleButtonGeoGeneric(self, get, model, name, typeIcon):
         """generic action after clic"""
 
         try:
             data = get
-            layer = self.layer_inst.createLayer(model, name)
+            layers = self.layer_inst.iface.legendInterface().layers()
+            layer = None
+            for l in layers: #a little bit long
+                if l.name() == name:
+                    layer = l
+                    break
+            if not layer:
+                layer = self.layer_inst.createLayer(model, name)
         except MaxRetryError as mte:
             print mte
         except LocationValueError as lve:
@@ -135,7 +151,7 @@ class PluginMapotempoHandle:
                 for layer in self.layer_inst.layerTab:
                     if layer.name() == self.translate.tr("planning"):
                         for feature in layer.getFeatures():
-                            if feature.attribute('id') == self.id_plan:
+                            if int(feature.attribute('id')) == self.id_plan:
                                 return
             self.layer_inst.iface.messageBar().pushMessage(
                 self.translate.tr("Processing"), level=QgsMessageBar.INFO)
@@ -147,8 +163,8 @@ class PluginMapotempoHandle:
                 self.dock.comboBox_2.clear()
                 self.handleButtonTags()
                 self.handleButtonProd()
-                self.handleButtonDest()
                 self.handleButtonStores()
+                self.handleButtonDest()
 
                 self.getPlanningsId(self.id_plan)
                 self.getZonings()
@@ -179,18 +195,6 @@ class PluginMapotempoHandle:
         self.layer_inst.iface.messageBar().pushMessage(
             self.translate.tr("Processing"), level=QgsMessageBar.INFO)
         self.layer_inst.littleRefresh()
-        # print 'coucou'
-        # self.dock.label_5.setText(self.translate.tr("Processing"))
-        # self.dock.label_5.repaint()
-        # print 'coucou2'
-        # self.dock.model.clear()
-        # print 'coucou3'
-        # self.handleButtonDest()
-        # print 'coucou4'
-        # self.getRoutes(id_planning)
-        # print 'coucou5'
-        # self.getStops(id_planning)
-        # print 'coucou6'
         self.layer_inst.iface.messageBar().pushMessage(
             self.translate.tr("Done"), level=QgsMessageBar.INFO)
         self.dock.label_5.setText(self.translate.tr("Done"))
@@ -289,6 +293,7 @@ class PluginMapotempoHandle:
         id_planning = self.dock.comboBox.itemData(index)
         response = PlanningsApi(self.client).move_stop(planning_id=id_planning, id=route_id, stop_id=stop_id, index=position)
         self.layer_inst.littleRefresh()
+        self.layer_inst.vehiclesStop()
 
     def update_stop(self, route_id, stop_id, state):
         index = self.dock.comboBox.currentIndex()
@@ -299,6 +304,8 @@ class PluginMapotempoHandle:
         elif state == 'UNCHECKED':
             active = 'false'
         response = PlanningsApi(self.client).update_stop(planning_id=id_planning, route_id=route_id, id=stop_id, active=active)
+        self.layer_inst.littleRefresh()
+        self.layer_inst.vehiclesStop()
 
     def optimize_route(self):
         index = self.dock.comboBox.currentIndex()
