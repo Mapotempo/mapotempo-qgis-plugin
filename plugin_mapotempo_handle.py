@@ -293,7 +293,6 @@ class PluginMapotempoHandle:
         id_planning = self.dock.comboBox.itemData(index)
         response = PlanningsApi(self.client).move_stop(planning_id=id_planning, id=route_id, stop_id=stop_id, index=position)
         self.layer_inst.littleRefresh()
-        self.layer_inst.vehiclesStop()
 
     def update_stop(self, route_id, stop_id, state):
         index = self.dock.comboBox.currentIndex()
@@ -305,7 +304,6 @@ class PluginMapotempoHandle:
             active = 'false'
         response = PlanningsApi(self.client).update_stop(planning_id=id_planning, route_id=route_id, id=stop_id, active=active)
         self.layer_inst.littleRefresh()
-        self.layer_inst.vehiclesStop()
 
     def optimize_route(self):
         index = self.dock.comboBox.currentIndex()
@@ -333,7 +331,7 @@ class PluginMapotempoHandle:
         self.thread.deleteLater()
         if ret is True:
             # report the result
-            boole = ret
+            self.layer_inst.littleRefresh()
             self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Done"))
         else:
             # notify the user that something went wrong

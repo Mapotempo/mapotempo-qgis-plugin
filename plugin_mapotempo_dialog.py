@@ -163,6 +163,9 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
 
     def addVehicles(self, data, color, infoVehicle, nonActiveTab):
         self.treeView.reset = True
+        self.model.deleteLater()
+        self.model = QtGui.QStandardItemModel()
+        self.model.itemChanged.connect(self.on_item_changed)
         self.addItems(self.model, data.items(), nonActiveTab, infoVehicle, color)
         self.model.setHeaderData(
             0,
@@ -188,10 +191,11 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                 item.setData(idClient.pop())
                 item.setText(' '.join(idClient))
                 parent.appendRow(item)
-                item.setCheckable(True)
-                item.setCheckState(QtCore.Qt.Checked)
-                if text in nonActiveTab:
-                    item.setCheckState(QtCore.Qt.Unchecked)
+                if not parent.text() == _translate("PluginMapotempo", "Unplanned", None):
+                    item.setCheckable(True)
+                    item.setCheckState(QtCore.Qt.Checked)
+                    if text in nonActiveTab:
+                        item.setCheckState(QtCore.Qt.Unchecked)
             elif text in infoVehicle:
                 item = QtGui.QStandardItem() #text + infoVehicle[text]
                 idVehicle = infoVehicle[text].split(' ').pop()
@@ -213,9 +217,9 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
             else:
                 item = QtGui.QStandardItem()
                 a = text.split(' ').pop()
-                idClient =  text.split(' ')
-                item.setData(idClient.pop())
-                item.setText(' '.join(idClient))
+                idNonPlanned =  text.split(' ')
+                item.setData(idNonPlanned.pop())
+                item.setText(' '.join(idNonPlanned))
                 parent.appendRow(item)
 
             if children:
@@ -254,16 +258,17 @@ class QCustomTreeView (QtGui.QTreeView):
         self.rowIns = False
 
     def dragEnterEvent (self, eventQDragEnterEvent):
-        sourceQCustomTreeView = eventQDragEnterEvent.source()
-        index = self.selectedIndexes()[0]
-        crawler = index.model().itemFromIndex(index)
-        if isinstance(sourceQCustomTreeView, QCustomTreeView):
-            sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
-            if crawler.parent():
-                QtGui.QTreeView.dragEnterEvent(self, eventQDragEnterEvent)
-        else:
-            if crawler.parent():
-                QtGui.QTreeView.dragEnterEvent(self, eventQDragEnterEvent)
+        if not self.reset:
+            sourceQCustomTreeView = eventQDragEnterEvent.source()
+            index = self.selectedIndexes()[0]
+            crawler = index.model().itemFromIndex(index)
+            if isinstance(sourceQCustomTreeView, QCustomTreeView):
+                sourceQCustomTreeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+                if crawler.parent():
+                    QtGui.QTreeView.dragEnterEvent(self, eventQDragEnterEvent)
+            else:
+                if crawler.parent():
+                    QtGui.QTreeView.dragEnterEvent(self, eventQDragEnterEvent)
 
     def getQTreeWidgetItemDepth(self, item):
         if(item==None):
@@ -285,33 +290,35 @@ class QCustomTreeView (QtGui.QTreeView):
         return depth
 
     def mousePressEvent(self, event):
-        try:
-            index = self.selectedIndexes()[0]
-        except:
-            QtGui.QTreeView.mousePressEvent(self, event)
-        else:
-            crawler = index.model().itemFromIndex(index)
-            self.mParent = self.getQTreeWidgetItemDepth(crawler)
-            QtGui.QTreeView.mousePressEvent(self, event)
+        if not self.reset:
+            try:
+                index = self.selectedIndexes()[0]
+            except:
+                QtGui.QTreeView.mousePressEvent(self, event)
+            else:
+                crawler = index.model().itemFromIndex(index)
+                self.mParent = self.getQTreeWidgetItemDepth(crawler)
+                QtGui.QTreeView.mousePressEvent(self, event)
 
     def dropEvent(self, event):
-        index = self.selectedIndexes()[0]
-        crawler = index.model().itemFromIndex(index)
-        self.idStop = crawler.data()
-        item = self.indexAt(event.pos())
-        depth = self.getDepth(item)
-        current = self.getDepth(self.currentIndex())
-        drop = self.dropIndicatorPosition()
-        if depth == 1 and current == 1 and drop == 0:
-            event.ignore()
-        elif depth == 0 and current == 1 and drop == 2:
-            event.ignore()
-        elif depth == 0 and current == 1 and drop == 3:
-            event.ignore()
-        elif depth == 0 and current == 1 and drop == 1:
-            event.ignore()
-        else:
-            QtGui.QTreeView.dropEvent(self, event)
+        if not self.reset:
+            index = self.selectedIndexes()[0]
+            crawler = index.model().itemFromIndex(index)
+            self.idStop = crawler.data()
+            item = self.indexAt(event.pos())
+            depth = self.getDepth(item)
+            current = self.getDepth(self.currentIndex())
+            drop = self.dropIndicatorPosition()
+            if depth == 1 and current == 1 and drop == 0:
+                event.ignore()
+            elif depth == 0 and current == 1 and drop == 2:
+                event.ignore()
+            elif depth == 0 and current == 1 and drop == 3:
+                event.ignore()
+            elif depth == 0 and current == 1 and drop == 1:
+                event.ignore()
+            else:
+                QtGui.QTreeView.dropEvent(self, event)
     
     def rowsAboutToBeRemoved(self, parent, start, end):
         if not self.reset:

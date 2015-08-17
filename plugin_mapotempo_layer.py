@@ -359,12 +359,14 @@ class PluginMapotempoLayer:
 
     def littleRefresh(self):
         self.littleClearLayer()
+        self.dock.comboBox_2.clear()
         self.handler.getRoutes(self.handler.id_plan)
         self.handler.getStops(self.handler.id_plan)
         self.handler.getVehicles()
         self.paintStop()
         self.paintDestination()
         self.setLabel()
+        self.vehiclesStop()
 
     def joinZoneVehicle(self):
         layers = self.iface.legendInterface().layers()
