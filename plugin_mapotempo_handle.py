@@ -30,32 +30,34 @@ class PluginMapotempoHandle:
         self.id_plan = None
         self.id_zone = None
         self.id_zones_tab = []
+        self.bigJson = {}
+        self.dictTypes = {}
 
     def handleButtonTags(self):
         """action after Tags clic"""
         self.handleButtonGeneric(
             TagsApi(self.client).get_tags(),
-            SwaggerMapo.models.V01Tag,
+            SwaggerMapo.models.V01Tag().swagger_types,
             self.translate.tr("tags"))
 
     def handleButtonProd(self):
         """action after Products clic"""
         self.handleButtonGeneric(
             ProductsApi(self.client).get_products(),
-            SwaggerMapo.models.V01Product,
+            SwaggerMapo.models.V01Product().swagger_types,
             self.translate.tr("prod"))
 
     def handleButtonDest(self):
         self.handleButtonGeoGeneric(
             DestinationsApi(self.client).get_destinations(),
-            SwaggerMapo.models.V01Destination,
+            SwaggerMapo.models.V01Destination().swagger_types,
             self.translate.tr("destinations"),
             'destination')
 
     def handleButtonStores(self):
         self.handleButtonGeoGeneric(
             StoresApi(self.client).get_stores(),
-            SwaggerMapo.models.V01Store,
+            SwaggerMapo.models.V01Store().swagger_types,
             self.translate.tr("store"),
             'store')
 
@@ -75,6 +77,8 @@ class PluginMapotempoHandle:
                     layer = l
                     break
             jsondata = self.client.sanitize_for_serialization(data)
+            self.bigJson[name] = jsondata
+            self.dictTypes[name] = model
             if not layer:
                 sqlite = self.layer_inst.json2sqlite(jsondata, model, name)
                 self.layer_inst.loadSQLiteLayer(name, sqlite)
@@ -100,6 +104,8 @@ class PluginMapotempoHandle:
             print lve
         else:
             jsondata = self.client.sanitize_for_serialization(data)
+            self.bigJson[name] = jsondata
+            self.dictTypes[name] = model
             if len(jsondata) > 0:
                 self.layer_inst.addAttributesLayer(layer, jsondata)
                 self.layer_inst.addIcon(layer, typeIcon)
@@ -160,6 +166,9 @@ class PluginMapotempoHandle:
             self.dock.label_5.repaint()
             if self.client:
                 self.dock.model.clear()
+                self.bigJson = {}
+                self.dictTypes = {}
+                
                 self.handleButtonTags()
                 self.handleButtonProd()
                 self.handleButtonStores()
@@ -167,10 +176,15 @@ class PluginMapotempoHandle:
 
                 self.getPlanningsId(self.id_plan)
                 self.getZonings()
+                
                 self.getZoneId(self.id_plan)
+                
                 self.getStops(self.id_plan)
                 self.getVehicles()
                 self.getZone()
+                
+                self.layer_inst.createDB()
+                
                 self.layer_inst.joinZoneVehicle()
                 self.layer_inst.joinStopVehicle()
                 self.layer_inst.joinDestinationVehicle()
@@ -201,14 +215,14 @@ class PluginMapotempoHandle:
     def getPlanningsId(self, id_plan):
         self.handleButtonGeneric(
             [PlanningsApi(self.client).get_planning(id=id_plan)],
-            SwaggerMapo.models.V01Planning,
+            SwaggerMapo.models.V01Planning().swagger_types,
             self.translate.tr("planning"))
         self.getRoutes(id_plan)
 
     def getRoutes(self, id_plan):
         self.handleButtonGeneric(
             PlanningsApi(self.client).get_routes(planning_id=id_plan),
-            SwaggerMapo.models.V01Route,
+            SwaggerMapo.models.V01Route().swagger_types,
             self.translate.tr("routes"))
 
     def getStops(self, id_plan):
@@ -220,6 +234,7 @@ class PluginMapotempoHandle:
             print lve
         else:
             jsondata = self.client.sanitize_for_serialization(data)
+            self.dictTypes[self.translate.tr("Stops")] = SwaggerMapo.models.V01Stop().swagger_types
             self.layer_inst.createLayerLine(
                 SwaggerMapo.models.V01Stop,
                 self.translate.tr("Stops"),
@@ -228,13 +243,13 @@ class PluginMapotempoHandle:
     def getVehicles(self):
         self.handleButtonGeneric(
             VehiclesApi(self.client).get_vehicles(),
-            SwaggerMapo.models.V01Vehicle,
+            SwaggerMapo.models.V01Vehicle().swagger_types,
             self.translate.tr("vehicles"))
 
     def getZonings(self):
         self.handleButtonGeneric(
             ZoningsApi(self.client).get_zonings(),
-            SwaggerMapo.models.V01Zoning,
+            SwaggerMapo.models.V01Zoning().swagger_types,
             self.translate.tr("zonings"))
 
     def getZone(self):
@@ -248,6 +263,8 @@ class PluginMapotempoHandle:
             json = self.client.sanitize_for_serialization(data)
             for row in json:
                 if 'zones' in row:
+                    self.bigJson[row['name']] = row['zones']
+                    self.dictTypes[row['name']] = SwaggerMapo.models.V01Zone().swagger_types
                     self.layer_inst.drawZone(row['zones'], row['name'], row['id'])
 
     def getZoneId(self, id_plan):

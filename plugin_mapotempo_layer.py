@@ -50,20 +50,20 @@ class PluginMapotempoLayer:
         mSimplifyMethod.setSimplifyHints(QgsVectorSimplifyMethod.NoSimplification)
         layer.setSimplifyMethod(mSimplifyMethod)
         self.layerTab.append(layer)
-        pr = layer.dataProvider()
-        types = model().swagger_types
-        keys = types.keys()
-        attributes = []
-        for i in keys:
-            if types[i] == 'int':
-                attributes.append(QgsField(i, QVariant.Int))
-            elif types[i] == 'float':
-                attributes.append(QgsField(i, QVariant.Double))
-            else:
-                attributes.append(QgsField(i, QVariant.String))
-        pr.addAttributes(attributes)
-        QgsMapLayerRegistry.instance().addMapLayer(layer)
-        layer.updateFields()
+        # pr = layer.dataProvider()
+        # types = model().swagger_types
+        # keys = types.keys()
+        # attributes = []
+        # for i in keys:
+        #     if types[i] == 'int':
+        #         attributes.append(QgsField(i, QVariant.Int))
+        #     elif types[i] == 'float':
+        #         attributes.append(QgsField(i, QVariant.Double))
+        #     else:
+        #         attributes.append(QgsField(i, QVariant.String))
+        # pr.addAttributes(attributes)
+        # QgsMapLayerRegistry.instance().addMapLayer(layer)
+        # layer.updateFields()
         return layer
 
     def addAttributesLayer(self, layer, json):
@@ -108,23 +108,50 @@ class PluginMapotempoLayer:
     def json2sqlite(self, json, model, name):
         f = self.resolve("sqlite/"+ name +".sqlite")
         f = unicodedata.normalize('NFKD', f).encode('ascii','ignore')
+        # tmp = open(f, "wb")
+        # db = sqlite3.connect(f)
+        # c = db.cursor()
+        # types = model().swagger_types
+        # query = 'create table `' + name + '` ' +str(tuple(types.keys()))
+        # c.execute(query)
+        # 
+        # for i in range(len(json)):
+        #     r = []
+        #     for field in types.keys():
+        #         if field in json[i]:
+        #             r.append(unicode(json[i][field]))
+        #         else:
+        #             r.append(None)
+        #     query = 'insert into `' + name + '` ' + 'values ' + string.replace(str(tuple([bytes('?') for i in range(len(r))])), "'", '')
+        #     c = db.cursor()
+        #     c.execute(query, tuple(r))
+        # db.commit()
+        # db.close()
+        return f
+
+    def createDB(self):
+        f = self.resolve("sqlite/data.sqlite")
         tmp = open(f, "wb")
         db = sqlite3.connect(f)
         c = db.cursor()
-        types = model().swagger_types
-        query = 'create table `' + name + '` ' +str(tuple(types.keys()))
-        c.execute(query)
-        
-        for i in range(len(json)):
-            r = []
-            for field in types.keys():
-                if field in json[i]:
-                    r.append(unicode(json[i][field]))
-                else:
-                    r.append(None)
-            query = 'insert into `' + name + '` ' + 'values ' + string.replace(str(tuple([bytes('?') for i in range(len(r))])), "'", '')
-            c = db.cursor()
-            c.execute(query, tuple(r))
+        for json in self.handler.bigJson:
+            types = self.handler.dictTypes[json]
+            types['route_id'] = 'int'
+            query = 'create table `' + json + '` ' +str(tuple(types.keys()))
+            c.execute(query)
+            jsonData = self.handler.bigJson[json]
+            for i in range(len(jsonData)):
+                r = []
+                for field in types.keys():
+                    if field in jsonData[i]:
+                        r.append(unicode(jsonData[i][field]))
+                    else:
+                        r.append(None)
+
+                query = 'insert into `' + json + '` ' + 'values ' + string.replace(str(tuple([bytes('?') for i in range(len(r))])), "'", '')
+                c = db.cursor()
+                c.execute(query, tuple(r))
+            
         db.commit()
         db.close()
         return f
@@ -169,10 +196,11 @@ class PluginMapotempoLayer:
             if 'stops' in row:
                 jsontmp = row['stops']
                 for rowStop in jsontmp:
+                    rowStop['route_id'] = row['id']
                     jsonstop.append(rowStop)
                     route_id.append(row['id'])
         pr = layer.dataProvider()
-
+        self.handler.bigJson[self.translate.tr("Stops")] = jsonstop
         iteration = 0
         for i in jsonstop:
 
