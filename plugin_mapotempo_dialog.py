@@ -175,6 +175,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
 
     def addVehicles(self, data, color, infoVehicle, nonActiveTab):
         self.treeView.reset = True
+        self.treeView.collapseAll()
         self.model.deleteLater()
         self.model = QtGui.QStandardItemModel()
         self.model.itemChanged.connect(self.on_item_changed)
