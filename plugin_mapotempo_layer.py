@@ -352,14 +352,12 @@ class PluginMapotempoLayer:
 
     def refresh(self):
         self.dock.comboBox.clear()
-        self.dock.comboBox_2.clear()
         self.dock.model.clear()
         self.clearLayer()
         self.handler.listPlannings()
 
     def littleRefresh(self):
         self.littleClearLayer()
-        self.dock.comboBox_2.clear()
         self.handler.getRoutes(self.handler.id_plan)
         self.handler.getStops(self.handler.id_plan)
         self.handler.getVehicles()

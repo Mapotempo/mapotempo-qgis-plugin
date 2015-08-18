@@ -160,7 +160,6 @@ class PluginMapotempoHandle:
             self.dock.label_5.repaint()
             if self.client:
                 self.dock.model.clear()
-                self.dock.comboBox_2.clear()
                 self.handleButtonTags()
                 self.handleButtonProd()
                 self.handleButtonStores()
@@ -305,12 +304,11 @@ class PluginMapotempoHandle:
         response = PlanningsApi(self.client).update_stop(planning_id=id_planning, route_id=route_id, id=stop_id, active=active)
         self.layer_inst.littleRefresh()
 
-    def optimize_route(self):
+    def optimize_route(self, idRoute):
         index = self.dock.comboBox.currentIndex()
         id_planning = self.dock.comboBox.itemData(index)
         if id_planning:
-            index2 = self.dock.comboBox_2.currentIndex()
-            route_id = int(self.dock.comboBox_2.itemData(index2))
+            route_id = int(idRoute)
             self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Route Optimizing..."))
             worker = OptimizeWorker(self.client, id_planning, route_id)
             thread = QtCore.QThread()

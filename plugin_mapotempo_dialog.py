@@ -125,14 +125,6 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
             QtGui.QIcon.Off)
         self.pushButton_2.setIcon(icon1)
         self.verticalLayout.addWidget(self.pushButton_2)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.comboBox_2 = QtGui.QComboBox(self.dockWidgetContents)
-        self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
-        self.horizontalLayout.addWidget(self.comboBox_2)
-        self.pushButton_3 = QtGui.QPushButton(self.dockWidgetContents)
-        self.pushButton_3.setObjectName(_fromUtf8("pushButton_3"))
-        self.horizontalLayout.addWidget(self.pushButton_3)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.pushButton_5 = QtGui.QPushButton(self.dockWidgetContents)
         self.pushButton_5.setObjectName(_fromUtf8("pushButton_5"))
@@ -149,7 +141,9 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.treeView = QCustomTreeView()
         self.treeView.setObjectName(_fromUtf8("treeView"))
         self.treeView.setDragEnabled(True)
-        self.treeView.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
+        self.treeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+        self.treeView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeView.customContextMenuRequested.connect(self.openMenu)
         self.model = QtGui.QStandardItemModel()
         self.model.itemChanged.connect(self.on_item_changed)
         self.verticalLayout.addWidget(self.treeView)
@@ -157,6 +151,24 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.setWidget(self.dockWidgetContents)
 
         self.retranslateUi(self)
+
+    def openMenu(self, position):
+        indexes = self.treeView.selectedIndexes()
+        if len(indexes) > 0:
+            level = 0
+            index = indexes[0]
+            while index.parent().isValid():
+                index = index.parent()
+                level += 1
+            menu = QtGui.QMenu()
+            if level == 0:
+                if index.model().itemFromIndex(index).text() != _translate("PluginMapotempo", "Unplanned", None):
+                    data = index.model().itemFromIndex(index).data()
+                    menu.addAction(_translate("DockWidget", "Optimize route", None), lambda: self.optimize(data))
+                    menu.exec_(self.treeView.viewport().mapToGlobal(position))
+
+    def optimize(self, data):
+        self.treeView.handler.optimize_route(data)
 
     def setHandler(self, instance):
         self.treeView.handler = instance
@@ -172,6 +184,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
             QtCore.Qt.Horizontal,
             _translate("PluginMapotempo", "routes", None))
         self.treeView.setModel(self.model)
+        self.treeView.expandAll()
         self.treeView.reset = False
 
     def on_item_changed(self,  item):
@@ -213,7 +226,6 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                     QtGui.QIcon.Normal,
                     QtGui.QIcon.Off)
                 item.setIcon(icon)
-                self.comboBox_2.addItem(text, idVehicle)
             else:
                 item = QtGui.QStandardItem()
                 a = text.split(' ').pop()
@@ -237,7 +249,6 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.label_5.setText(_translate("DockWidget", "", None))
         self.pushButton.setText(_translate("DockWidget", "Connection", None))
         self.pushButton_4.setText(_translate("DockWidget", "Parameter", None))
-        self.pushButton_3.setText(_translate("DockWidget", "Optimize route", None))
         self.pushButton_5.setText(_translate("DockWidget", "Optimize all", None))
 
     def resolve(self, name, basepath=None):
