@@ -73,6 +73,7 @@ class PluginMapotempoLayer:
             r = []
             feature = QgsFeature()
             for field in fields:
+                # print layer.fieldNameIndex(field.name())
                 if field.name() in json[i]:
                     r.append(json[i][field.name()])
                 else:
@@ -387,6 +388,9 @@ class PluginMapotempoLayer:
 
             categories = []
             alreadyHere = []
+            indexes = zoneLayer.pendingAllAttributesList()
+            for i in indexes:
+                zoneLayer.setEditorWidgetV2(i, 'Hidden')
             for feature in zoneLayer.getFeatures():
                 vehicle_name = feature.attribute(
                     self.translate.tr("vehicles") + "_name")
@@ -420,12 +424,19 @@ class PluginMapotempoLayer:
             elif layer.name() == self.translate.tr("Stops"):
                 stopLayer = layer
 
+        indexesBefore = stopLayer.pendingAllAttributesList()
+        indexesBeforeRoute = routeLayer.pendingAllAttributesList()
+
         info = QgsVectorJoinInfo()
         info.joinLayerId = vehiclesLayer.id()
         info.joinFieldName = "id"
         info.targetFieldName = "vehicle_id"
         info.memoryCache = False
         routeLayer.addJoin(info)
+
+        indexesAfterRoute = routeLayer.pendingAllAttributesList()
+        for i in range(len(indexesBeforeRoute), len(indexesAfterRoute)):
+            routeLayer.setEditorWidgetV2(i, 'Hidden')
 
         info = QgsVectorJoinInfo()
         info.joinLayerId = routeLayer.id()
@@ -434,6 +445,10 @@ class PluginMapotempoLayer:
         info.memoryCache = True
         stopLayer.addJoin(info)
         self.paintStop()
+
+        indexesAfter = stopLayer.pendingAllAttributesList()
+        for i in range(len(indexesBefore), len(indexesAfter)):
+            stopLayer.setEditorWidgetV2(i, 'Hidden')
 
     def paintStop(self):
         layers = self.iface.legendInterface().layers()
@@ -471,9 +486,13 @@ class PluginMapotempoLayer:
                     alreadyRouteId.append(route_id)
                     color = feature.attribute(
                         self.translate.tr("routes") +
-                        '_' +
-                        self.translate.tr("vehicles") +
                         '_color')
+                    if color == 'None':
+                        color = feature.attribute(
+                            self.translate.tr("routes") +
+                            '_' +
+                            self.translate.tr("vehicles") +
+                            '_color')
                     route_name = feature.attribute(
                         self.translate.tr("routes") +
                         '_' +
@@ -499,6 +518,8 @@ class PluginMapotempoLayer:
             elif layer.name() == self.translate.tr("Stops"):
                 stopLayer = layer
 
+        indexesBefore = destinationLayer.pendingAllAttributesList()
+
         info = QgsVectorJoinInfo()
         info.joinLayerId = stopLayer.id()
         info.joinFieldName = "destination_id"
@@ -506,6 +527,10 @@ class PluginMapotempoLayer:
         info.memoryCache = False
         destinationLayer.addJoin(info)
         self.paintDestination()
+
+        indexesAfter = destinationLayer.pendingAllAttributesList()
+        for i in range(len(indexesBefore), len(indexesAfter)):
+            destinationLayer.setEditorWidgetV2(i, 'Hidden')
 
     def paintDestination(self):
         layers = self.iface.legendInterface().layers()
@@ -525,9 +550,15 @@ class PluginMapotempoLayer:
                     self.translate.tr("Stops") +
                     '_' +
                     self.translate.tr('routes') +
-                    '_' +
-                    self.translate.tr('vehicles') +
                     '_color')
+                if color == 'None':
+                    color = feature.attribute(
+                        self.translate.tr("Stops") +
+                        '_' +
+                        self.translate.tr('routes') +
+                        '_' +
+                        self.translate.tr('vehicles') +
+                        '_color')
                 if not color:
                     color = '#bfbfbf'
 
@@ -571,6 +602,9 @@ class PluginMapotempoLayer:
         infoVehicle = {}
         idRouteNull = None
         for feature in routesLayer.getFeatures():
+            color = feature.attribute('color')
+            if color != 'None':
+                colorVehicle[feature.attribute(self.translate.tr("vehicles") + '_' + 'name')] = color
             if feature.attribute('vehicle_id'):
                 km = float(feature.attribute('distance'))
                 if km:
@@ -662,3 +696,10 @@ class PluginMapotempoLayer:
         label_1.writeToLayer(storeLayer)
         destinationLayer.triggerRepaint()
         storeLayer.triggerRepaint()
+
+    def hideFields(self):
+        for layer in self.layerTab:
+            fields = layer.pendingFields()
+            for field in fields:
+                if field.name().split('_').pop() == 'id' or field.name() == 'stop_trace' or field.name() == 'stops':
+                    layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')

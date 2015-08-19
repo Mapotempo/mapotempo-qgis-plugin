@@ -171,6 +171,7 @@ class PluginMapotempoHandle:
                 self.getStops(self.id_plan)
                 self.getVehicles()
                 self.getZone()
+                self.layer_inst.hideFields()
                 self.layer_inst.joinZoneVehicle()
                 self.layer_inst.joinStopVehicle()
                 self.layer_inst.joinDestinationVehicle()

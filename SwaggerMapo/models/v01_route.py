@@ -44,7 +44,8 @@ class V01Route(object):
             'stop_trace': 'str',
             'stop_out_of_drive_time': 'bool',
             'stop_distance': 'float',
-            'ref': 'str'
+            'ref': 'str',
+            'color': 'str'
         }
 
         self.attribute_map = {
@@ -61,51 +62,55 @@ class V01Route(object):
             'stop_trace': 'stop_trace',
             'stop_out_of_drive_time': 'stop_out_of_drive_time',
             'stop_distance': 'stop_distance',
-            'ref': 'ref'
+            'ref': 'ref',
+            'color': 'color'
         }
-
-
+        
+        
         self.id = None  # int
-
-
+        
+        
         self.distance = None  # float
-
-
+        
+        
         self.emission = None  # float
-
-
+        
+        
         self.vehicle_id = None  # int
-
-
-        self.start = None  # DateTime
-
-
-        self.end = None  # DateTime
-
-
+        
+        
+        self.start = None  # datetime
+        
+        
+        self.end = None  # datetime
+        
+        
         self.hidden = None  # bool
-
-
+        
+        
         self.locked = None  # bool
-
-
+        
+        
         self.out_of_date = None  # bool
-
-
+        
+        
         self.stops = None  # list[V01Stop]
-
-
+        
+        
         self.stop_trace = None  # str
-
-
+        
+        
         self.stop_out_of_drive_time = None  # bool
-
-
+        
+        
         self.stop_distance = None  # float
-
-
+        
+        
         self.ref = None  # str
-
+        
+        
+        self.color = None  # str
+        
 
     def __repr__(self):
         properties = []
@@ -114,3 +119,5 @@ class V01Route(object):
                 properties.append('{prop}={val!r}'.format(prop=p, val=self.__dict__[p]))
 
         return '<{name} {props}>'.format(name=__name__, props=' '.join(properties))
+
+
