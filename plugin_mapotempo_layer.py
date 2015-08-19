@@ -181,7 +181,7 @@ class PluginMapotempoLayer:
             feature = QgsFeature()
             for field in fields:
                 if field.name() in i:
-                    r.append(i[field.name()])
+                    r.append(bytes(i[field.name()])) #strange behavior
                 elif field.name() == 'route_id':
                     r.append(route_id[iteration])
                 else:
