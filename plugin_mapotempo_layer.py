@@ -83,10 +83,9 @@ class PluginMapotempoLayer:
                     QgsGeometry.fromPoint(QgsPoint(json[i]['lng'], json[i]['lat'])))
             feature.setAttributes(r)
             pr.addFeatures([feature])
-
-        layer.updateFields()
+            layer.updateExtents()
+            layer.updateFields()
         layer.commitChanges()
-        layer.updateExtents()
         layer.triggerRepaint()
 
     def fillField(self, json, layer):
@@ -181,13 +180,12 @@ class PluginMapotempoLayer:
             feature = QgsFeature()
             for field in fields:
                 if field.name() in i:
-                    r.append(bytes(i[field.name()])) #strange behavior
+                    r.append(unicode(i[field.name()]))
                 elif field.name() == 'route_id':
                     r.append(route_id[iteration])
                 else:
                     r.append(None)
             iteration += 1
-            feature.setAttributes(r)
 
             pointList = []
             if i['active'] and i['trace'] != 'None':
@@ -197,13 +195,14 @@ class PluginMapotempoLayer:
             for point in pointList:
                 pointListFinal.append(QgsPoint(point[1]/10, point[0]/10))
             line = QgsGeometry.fromPolyline(pointListFinal)
-            feature.setGeometry(line)
+            if len(pointListFinal) != 0: #to aviod save problem with pause and non active
+                feature.setGeometry(line)
+            feature.setAttributes(r)
             pr.addFeatures([feature])
             layer.updateExtents()
             layer.updateFields()
-        layer.triggerRepaint()
         layer.commitChanges()
-        QgsMapLayerRegistry.instance().addMapLayer(layer)
+        layer.triggerRepaint()
         self.addIcon(layer, 'line')
 
     def drawZone(self, json, name, idToDraw):
@@ -643,7 +642,7 @@ class PluginMapotempoLayer:
             '_id')
             name = name + " " + str(stop_id)
 
-            if feature.attribute(self.translate.tr("Stops") + '_active') == False:
+            if feature.attribute(self.translate.tr("Stops") + '_active') == unicode(False): #have to do this to save layer
                 nonActiveTab.append(name)
             if vehicle == 'None':
                 listVehicle[idRouteNull].append((name, []))
