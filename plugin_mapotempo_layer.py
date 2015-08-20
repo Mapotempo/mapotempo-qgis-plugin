@@ -255,7 +255,7 @@ class PluginMapotempoLayer:
                 feature.setGeometry(form)
 
             elif a['geometry']['type'] == 'MultiPolygon':
-                feature.setGeometry(QgsGeometry.fromMultiPolygon([[[[QgsPoint(point[0],point[1]) for point in polygon ] for polygon in ring] for ring in a['coordinates']]][0]))
+                feature.setGeometry(QgsGeometry.fromMultiPolygon([[[[QgsPoint(point[0],point[1]) for point in polygon ] for polygon in ring] for ring in a['geometry']['coordinates']]][0]))
 
             pr.addFeatures([feature])
             layer.updateFields()
