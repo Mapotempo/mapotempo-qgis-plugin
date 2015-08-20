@@ -289,7 +289,7 @@ class PluginMapotempoHandle:
 
             for row in jsondata:
                 self.dock.comboBox.addItem(
-                    str(row['name']), row['id'])
+                    unicode(row['name']), row['id'])
 
     def move_stop(self, route_id, stop_id, position):
         index = self.dock.comboBox.currentIndex()
