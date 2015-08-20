@@ -154,7 +154,7 @@ class PluginMapotempoHandle:
                             if int(feature.attribute('id')) == self.id_plan:
                                 return
             self.layer_inst.iface.messageBar().pushMessage(
-                self.translate.tr("Processing"), level=QgsMessageBar.INFO)
+                self.translate.tr("Processing"), duration=1, level=QgsMessageBar.INFO)
             self.dock.label_5.setText(self.translate.tr("Processing"))
             self.layer_inst.clearLayer()
             self.dock.label_5.repaint()
@@ -180,7 +180,7 @@ class PluginMapotempoHandle:
                 self.layer_inst.vehiclesStop()
                 self.layer_inst.setLabel()
                 self.layer_inst.iface.messageBar().pushMessage(
-                    self.translate.tr("Done"), level=QgsMessageBar.INFO)
+                    self.translate.tr("Done"), duration=3, level=QgsMessageBar.INFO)
                 self.dock.label_5.setText(self.translate.tr("Done"))
             else:
                 self.dock.label_5.setText(
@@ -193,10 +193,10 @@ class PluginMapotempoHandle:
         index = self.dock.comboBox.currentIndex()
         id_planning = self.dock.comboBox.itemData(index)
         self.layer_inst.iface.messageBar().pushMessage(
-            self.translate.tr("Processing"), level=QgsMessageBar.INFO)
+            self.translate.tr("Processing"), duration=1, level=QgsMessageBar.INFO)
         self.layer_inst.littleRefresh()
         self.layer_inst.iface.messageBar().pushMessage(
-            self.translate.tr("Done"), level=QgsMessageBar.INFO)
+            self.translate.tr("Done"), duration=3, level=QgsMessageBar.INFO)
         self.dock.label_5.setText(self.translate.tr("Done"))
         
     def getPlanningsId(self, id_plan):
@@ -313,7 +313,7 @@ class PluginMapotempoHandle:
         id_planning = self.dock.comboBox.itemData(index)
         if id_planning:
             route_id = int(idRoute)
-            self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Route Optimizing..."))
+            self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Route Optimizing..."), duration=35)
             worker = OptimizeWorker(self.client, id_planning, route_id)
             thread = QtCore.QThread()
             worker.moveToThread(thread)
@@ -334,10 +334,10 @@ class PluginMapotempoHandle:
         if ret is True:
             # report the result
             self.layer_inst.littleRefresh()
-            self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Done"))
+            self.layer_inst.iface.messageBar().pushMessage(self.translate.tr("Done"), duration=3)
         else:
             # notify the user that something went wrong
-            self.layer_inst.iface.messageBar().pushMessage('Something went wrong! See the message log for more information.', level=QgsMessageBar.CRITICAL, duration=3)
+            self.layer_inst.iface.messageBar().pushMessage(self.translate.tr('Something went wrong! See the message log for more information.'), level=QgsMessageBar.CRITICAL, duration=10)
 
 
     def workerError(self, e, exception_string):

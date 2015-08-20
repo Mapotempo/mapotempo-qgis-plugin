@@ -105,6 +105,14 @@
         <source>Unplanned</source>
         <translation>Non planifié</translation>
     </message>
+    <message>
+        <source>Route Optimizing...</source>
+        <translation>Optimisation de la tournée</translation>
+    </message>
+    <message>
+        <source>Something went wrong! See the message log for more information.</source>
+        <translation>Quelque chose s'est mal passé! Voir les logs pour plus d'informations</translation>
+    </message>
     
 </context>
 <context>

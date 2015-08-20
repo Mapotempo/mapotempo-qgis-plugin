@@ -365,6 +365,8 @@ class PluginMapotempoLayer:
         self.paintDestination()
         self.setLabel()
         self.vehiclesStop()
+        self.iface.messageBar().pushMessage(
+            self.translate.tr("Done"), duration=3, level=QgsMessageBar.INFO)        
 
     def joinZoneVehicle(self):
         layers = self.iface.legendInterface().layers()
