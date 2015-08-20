@@ -507,7 +507,18 @@ class PluginMapotempoLayer:
         renderer = QgsCategorizedSymbolRendererV2(field, categories)
         stopLayer.setRendererV2(renderer)
         stopLayer.triggerRepaint()
-        
+
+        idStopTab = []#id stop trace to null
+        for feature in stopLayer.getFeatures():
+            stopId = feature.attribute('id')
+            if not stopId in idStopTab:
+                idStopTab.append(stopId)
+            else:
+                stopLayer.startEditing()
+                feature['id'] = None
+                stopLayer.updateFeature(feature)
+                stopLayer.commitChanges()
+
     def joinDestinationVehicle(self): #use after joinStopVehicle
         layers = self.iface.legendInterface().layers()
         stopLayer, destinationLayer = None, None
