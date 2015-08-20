@@ -262,7 +262,10 @@ class PluginMapotempoHandle:
                 zoningLayer = layer
         for feature in planningLayer.getFeatures():
             if str(feature.attribute('id')) == str(id_plan):
-                self.id_zone = int(feature.attribute('zoning_id'))
+                try:
+                    self.id_zone = int(feature.attribute('zoning_id'))
+                except:
+                    self.id_zone = None
         for feature in zoningLayer.getFeatures():
             self.id_zones_tab.append(int(feature.attribute('id')))
 
