@@ -113,6 +113,10 @@
         <source>Something went wrong! See the message log for more information.</source>
         <translation>Quelque chose s'est mal passé! Voir les logs pour plus d'informations</translation>
     </message>
+    <message>
+        <source>Time out of drive</source>
+        <translation>Trajet hors plage horaire</translation>
+    </message>
     
 </context>
 <context>

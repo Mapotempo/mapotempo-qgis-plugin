@@ -203,7 +203,11 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                 item = QtGui.QStandardItem()
                 idClient =  text.split(' ')
                 item.setData(idClient.pop())
-                item.setText(' '.join(idClient))
+                out_of_time = idClient.pop()
+                item.setText(unicode(' '.join(idClient)))
+                if out_of_time == 'True':
+                    item.setForeground(QtGui.QBrush(QtGui.QColor('red')))
+                    item.setToolTip(_translate("PluginMapotempo", "Out of drive", None))
                 parent.appendRow(item)
                 if not parent.text() == _translate("PluginMapotempo", "Unplanned", None):
                     item.setCheckable(True)
@@ -218,7 +222,11 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                 colorV = color[text]
                 infoV = infoVehicle[text].split(' ')
                 infoV.pop()
-                item.setText(text + ' '.join(infoV))
+                out_of_time = infoV.pop()
+                item.setText(unicode(text + ' '.join(infoV)))
+                if out_of_time == 'True':
+                    item.setForeground(QtGui.QBrush(QtGui.QColor('red')))
+                    item.setToolTip(_translate("PluginMapotempo", "Out of drive", None))
                 icon = QtGui.QIcon()
                 pixmap = QtGui.QPixmap(20, 20)
                 pixmap.fill(QtGui.QColor(str(colorV)))
@@ -232,7 +240,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                 a = text.split(' ').pop()
                 idNonPlanned =  text.split(' ')
                 item.setData(idNonPlanned.pop())
-                item.setText(' '.join(idNonPlanned))
+                item.setText(unicode(' '.join(idNonPlanned)))
                 parent.appendRow(item)
 
             if children:

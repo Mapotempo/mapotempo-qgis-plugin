@@ -96,7 +96,7 @@ class PluginMapotempoLayer:
             feature = QgsFeature()
             for field in fields:
                 if field.name() in json[i]:
-                    r.append(json[i][field.name()])
+                    r.append(unicode(json[i][field.name()]))
                 else:
                     r.append(None)
             feature.setAttributes(r)
@@ -160,7 +160,9 @@ class PluginMapotempoLayer:
             pr.addAttributes(attributes)
             QgsMapLayerRegistry.instance().addMapLayer(layer)
             layer.updateFields()
-            
+        # 
+        # layer.committedAttributeValuesChanges.connect(self.test)
+
         fields = layer.pendingFields()
         jsonstop = []
 
@@ -204,6 +206,10 @@ class PluginMapotempoLayer:
         layer.commitChanges()
         layer.triggerRepaint()
         self.addIcon(layer, 'line')
+
+    # def test(self, layerId, changedAttributesValues):
+    #     print 'layerId' + unicode(layerId)
+    #     print 'changedAttributesValues' + unicode(changedAttributesValues)
 
     def drawZone(self, json, name, idToDraw):
         layer = QgsVectorLayer(
@@ -632,7 +638,7 @@ class PluginMapotempoLayer:
                     self.translate.tr('vehicles') + '_name')] = (
                         ' - ' +
                         str(time.strftime("%H:%M", time.gmtime(timeTot))) +
-                        ' - ' + str(km) + 'Km ' + str(feature.attribute('id')))
+                        ' - ' + str(km) + 'Km ' + str(feature.attribute('stop_out_of_drive_time')) + ' ' +str(feature.attribute('id')))
             else:
                 idRouteNull = self.translate.tr("Unplanned") + " " + str(feature.attribute('id'))
                 listVehicle[idRouteNull] = []
@@ -653,7 +659,11 @@ class PluginMapotempoLayer:
                 '_name'))
             stop_id = feature.attribute(self.translate.tr("Stops") +
             '_id')
-            name = name + " " + str(stop_id)
+            out_of_time = unicode(feature.attribute(
+                self.translate.tr("Stops") +
+                '_' +
+                self.translate.tr('out_of_drive_time')))
+            name = name + " " + str(out_of_time) + " " + str(stop_id)
 
             if feature.attribute(self.translate.tr("Stops") + '_active') == unicode(False): #have to do this to save layer
                 nonActiveTab.append(name)
@@ -672,7 +682,7 @@ class PluginMapotempoLayer:
 
         
 
-        sorted_by_first = sorted(listFeature, key=lambda tup: tup[0])
+        sorted_by_first = sorted(listFeature, key=lambda tup: int(tup[0]))
         for v in sorted_by_first:
             listVehicle[v[2]].append((v[1], []))
         self.dock.addVehicles(listVehicle, colorVehicle, infoVehicle, nonActiveTab)
