@@ -723,5 +723,18 @@ class PluginMapotempoLayer:
         for layer in self.layerTab:
             fields = layer.pendingFields()
             for field in fields:
+                if layer.name() == self.translate.tr("planning"):
+                    if field.name() == 'route_ids':
+                        layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
+                    elif  field.name() == 'tag_ids':
+                        layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
+                    elif field.name() == 'out_of_date':
+                        layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
+                if layer.name() == self.translate.tr("routes") and field.name() != 'color':
+                    layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
+                if layer.name() == self.translate.tr("zonings") and field.name() != 'zones':
+                    layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
+                if layer.name() == self.translate.tr("Stops") and field.name() != 'active':
+                    layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
                 if field.name().split('_').pop() == 'id' or field.name() == 'stop_trace' or field.name() == 'stops':
                     layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
