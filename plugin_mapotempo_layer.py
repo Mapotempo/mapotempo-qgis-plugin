@@ -9,7 +9,7 @@ from qgis.core import (
     QgsSimpleFillSymbolLayerV2, QgsVectorJoinInfo, QgsSymbolV2,
     QgsRendererCategoryV2, QgsCategorizedSymbolRendererV2,
     QgsPalLayerSettings, QgsRasterLayer, QgsVectorSimplifyMethod,
-    QgsDataSourceURI)
+    QgsDataSourceURI, QgsVectorLayerCache)
 import sqlite3
 import string
 import datetime
@@ -160,8 +160,7 @@ class PluginMapotempoLayer:
             pr.addAttributes(attributes)
             QgsMapLayerRegistry.instance().addMapLayer(layer)
             layer.updateFields()
-        # 
-        # layer.committedAttributeValuesChanges.connect(self.test)
+
 
         fields = layer.pendingFields()
         jsonstop = []
@@ -207,9 +206,26 @@ class PluginMapotempoLayer:
         layer.triggerRepaint()
         self.addIcon(layer, 'line')
 
-    # def test(self, layerId, changedAttributesValues):
-    #     print 'layerId' + unicode(layerId)
-    #     print 'changedAttributesValues' + unicode(changedAttributesValues)
+    def test(self, layerId, changedAttributesValues):
+        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
+        fields = lyr.pendingFields()
+        print changedAttributesValues
+        for i in changedAttributesValues:
+            for a in changedAttributesValues[i]:
+                if unicode(fields[a].name()) != u'active':
+                    continue
+                elif changedAttributesValues[i][a] == u'True' or changedAttributesValues[i][a] == u'False':
+                    cache = QgsVectorLayerCache(lyr, 10000)
+                    feat = QgsFeature()
+                    cache.featureAtId(i, feat)
+                    lyr.updateFields()
+                    featId = int(feat['id'])
+                    routeId = int(feat['route_id'])
+                    if changedAttributesValues[i][a] == u'True':
+                        self.handler.update_stop(routeId, featId, 'CHECKED', refresh=False)
+                    elif changedAttributesValues[i][a] == u'False':
+                        self.handler.update_stop(routeId, featId, 'UNCHECKED', refresh=False)
+                    cache.removeCachedFeature(feat.id())
 
     def drawZone(self, json, name, idToDraw):
         layer = QgsVectorLayer(
@@ -346,13 +362,14 @@ class PluginMapotempoLayer:
                     ids = [f.id() for f in layer.getFeatures()]
                     layer.startEditing()
                     layer.dataProvider().deleteFeatures( ids )
-                    layer.updateFields()                    
+                    layer.updateFields()
                     layer.commitChanges()
                 elif layer.name() == self.translate.tr("Stops"):
+                    layer.committedAttributeValuesChanges.disconnect()
                     ids = [f.id() for f in layer.getFeatures()]
                     layer.startEditing()
                     layer.dataProvider().deleteFeatures( ids )
-                    layer.updateFields()                    
+                    layer.updateFields()
                     layer.commitChanges()
         self.dock.label_5.setText(self.translate.tr("Done"))
 
@@ -372,7 +389,7 @@ class PluginMapotempoLayer:
         self.setLabel()
         self.vehiclesStop()
         self.iface.messageBar().pushMessage(
-            self.translate.tr("Done"), duration=3, level=QgsMessageBar.INFO)        
+            self.translate.tr("Done"), duration=3, level=QgsMessageBar.INFO)
 
     def joinZoneVehicle(self):
         layers = self.iface.legendInterface().layers()
@@ -526,6 +543,7 @@ class PluginMapotempoLayer:
                 feature['id'] = None
                 stopLayer.updateFeature(feature)
                 stopLayer.commitChanges()
+        stopLayer.committedAttributeValuesChanges.connect(self.test)
 
     def joinDestinationVehicle(self): #use after joinStopVehicle
         layers = self.iface.legendInterface().layers()

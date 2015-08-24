@@ -297,7 +297,7 @@ class PluginMapotempoHandle:
         response = PlanningsApi(self.client).move_stop(planning_id=id_planning, id=route_id, stop_id=stop_id, index=position)
         self.layer_inst.littleRefresh()
 
-    def update_stop(self, route_id, stop_id, state):
+    def update_stop(self, route_id, stop_id, state, refresh=True):
         index = self.dock.comboBox.currentIndex()
         id_planning = self.dock.comboBox.itemData(index)
         active = None
@@ -306,7 +306,8 @@ class PluginMapotempoHandle:
         elif state == 'UNCHECKED':
             active = 'false'
         response = PlanningsApi(self.client).update_stop(planning_id=id_planning, route_id=route_id, id=stop_id, active=active)
-        self.layer_inst.littleRefresh()
+        if refresh:#bug table editing
+            self.layer_inst.littleRefresh()
 
     def optimize_route(self, idRoute):
         index = self.dock.comboBox.currentIndex()
