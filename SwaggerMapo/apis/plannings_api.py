@@ -285,7 +285,7 @@ class PlanningsApi(object):
 
         return response
 
-    def update_p_lanning(self, id, **kwargs):
+    def update_planning(self, id, **kwargs):
         """
         Update planning.
 
@@ -304,14 +304,14 @@ class PlanningsApi(object):
 
         # verify the required parameter 'id' is set
         if id is None:
-            raise ValueError("Missing the required parameter `id` when calling `update_p_lanning`")
+            raise ValueError("Missing the required parameter `id` when calling `update_planning`")
 
         all_params = ['id', 'name', 'ref', 'date', 'zoning_id', 'out_of_date', 'route_ids', 'tag_ids']
 
         params = locals()
         for key, val in iteritems(params['kwargs']):
             if key not in all_params:
-                raise TypeError("Got an unexpected keyword argument '%s' to method update_p_lanning" % key)
+                raise TypeError("Got an unexpected keyword argument '%s' to method update_planning" % key)
             params[key] = val
         del params['kwargs']
 
@@ -359,7 +359,7 @@ class PlanningsApi(object):
             del header_params['Accept']
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type([])
+        header_params['Content-Type'] = self.api_client.select_header_content_type(['application/x-www-form-urlencoded'])
 
         # Authentication setting
         auth_settings = ['api_key']

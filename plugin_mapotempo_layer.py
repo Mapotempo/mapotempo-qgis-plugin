@@ -17,6 +17,7 @@ import time
 import unicodedata
 import os.path
 import ast
+import binascii
 
 from polyline.codec import PolylineCodec
 from geojson.utils import coords
@@ -206,7 +207,28 @@ class PluginMapotempoLayer:
         layer.triggerRepaint()
         self.addIcon(layer, 'line')
 
-    def test(self, layerId, changedAttributesValues):
+    def changeVehicleAttributes(self, layerId, changedAttributesValues):
+        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
+        fields = lyr.pendingFields()
+        print changedAttributesValues
+        for i in changedAttributesValues:
+            for a in changedAttributesValues[i]:
+                if unicode(fields[a].name()) == u'color':
+                    continue#todo
+                    if is_bgcolor(changedAttributesValues[i][a]):
+                        cache = QgsVectorLayerCache(lyr, 10000)
+                        feat = QgsFeature()
+                        cache.featureAtId(i, feat)
+                        featId = int(feat['id'])
+                        try:
+                            vehicleId = int(feat['vehicle_id'])
+                        except:
+                            vehicleId = None
+                        if vehicleId:
+                            self.handler.update_vehicle(routeId, featId, refresh=False)
+                        cache.removeCachedFeature(feat.id())
+
+    def changeStopAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
         fields = lyr.pendingFields()
         print changedAttributesValues
@@ -218,7 +240,6 @@ class PluginMapotempoLayer:
                     cache = QgsVectorLayerCache(lyr, 10000)
                     feat = QgsFeature()
                     cache.featureAtId(i, feat)
-                    lyr.updateFields()
                     featId = int(feat['id'])
                     routeId = int(feat['route_id'])
                     if changedAttributesValues[i][a] == u'True':
@@ -226,6 +247,124 @@ class PluginMapotempoLayer:
                     elif changedAttributesValues[i][a] == u'False':
                         self.handler.update_stop(routeId, featId, 'UNCHECKED', refresh=False)
                     cache.removeCachedFeature(feat.id())
+
+    def changeRouteAttributes(self, layerId, changedAttributesValues):
+        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
+        fields = lyr.pendingFields()
+        print changedAttributesValues
+        for i in changedAttributesValues:
+            for a in changedAttributesValues[i]:
+                if unicode(fields[a].name()) != u'color':
+                    continue
+                elif self.is_bgcolor(changedAttributesValues[i][a]):
+                    cache = QgsVectorLayerCache(lyr, 10000)
+                    feat = QgsFeature()
+                    cache.featureAtId(i, feat)
+                    featId = int(feat['id'])
+                    try:
+                        vehicleId = int(feat['vehicle_id'])
+                    except:
+                        vehicleId = None
+                    if vehicleId:
+                        self.handler.update_color_route(routeId, featId, refresh=False)
+                    cache.removeCachedFeature(feat.id())
+
+    def changePlanningAttributes(self, layerId, changedAttributesValues):
+        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
+        fields = lyr.pendingFields()
+        print changedAttributesValues
+        for i in changedAttributesValues:
+            kwargs = {}
+            valid = True
+            for a in changedAttributesValues[i]:
+                if unicode(fields[a].name()) == u'name':
+                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                elif unicode(fields[a].name()) == u'ref':
+                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                elif unicode(fields[a].name()) == u'date':
+                    if self.is_date_correct(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    else:
+                        valid = False
+            if valid and len(kwargs) > 0:
+                self.handler.update_planning(refresh=False, **kwargs)
+
+    def is_date_correct(self, date):
+        try:
+            datetime.datetime.strptime(date, '%Y-%m-%d')
+        except ValueError:
+            return False
+        else:
+            return True
+
+    def changeDestinationAttributes(self, layerId, changedAttributesValues):
+        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
+        fields = lyr.pendingFields()
+        print changedAttributesValues
+        for i in changedAttributesValues:
+            for a in changedAttributesValues[i]:
+                if unicode(fields[a].name()) == u'name':
+                    cache = QgsVectorLayerCache(lyr, 10000)
+                    feat = QgsFeature()
+                    cache.featureAtId(i, feat)
+                     # have to see the API
+                    self.handler.update_destination(routeId, featId, refresh=False)
+                    cache.removeCachedFeature(feat.id())
+
+    def changeStoreAttributes(self, layerId, changedAttributesValues):
+        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
+        fields = lyr.pendingFields()
+        print changedAttributesValues
+        for i in changedAttributesValues:
+            for a in changedAttributesValues[i]:
+                if unicode(fields[a].name()) == u'name':
+                    cache = QgsVectorLayerCache(lyr, 10000)
+                    feat = QgsFeature()
+                    cache.featureAtId(i, feat)
+                     # have to see the API
+                    self.handler.update_store(routeId, featId, refresh=False)
+                    cache.removeCachedFeature(feat.id())
+
+    def changeProductAttributes(self, layerId, changedAttributesValues):
+        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
+        fields = lyr.pendingFields()
+        print changedAttributesValues
+        for i in changedAttributesValues:
+            for a in changedAttributesValues[i]:
+                if unicode(fields[a].name()) == u'name':
+                    cache = QgsVectorLayerCache(lyr, 10000)
+                    feat = QgsFeature()
+                    cache.featureAtId(i, feat)
+                     # have to see the API
+                    self.handler.update_product(routeId, featId, refresh=False)
+                    cache.removeCachedFeature(feat.id())
+
+    def changeTagAttributes(self, layerId, changedAttributesValues):
+        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
+        fields = lyr.pendingFields()
+        print changedAttributesValues
+        for i in changedAttributesValues:
+            for a in changedAttributesValues[i]:
+                if unicode(fields[a].name()) == u'label':
+                    cache = QgsVectorLayerCache(lyr, 10000)
+                    feat = QgsFeature()
+                    cache.featureAtId(i, feat)
+                     # have to see the API
+                    self.handler.update_store(routeId, featId, refresh=False)
+                    cache.removeCachedFeature(feat.id())
+
+    def parse_bgcolor(self, bgcolor):
+        if not bgcolor.startswith('#'):
+            raise ValueError('A bgcolor must start with a "#"')
+        return binascii.unhexlify(bgcolor[1:])
+
+    def is_bgcolor(self, bgcolor):
+        try:
+            self.parse_bgcolor(bgcolor)
+        except Exception as e:
+            return False
+        else:
+            return True
 
     def drawZone(self, json, name, idToDraw):
         layer = QgsVectorLayer(
@@ -342,6 +481,8 @@ class PluginMapotempoLayer:
         layers = self.iface.legendInterface().layers()
         for layer in layers: #a little bit long
             if layer in self.layerTab:
+                if layer.name() == self.translate.tr("planning"):
+                    layer.committedAttributeValuesChanges.disconnect()
                 QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
         self.layerTab = []
         self.dock.label_5.setText(self.translate.tr("Done"))
@@ -543,7 +684,7 @@ class PluginMapotempoLayer:
                 feature['id'] = None
                 stopLayer.updateFeature(feature)
                 stopLayer.commitChanges()
-        stopLayer.committedAttributeValuesChanges.connect(self.test)
+        stopLayer.committedAttributeValuesChanges.connect(self.changeStopAttributes)
 
     def joinDestinationVehicle(self): #use after joinStopVehicle
         layers = self.iface.legendInterface().layers()
@@ -748,6 +889,8 @@ class PluginMapotempoLayer:
                         layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
                     elif field.name() == 'out_of_date':
                         layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
+                    elif field.name() == 'date':
+                        layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'DateTime')
                 if layer.name() == self.translate.tr("routes") and field.name() != 'color':
                     layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
                 if layer.name() == self.translate.tr("zonings") and field.name() != 'zones':

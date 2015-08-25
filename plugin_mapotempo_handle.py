@@ -200,10 +200,16 @@ class PluginMapotempoHandle:
         self.dock.label_5.setText(self.translate.tr("Done"))
         
     def getPlanningsId(self, id_plan):
+        lyr = None
         self.handleButtonGeneric(
             [PlanningsApi(self.client).get_planning(id=id_plan)],
             SwaggerMapo.models.V01Planning,
             self.translate.tr("planning"))
+        layers = self.layer_inst.iface.legendInterface().layers()
+        for layer in layers:
+            if layer.name() == self.translate.tr('planning'):
+                lyr = layer
+        lyr.committedAttributeValuesChanges.connect(self.layer_inst.changePlanningAttributes)
         self.getRoutes(id_plan)
 
     def getRoutes(self, id_plan):
@@ -308,6 +314,20 @@ class PluginMapotempoHandle:
         response = PlanningsApi(self.client).update_stop(planning_id=id_planning, route_id=route_id, id=stop_id, active=active)
         if refresh:#bug table editing
             self.layer_inst.littleRefresh()
+
+    def update_color_route(self, route_id, color, refresh=True):
+        index = self.dock.comboBox.currentIndex()
+        id_planning = self.dock.comboBox.itemData(index)
+        response = PlanningsApi(self.client).update_route(planning_id=id_planning, id=route_id, color=color)
+        if refresh:#bug table editing
+            self.layer_inst.littleRefresh()
+
+    def update_planning(self, refresh=True, **kwargs):
+        index = self.dock.comboBox.currentIndex()
+        id_planning = self.dock.comboBox.itemData(index)
+        response = PlanningsApi(self.client).update_planning(id=id_planning, **kwargs)
+        if refresh:#bug table editing
+            self.layer_inst.refresh()
 
     def optimize_route(self, idRoute):
         index = self.dock.comboBox.currentIndex()
