@@ -37,6 +37,11 @@ class PluginMapotempoHandle:
             TagsApi(self.client).get_tags(),
             SwaggerMapo.models.V01Tag,
             self.translate.tr("tags"))
+        layers = self.layer_inst.iface.legendInterface().layers()
+        for layer in layers:
+            if layer.name() == self.translate.tr('tags'):
+                lyr = layer
+        lyr.committedAttributeValuesChanges.connect(self.layer_inst.changeTagAttributes)
 
     def handleButtonProd(self):
         """action after Products clic"""
@@ -326,6 +331,12 @@ class PluginMapotempoHandle:
         index = self.dock.comboBox.currentIndex()
         id_planning = self.dock.comboBox.itemData(index)
         response = PlanningsApi(self.client).update_planning(id=id_planning, **kwargs)
+        if refresh:#bug table editing
+            self.layer_inst.refresh()
+
+    def update_tag(self, tagId, refresh=True, **kwargs):
+        print kwargs
+        response = TagsApi(self.client).update_tag(id=tagId, **kwargs)
         if refresh:#bug table editing
             self.layer_inst.refresh()
 

@@ -327,10 +327,10 @@ class TagsApi(object):
             del header_params['Accept']
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type([])
+        header_params['Content-Type'] = self.api_client.select_header_content_type(['application/x-www-form-urlencoded'])
 
         # Authentication setting
-        auth_settings = ['api-key']
+        auth_settings = ['api_key']
 
         response = self.api_client.call_api(resource_path, method, path_params, query_params, header_params,
                                             body=body_params, post_params=form_params, files=files,

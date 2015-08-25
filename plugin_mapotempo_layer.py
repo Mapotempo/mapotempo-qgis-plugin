@@ -344,14 +344,26 @@ class PluginMapotempoLayer:
         fields = lyr.pendingFields()
         print changedAttributesValues
         for i in changedAttributesValues:
+            kwargs = {}
+            valid = True
             for a in changedAttributesValues[i]:
                 if unicode(fields[a].name()) == u'label':
-                    cache = QgsVectorLayerCache(lyr, 10000)
-                    feat = QgsFeature()
-                    cache.featureAtId(i, feat)
-                     # have to see the API
-                    self.handler.update_store(routeId, featId, refresh=False)
-                    cache.removeCachedFeature(feat.id())
+                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                # elif unicode(fields[a].name()) == u'icon':
+                #     kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                elif unicode(fields[a].name()) == u'color':
+                    if self.is_bgcolor(str(changedAttributesValues[i][a])):
+                        kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    else:
+                        valid = False
+            if valid and len(kwargs) > 0:
+                cache = QgsVectorLayerCache(lyr, 10000)
+                feat = QgsFeature()
+                cache.featureAtId(i, feat)
+                featId = int(feat['id'])
+                 # have to see the API
+                self.handler.update_tag(featId, refresh=False, **kwargs)
+                cache.removeCachedFeature(feat.id())
 
     def parse_bgcolor(self, bgcolor):
         if not bgcolor.startswith('#'):
@@ -482,6 +494,8 @@ class PluginMapotempoLayer:
         for layer in layers: #a little bit long
             if layer in self.layerTab:
                 if layer.name() == self.translate.tr("planning"):
+                    layer.committedAttributeValuesChanges.disconnect()
+                elif layer.name() == self.translate.tr("tags"):
                     layer.committedAttributeValuesChanges.disconnect()
                 QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
         self.layerTab = []
