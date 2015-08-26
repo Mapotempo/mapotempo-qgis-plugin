@@ -204,7 +204,36 @@ class PluginMapotempoHandle:
         self.layer_inst.iface.messageBar().pushMessage(
             self.translate.tr("Done"), duration=3, level=QgsMessageBar.INFO)
         self.dock.label_5.setText(self.translate.tr("Done"))
-        
+
+    def HandleApplyZoning(self):
+        self.layer_inst.iface.messageBar().pushMessage(
+            self.translate.tr("Processing"), duration=1, level=QgsMessageBar.INFO)
+        index = self.dock.comboBox.currentIndex()
+        id_planning = self.dock.comboBox.itemData(index)
+        if id_planning:
+            index2 = self.dock.comboBox_2.currentIndex()
+            try:
+                id_zoning = int(self.dock.comboBox_2.itemData(index2))
+            except:
+                return
+            layers = self.layer_inst.iface.legendInterface().layers()
+            for layer in layers:
+                if layer.name() == self.translate.tr('planning'):
+                    lyr = layer
+                    break
+            for feature in lyr.getFeatures():
+                try:
+                    old_id_zoning = int(feature.attribute('zoning_id'))
+                except:
+                    old_id_zoning = None
+                if old_id_zoning == id_zoning:
+                    return
+                else:
+                    response = PlanningsApi(self.client).update_planning(id=id_planning, zoning_id=id_zoning)
+                    self.layer_inst.refresh()
+        self.layer_inst.iface.messageBar().pushMessage(
+            self.translate.tr("Done"), duration=3, level=QgsMessageBar.INFO)
+
     def getPlanningsId(self, id_plan):
         lyr = None
         self.handleButtonGeneric(
@@ -289,8 +318,12 @@ class PluginMapotempoHandle:
                     self.id_zone = int(feature.attribute('zoning_id'))
                 except:
                     self.id_zone = None
+        self.dock.comboBox_2.addItem(
+            self.translate.tr("Choose zoning to apply"), None)
         for feature in zoningLayer.getFeatures():
             self.id_zones_tab.append(int(feature.attribute('id')))
+            self.dock.comboBox_2.addItem(
+                self.translate.tr("Zoning")+ ' ' + feature.attribute('name'), int(feature.attribute('id')))
 
     def listPlannings(self):
         try:
@@ -307,6 +340,7 @@ class PluginMapotempoHandle:
             jsondata = self.client.sanitize_for_serialization(data)
 
             self.dock.comboBox.clear()
+            self.dock.comboBox_2.clear()
             self.dock.comboBox.addItem(
                 self.translate.tr("Clic to choose a planning"), None)
 

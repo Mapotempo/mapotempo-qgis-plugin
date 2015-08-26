@@ -82,6 +82,7 @@ class PluginMapotempo:
         self.dock.pushButton_2.clicked.connect(self.layer_inst.refresh)
         self.dock.pushButton_4.clicked.connect(self.handle.HandleParam)
         self.dock.comboBox.activated.connect(self.handle.HandleSelect)
+        self.dock.pushButton_3.clicked.connect(self.handle.HandleApplyZoning)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dock)
         self.handle.keyConnection = self.handle.s.value("PluginMapotempo/key")
         self.handle.hostConnection = self.handle.s.value("PluginMapotempo/host")

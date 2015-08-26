@@ -138,6 +138,15 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.comboBox = QtGui.QComboBox(self.dockWidgetContents)
         self.comboBox.setObjectName(_fromUtf8("comboBox"))
         self.verticalLayout.addWidget(self.comboBox)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.comboBox_2 = QtGui.QComboBox(self.dockWidgetContents)
+        self.comboBox_2.setObjectName(_fromUtf8("comboBox_2"))
+        self.horizontalLayout.addWidget(self.comboBox_2)
+        self.pushButton_3 = QtGui.QPushButton(self.dockWidgetContents)
+        self.pushButton_3.setObjectName(_fromUtf8("pushButton_3"))
+        self.horizontalLayout.addWidget(self.pushButton_3)
+        self.verticalLayout.addLayout(self.horizontalLayout)
         self.treeView = QCustomTreeView()
         self.treeView.setObjectName(_fromUtf8("treeView"))
         self.treeView.setDragEnabled(True)
@@ -259,6 +268,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.pushButton.setText(_translate("DockWidget", "Connection", None))
         self.pushButton_4.setText(_translate("DockWidget", "Parameter", None))
         self.pushButton_5.setText(_translate("DockWidget", "Optimize all", None))
+        self.pushButton_3.setText(_translate("DockWidget", "Apply zoning", None))
 
     def resolve(self, name, basepath=None):
         if not basepath:

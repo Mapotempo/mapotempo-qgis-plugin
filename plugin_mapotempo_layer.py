@@ -646,6 +646,7 @@ class PluginMapotempoLayer:
 
     def refresh(self):
         self.dock.comboBox.clear()
+        self.dock.comboBox_2.clear()
         self.dock.model.clear()
         self.clearLayer()
         self.handler.listPlannings()
@@ -1033,7 +1034,7 @@ class PluginMapotempoLayer:
                         layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'DateTime')
                 if layer.name() == self.translate.tr("routes") and field.name() != 'color':
                     layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
-                if layer.name() == self.translate.tr("zonings") and field.name() != 'zones':
+                if layer.name() == self.translate.tr("zonings") and field.name() == 'zones':
                     layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
                 if layer.name() == self.translate.tr("Stops") and field.name() != 'active':
                     layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
