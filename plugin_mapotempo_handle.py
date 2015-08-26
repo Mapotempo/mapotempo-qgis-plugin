@@ -218,10 +218,16 @@ class PluginMapotempoHandle:
         self.getRoutes(id_plan)
 
     def getRoutes(self, id_plan):
+        lyr = None
         self.handleButtonGeneric(
             PlanningsApi(self.client).get_routes(planning_id=id_plan),
             SwaggerMapo.models.V01Route,
             self.translate.tr("routes"))
+        layers = self.layer_inst.iface.legendInterface().layers()
+        for layer in layers:
+            if layer.name() == self.translate.tr('routes'):
+                lyr = layer
+        lyr.committedAttributeValuesChanges.connect(self.layer_inst.changeRouteAttributes)
 
     def getStops(self, id_plan):
         try:

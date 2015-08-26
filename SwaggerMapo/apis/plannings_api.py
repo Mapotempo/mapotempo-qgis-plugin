@@ -992,8 +992,9 @@ class PlanningsApi(object):
 
         :param str planning_id: Id or the ref field value, then use \"ref:[value]\". (required)
         :param int id:  (required)
-        :param bool hidden:
-        :param bool locked:
+        :param bool hidden:  
+        :param bool locked:  
+        :param str color:  
 
         :return: V01Route
         """
@@ -1006,7 +1007,7 @@ class PlanningsApi(object):
         if id is None:
             raise ValueError("Missing the required parameter `id` when calling `update_route`")
 
-        all_params = ['planning_id', 'id', 'hidden', 'locked']
+        all_params = ['planning_id', 'id', 'hidden', 'locked', 'color']
 
         params = locals()
         for key, val in iteritems(params['kwargs']):
@@ -1021,10 +1022,10 @@ class PlanningsApi(object):
         path_params = {}
 
         if 'planning_id' in params:
-            path_params['planning_id'] = params['planning_id']
+            path_params['planning_id'] = params['planning_id']  
 
         if 'id' in params:
-            path_params['id'] = params['id']
+            path_params['id'] = params['id']  
 
         query_params = {}
 
@@ -1035,9 +1036,12 @@ class PlanningsApi(object):
 
         if 'hidden' in params:
             form_params['hidden'] = params['hidden']
-
+        
         if 'locked' in params:
             form_params['locked'] = params['locked']
+
+        if 'color' in params:
+            form_params['color'] = params['color']
 
         body_params = None
 
@@ -1047,7 +1051,7 @@ class PlanningsApi(object):
             del header_params['Accept']
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type([])
+        header_params['Content-Type'] = self.api_client.select_header_content_type(['application/x-www-form-urlencoded'])
 
         # Authentication setting
         auth_settings = ['api_key']

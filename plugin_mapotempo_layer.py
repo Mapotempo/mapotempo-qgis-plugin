@@ -266,7 +266,7 @@ class PluginMapotempoLayer:
                     except:
                         vehicleId = None
                     if vehicleId:
-                        self.handler.update_color_route(routeId, featId, refresh=False)
+                        self.handler.update_color_route(featId, changedAttributesValues[i][a], refresh=False)
                     cache.removeCachedFeature(feat.id())
 
     def changePlanningAttributes(self, layerId, changedAttributesValues):
@@ -349,8 +349,11 @@ class PluginMapotempoLayer:
             for a in changedAttributesValues[i]:
                 if unicode(fields[a].name()) == u'label':
                     kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
-                # elif unicode(fields[a].name()) == u'icon':
-                #     kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                elif unicode(fields[a].name()) == u'icon':
+                    if self.is_icon_valid(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    else:
+                        valid = False
                 elif unicode(fields[a].name()) == u'color':
                     if self.is_bgcolor(str(changedAttributesValues[i][a])):
                         kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
@@ -364,6 +367,13 @@ class PluginMapotempoLayer:
                  # have to see the API
                 self.handler.update_tag(featId, refresh=False, **kwargs)
                 cache.removeCachedFeature(feat.id())
+                #mesage todo
+
+    def is_icon_valid(self, icon):
+        if unicode(icon) == u'diamon' | unicode(icon) == u'square' | unicode(icon) == u'square':
+            return True
+        else:
+            return False
 
     def parse_bgcolor(self, bgcolor):
         if not bgcolor.startswith('#'):
@@ -496,6 +506,8 @@ class PluginMapotempoLayer:
                 if layer.name() == self.translate.tr("planning"):
                     layer.committedAttributeValuesChanges.disconnect()
                 elif layer.name() == self.translate.tr("tags"):
+                    layer.committedAttributeValuesChanges.disconnect()
+                elif layer.name() == self.translate.tr("routes"):
                     layer.committedAttributeValuesChanges.disconnect()
                 QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
         self.layerTab = []
