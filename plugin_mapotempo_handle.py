@@ -56,6 +56,11 @@ class PluginMapotempoHandle:
             SwaggerMapo.models.V01Destination,
             self.translate.tr("destinations"),
             'destination')
+        layers = self.layer_inst.iface.legendInterface().layers()
+        for layer in layers:
+            if layer.name() == self.translate.tr('destinations'):
+                lyr = layer
+        lyr.committedAttributeValuesChanges.connect(self.layer_inst.changeDestinationAttributes)
 
     def handleButtonStores(self):
         self.handleButtonGeoGeneric(
@@ -362,6 +367,11 @@ class PluginMapotempoHandle:
 
     def update_vehicle(self, vehicleId, refresh=True, **kwargs):
         response = VehiclesApi(self.client).update_vehicle(id=vehicleId, **kwargs)
+        if refresh:#bug table editing
+            self.layer_inst.refresh()
+
+    def update_destination(self, destinationId, refresh=True, **kwargs):
+        response = DestinationsApi(self.client).update_destination(id=destinationId, **kwargs)
         if refresh:#bug table editing
             self.layer_inst.refresh()
 

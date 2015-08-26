@@ -210,7 +210,6 @@ class PluginMapotempoLayer:
     def changeVehicleAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
         fields = lyr.pendingFields()
-        print changedAttributesValues
         for i in changedAttributesValues:
             kwargs = {}
             valid = True
@@ -268,7 +267,6 @@ class PluginMapotempoLayer:
     def changeStopAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
         fields = lyr.pendingFields()
-        print changedAttributesValues
         for i in changedAttributesValues:
             for a in changedAttributesValues[i]:
                 if unicode(fields[a].name()) != u'active':
@@ -288,7 +286,6 @@ class PluginMapotempoLayer:
     def changeRouteAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
         fields = lyr.pendingFields()
-        print changedAttributesValues
         for i in changedAttributesValues:
             for a in changedAttributesValues[i]:
                 if unicode(fields[a].name()) != u'color':
@@ -309,7 +306,6 @@ class PluginMapotempoLayer:
     def changePlanningAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
         fields = lyr.pendingFields()
-        print changedAttributesValues
         for i in changedAttributesValues:
             kwargs = {}
             valid = True
@@ -337,21 +333,70 @@ class PluginMapotempoLayer:
     def changeDestinationAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
         fields = lyr.pendingFields()
-        print changedAttributesValues
         for i in changedAttributesValues:
+            kwargs = {}
+            valid = True
             for a in changedAttributesValues[i]:
                 if unicode(fields[a].name()) == u'name':
-                    cache = QgsVectorLayerCache(lyr, 10000)
-                    feat = QgsFeature()
-                    cache.featureAtId(i, feat)
-                     # have to see the API
-                    self.handler.update_destination(routeId, featId, refresh=False)
-                    cache.removeCachedFeature(feat.id())
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'comment':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'city':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'ref':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'details':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'street':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'postalcode':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'take_over':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'open':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'close':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'take_over_default':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'lat':
+                    if self.is_float(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                    else:
+                        valid = False
+                elif unicode(fields[a].name()) == u'lng':
+                    if self.is_float(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                    else:
+                        valid = False
+                elif unicode(fields[a].name()) == u'quantity':
+                    if self.is_float(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                    elif not changedAttributesValues[i][a]:
+                        kwargs[str(fields[a].name())] = None
+                    else:
+                        valid = False
+                elif unicode(fields[a].name()) == u'speed_multiplicator':
+                    if self.is_float(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                    elif not changedAttributesValues[i][a]:
+                        kwargs[str(fields[a].name())] = None
+                    else:
+                        valid = False
+
+            if valid and len(kwargs) > 0:
+                cache = QgsVectorLayerCache(lyr, 10000)
+                feat = QgsFeature()
+                cache.featureAtId(i, feat)
+                featId = int(feat['id'])
+                 # have to see the API
+                self.handler.update_destination(featId, refresh=False, **kwargs)
+                cache.removeCachedFeature(feat.id())
+                #mesage todo
 
     def changeStoreAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
         fields = lyr.pendingFields()
-        print changedAttributesValues
         for i in changedAttributesValues:
             kwargs = {}
             valid = True
@@ -396,7 +441,6 @@ class PluginMapotempoLayer:
     def changeProductAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
         fields = lyr.pendingFields()
-        print changedAttributesValues
         for i in changedAttributesValues:
             for a in changedAttributesValues[i]:
                 if unicode(fields[a].name()) == u'name':
@@ -410,7 +454,6 @@ class PluginMapotempoLayer:
     def changeTagAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
         fields = lyr.pendingFields()
-        print changedAttributesValues
         for i in changedAttributesValues:
             kwargs = {}
             valid = True
@@ -580,6 +623,8 @@ class PluginMapotempoLayer:
                 elif layer.name() == self.translate.tr("store"):
                     layer.committedAttributeValuesChanges.disconnect()
                 elif layer.name() == self.translate.tr("vehicles"):
+                    layer.committedAttributeValuesChanges.disconnect()
+                elif layer.name() == self.translate.tr("destinations"):
                     layer.committedAttributeValuesChanges.disconnect()
                 QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
         self.layerTab = []
