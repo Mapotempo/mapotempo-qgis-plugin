@@ -212,21 +212,58 @@ class PluginMapotempoLayer:
         fields = lyr.pendingFields()
         print changedAttributesValues
         for i in changedAttributesValues:
+            kwargs = {}
+            valid = True
             for a in changedAttributesValues[i]:
-                if unicode(fields[a].name()) == u'color':
-                    continue#todo
-                    if is_bgcolor(changedAttributesValues[i][a]):
-                        cache = QgsVectorLayerCache(lyr, 10000)
-                        feat = QgsFeature()
-                        cache.featureAtId(i, feat)
-                        featId = int(feat['id'])
-                        try:
-                            vehicleId = int(feat['vehicle_id'])
-                        except:
-                            vehicleId = None
-                        if vehicleId:
-                            self.handler.update_vehicle(routeId, featId, refresh=False)
-                        cache.removeCachedFeature(feat.id())
+                if unicode(fields[a].name()) == u'name':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'color':
+                    if self.is_bgcolor(changedAttributesValues[i][a].encode('utf8')):
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                    else:
+                        valid = False
+                elif unicode(fields[a].name()) == u'rest_stop':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'rest_start':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'close':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'open':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'rest_duration':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                elif unicode(fields[a].name()) == u'capacity':
+                    if self.is_float(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                    else:
+                        valid = False
+                elif unicode(fields[a].name()) == u'consumption':
+                    if self.is_float(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                    else:
+                        valid = False
+                elif unicode(fields[a].name()) == u'emission':
+                    if self.is_float(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                    else:
+                        valid = False
+                elif unicode(fields[a].name()) == u'speed_multiplicator':
+                    if self.is_float(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+                    elif not changedAttributesValues[i][a]:
+                        kwargs[str(fields[a].name())] = None
+                    else:
+                        valid = False
+
+            if valid and len(kwargs) > 0:
+                cache = QgsVectorLayerCache(lyr, 10000)
+                feat = QgsFeature()
+                cache.featureAtId(i, feat)
+                featId = int(feat['id'])
+                 # have to see the API
+                self.handler.update_vehicle(featId, refresh=False, **kwargs)
+                cache.removeCachedFeature(feat.id())
+                #mesage todo
 
     def changeStopAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
@@ -278,12 +315,12 @@ class PluginMapotempoLayer:
             valid = True
             for a in changedAttributesValues[i]:
                 if unicode(fields[a].name()) == u'name':
-                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                 elif unicode(fields[a].name()) == u'ref':
-                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                 elif unicode(fields[a].name()) == u'date':
                     if self.is_date_correct(changedAttributesValues[i][a]):
-                        kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                     else:
                         valid = False
             if valid and len(kwargs) > 0:
@@ -320,21 +357,21 @@ class PluginMapotempoLayer:
             valid = True
             for a in changedAttributesValues[i]:
                 if unicode(fields[a].name()) == u'city':
-                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                 elif unicode(fields[a].name()) == u'name':
-                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                 elif unicode(fields[a].name()) == u'postalcode':
-                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                 elif unicode(fields[a].name()) == u'street':
-                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                 elif unicode(fields[a].name()) == u'lat':
                     if self.is_float(changedAttributesValues[i][a]):
-                        kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                     else:
                         valid = False
                 elif unicode(fields[a].name()) == u'lng':
                     if self.is_float(changedAttributesValues[i][a]):
-                        kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                     else:
                         valid = False
 
@@ -379,15 +416,15 @@ class PluginMapotempoLayer:
             valid = True
             for a in changedAttributesValues[i]:
                 if unicode(fields[a].name()) == u'label':
-                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                 elif unicode(fields[a].name()) == u'icon':
                     if self.is_icon_valid(changedAttributesValues[i][a]):
-                        kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                     else:
                         valid = False
                 elif unicode(fields[a].name()) == u'color':
-                    if self.is_bgcolor(str(changedAttributesValues[i][a])):
-                        kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    if self.is_bgcolor(changedAttributesValues[i][a].encode('utf8')):
+                        kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
                     else:
                         valid = False
             if valid and len(kwargs) > 0:
@@ -541,6 +578,8 @@ class PluginMapotempoLayer:
                 elif layer.name() == self.translate.tr("routes"):
                     layer.committedAttributeValuesChanges.disconnect()
                 elif layer.name() == self.translate.tr("store"):
+                    layer.committedAttributeValuesChanges.disconnect()
+                elif layer.name() == self.translate.tr("vehicles"):
                     layer.committedAttributeValuesChanges.disconnect()
                 QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
         self.layerTab = []
@@ -941,6 +980,11 @@ class PluginMapotempoLayer:
         for layer in self.layerTab:
             fields = layer.pendingFields()
             for field in fields:
+                if layer.name() == self.translate.tr("vehicles"):
+                    if field.name() == 'close' or field.name() == 'open' or field.name() == 'rest_start' or field.name() == 'rest_stop' or field.name() == 'rest_duration':
+                        fieldName = layer.fieldNameIndex(field.name())
+                        layer.setEditorWidgetV2(fieldName, 'DateTime')
+                        layer.setEditorWidgetV2Config(fieldName, {'display_format': 'yyyy-MM-dd HH:mm:ss', 'allow_null': True, 'field_format': 'yyyy-MM-ddTHH:mm:ss', 'calendar_popup': False})
                 if layer.name() == self.translate.tr("planning"):
                     if field.name() == 'route_ids':
                         layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')

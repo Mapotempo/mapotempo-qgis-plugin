@@ -253,6 +253,11 @@ class PluginMapotempoHandle:
             VehiclesApi(self.client).get_vehicles(),
             SwaggerMapo.models.V01Vehicle,
             self.translate.tr("vehicles"))
+        layers = self.layer_inst.iface.legendInterface().layers()
+        for layer in layers:
+            if layer.name() == self.translate.tr('vehicles'):
+                lyr = layer
+        lyr.committedAttributeValuesChanges.connect(self.layer_inst.changeVehicleAttributes)
 
     def getZonings(self):
         self.handleButtonGeneric(
@@ -352,6 +357,11 @@ class PluginMapotempoHandle:
 
     def update_store(self, storeId, refresh=True, **kwargs):
         response = StoresApi(self.client).update_store(id=storeId, **kwargs)
+        if refresh:#bug table editing
+            self.layer_inst.refresh()
+
+    def update_vehicle(self, vehicleId, refresh=True, **kwargs):
+        response = VehiclesApi(self.client).update_vehicle(id=vehicleId, **kwargs)
         if refresh:#bug table editing
             self.layer_inst.refresh()
 
