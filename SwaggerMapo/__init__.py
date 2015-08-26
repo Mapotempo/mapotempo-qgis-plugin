@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 # import models into sdk package
 from .models.v01_destination import V01Destination
-from .models.v01_product import V01Product
 from .models.v01_store import V01Store
 from .models.v01_customer import V01Customer
 from .models.v01_order import V01Order
@@ -18,7 +17,6 @@ from .models.v01_zoning import V01Zoning
 # import apis into sdk package
 from .apis.tags_api import TagsApi
 from .apis.customers_api import CustomersApi
-from .apis.products_api import ProductsApi
 from .apis.destinations_api import DestinationsApi
 from .apis.geocoder_api import GeocoderApi
 from .apis.vehicles_api import VehiclesApi

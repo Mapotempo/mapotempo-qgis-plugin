@@ -438,19 +438,6 @@ class PluginMapotempoLayer:
         else:
             return True
 
-    def changeProductAttributes(self, layerId, changedAttributesValues):
-        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
-        fields = lyr.pendingFields()
-        for i in changedAttributesValues:
-            for a in changedAttributesValues[i]:
-                if unicode(fields[a].name()) == u'name':
-                    cache = QgsVectorLayerCache(lyr, 10000)
-                    feat = QgsFeature()
-                    cache.featureAtId(i, feat)
-                     # have to see the API
-                    self.handler.update_product(routeId, featId, refresh=False)
-                    cache.removeCachedFeature(feat.id())
-
     def changeTagAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
         fields = lyr.pendingFields()

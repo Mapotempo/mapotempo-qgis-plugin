@@ -8,7 +8,6 @@ import json
 import SwaggerMapo
 from SwaggerMapo import configuration
 from SwaggerMapo.apis import TagsApi
-from SwaggerMapo.apis import ProductsApi
 from SwaggerMapo.apis import DestinationsApi
 from SwaggerMapo.apis import PlanningsApi
 from SwaggerMapo.apis import StoresApi
@@ -42,13 +41,6 @@ class PluginMapotempoHandle:
             if layer.name() == self.translate.tr('tags'):
                 lyr = layer
         lyr.committedAttributeValuesChanges.connect(self.layer_inst.changeTagAttributes)
-
-    def handleButtonProd(self):
-        """action after Products clic"""
-        self.handleButtonGeneric(
-            ProductsApi(self.client).get_products(),
-            SwaggerMapo.models.V01Product,
-            self.translate.tr("prod"))
 
     def handleButtonDest(self):
         self.handleButtonGeoGeneric(
@@ -176,7 +168,6 @@ class PluginMapotempoHandle:
             if self.client:
                 self.dock.model.clear()
                 self.handleButtonTags()
-                self.handleButtonProd()
                 self.handleButtonStores()
                 self.handleButtonDest()
 

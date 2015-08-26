@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 # import models into model package
 from .v01_destination import V01Destination
-from .v01_product import V01Product
 from .v01_store import V01Store
 from .v01_customer import V01Customer
 from .v01_order import V01Order
