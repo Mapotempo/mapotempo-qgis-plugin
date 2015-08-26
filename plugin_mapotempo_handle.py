@@ -63,6 +63,11 @@ class PluginMapotempoHandle:
             SwaggerMapo.models.V01Store,
             self.translate.tr("store"),
             'store')
+        layers = self.layer_inst.iface.legendInterface().layers()
+        for layer in layers:
+            if layer.name() == self.translate.tr('store'):
+                lyr = layer
+        lyr.committedAttributeValuesChanges.connect(self.layer_inst.changeStoreAttributes)
 
     def handleButtonGeneric(self, get, model, name):
         """generic action after clic"""
@@ -341,8 +346,12 @@ class PluginMapotempoHandle:
             self.layer_inst.refresh()
 
     def update_tag(self, tagId, refresh=True, **kwargs):
-        print kwargs
         response = TagsApi(self.client).update_tag(id=tagId, **kwargs)
+        if refresh:#bug table editing
+            self.layer_inst.refresh()
+
+    def update_store(self, storeId, refresh=True, **kwargs):
+        response = StoresApi(self.client).update_store(id=storeId, **kwargs)
         if refresh:#bug table editing
             self.layer_inst.refresh()
 

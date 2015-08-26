@@ -316,14 +316,45 @@ class PluginMapotempoLayer:
         fields = lyr.pendingFields()
         print changedAttributesValues
         for i in changedAttributesValues:
+            kwargs = {}
+            valid = True
             for a in changedAttributesValues[i]:
-                if unicode(fields[a].name()) == u'name':
-                    cache = QgsVectorLayerCache(lyr, 10000)
-                    feat = QgsFeature()
-                    cache.featureAtId(i, feat)
-                     # have to see the API
-                    self.handler.update_store(routeId, featId, refresh=False)
-                    cache.removeCachedFeature(feat.id())
+                if unicode(fields[a].name()) == u'city':
+                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                elif unicode(fields[a].name()) == u'name':
+                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                elif unicode(fields[a].name()) == u'postalcode':
+                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                elif unicode(fields[a].name()) == u'street':
+                    kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                elif unicode(fields[a].name()) == u'lat':
+                    if self.is_float(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    else:
+                        valid = False
+                elif unicode(fields[a].name()) == u'lng':
+                    if self.is_float(changedAttributesValues[i][a]):
+                        kwargs[str(fields[a].name())] = unicode(changedAttributesValues[i][a])
+                    else:
+                        valid = False
+
+            if valid and len(kwargs) > 0:
+                cache = QgsVectorLayerCache(lyr, 10000)
+                feat = QgsFeature()
+                cache.featureAtId(i, feat)
+                featId = int(feat['id'])
+                 # have to see the API
+                self.handler.update_store(featId, refresh=False, **kwargs)
+                cache.removeCachedFeature(feat.id())
+                #mesage todo
+
+    def is_float(self, number):
+        try:
+            float(number)
+        except:
+            return False
+        else:
+            return True
 
     def changeProductAttributes(self, layerId, changedAttributesValues):
         lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
@@ -508,6 +539,8 @@ class PluginMapotempoLayer:
                 elif layer.name() == self.translate.tr("tags"):
                     layer.committedAttributeValuesChanges.disconnect()
                 elif layer.name() == self.translate.tr("routes"):
+                    layer.committedAttributeValuesChanges.disconnect()
+                elif layer.name() == self.translate.tr("store"):
                     layer.committedAttributeValuesChanges.disconnect()
                 QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
         self.layerTab = []

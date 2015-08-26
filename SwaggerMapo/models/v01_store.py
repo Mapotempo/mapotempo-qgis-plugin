@@ -38,8 +38,6 @@ class V01Store(object):
             'city': 'str',
             'lat': 'float',
             'lng': 'float',
-            'open': 'datetime',
-            'close': 'datetime'
         }
 
         self.attribute_map = {
@@ -50,8 +48,6 @@ class V01Store(object):
             'city': 'city',
             'lat': 'lat',
             'lng': 'lng',
-            'open': 'open',
-            'close': 'close'
         }
 
 
@@ -74,12 +70,6 @@ class V01Store(object):
 
 
         self.lng = None  # float
-
-
-        self.open = None  # DateTime
-
-
-        self.close = None  # DateTime
 
 
     def __repr__(self):
