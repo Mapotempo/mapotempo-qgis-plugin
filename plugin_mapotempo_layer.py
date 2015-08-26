@@ -1030,6 +1030,11 @@ class PluginMapotempoLayer:
                         fieldName = layer.fieldNameIndex(field.name())
                         layer.setEditorWidgetV2(fieldName, 'DateTime')
                         layer.setEditorWidgetV2Config(fieldName, {'display_format': 'yyyy-MM-dd HH:mm:ss', 'allow_null': True, 'field_format': 'yyyy-MM-ddTHH:mm:ss', 'calendar_popup': False})
+                if layer.name() == self.translate.tr("destinations"):
+                    if field.name() == 'close' or field.name() == 'open' or field.name() == 'take_over' or field.name() == 'take_over_default':
+                        fieldName = layer.fieldNameIndex(field.name())
+                        layer.setEditorWidgetV2(fieldName, 'DateTime')
+                        layer.setEditorWidgetV2Config(fieldName, {'display_format': 'yyyy-MM-dd HH:mm:ss', 'allow_null': True, 'field_format': 'yyyy-MM-ddTHH:mm:ss', 'calendar_popup': False})
                 if layer.name() == self.translate.tr("planning"):
                     if field.name() == 'route_ids':
                         layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
