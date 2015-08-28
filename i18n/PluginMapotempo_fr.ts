@@ -30,6 +30,10 @@
 <context>
     <name>PluginMapotempo</name>
     <message>
+          <source>Choose zoning to apply</source>
+          <translation>Choisir zonage</translation>
+    </message>
+    <message>
           <source>Connection problem</source>
           <translation>Problème de connexion</translation>
     </message>
@@ -124,6 +128,10 @@
     <message>
         <source>Planning choice</source>
         <translation>Choix Planning</translation>
+    </message>
+    <message>
+        <source>Apply zoning</source>
+        <translation>Appliquer zonage</translation>
     </message>
     <message>
         <source>label_4</source>
