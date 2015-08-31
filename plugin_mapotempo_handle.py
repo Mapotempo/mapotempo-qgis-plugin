@@ -28,7 +28,7 @@ class PluginMapotempoHandle:
         self.client = None
         self.id_plan = None
         self.id_zone = None
-        self.id_zones_tab = []
+        self.id_zones_tab = {}
 
     def handleButtonTags(self):
         """action after Tags clic"""
@@ -304,7 +304,6 @@ class PluginMapotempoHandle:
                     self.layer_inst.drawZone(row['zones'], row['name'], row['id'])
 
     def getZoneId(self, id_plan):
-        self.id_zones_tab = []
         layers = self.layer_inst.iface.legendInterface().layers()
         planningLayer, zoningLayer = None, None
         for layer in layers:
@@ -321,7 +320,15 @@ class PluginMapotempoHandle:
         self.dock.comboBox_2.addItem(
             self.translate.tr("Choose zoning to apply"), None)
         for feature in zoningLayer.getFeatures():
-            self.id_zones_tab.append(int(feature.attribute('id')))
+            zones = feature.attribute('zones')
+            try:
+                zones = eval('[' + zones + ']')
+            except:
+                zones = [[]]
+            zonesTab = []
+            for zone in zones[0]:
+                zonesTab.append(int(zone['id']))
+            self.id_zones_tab[int(feature.attribute('id'))] = zonesTab
             self.dock.comboBox_2.addItem(
                 self.translate.tr("Zoning")+ ' ' + feature.attribute('name'), int(feature.attribute('id')))
 
@@ -397,6 +404,34 @@ class PluginMapotempoHandle:
 
     def update_destination(self, destinationId, refresh=True, **kwargs):
         response = DestinationsApi(self.client).update_destination(id=destinationId, **kwargs)
+        if refresh:#bug table editing
+            self.layer_inst.refresh()
+# [{
+# "id": 442,
+# "vehicle_id":46,
+# "polygon": {
+#           "type": "Feature",
+#           "properties": {},
+#           "geometry": {
+#             "type": "Polygon",
+#             "coordinates": [[[(-0.60605,44.8433), (-0.613131,44.8347), (-0.597296,44.8162), (-0.546827,44.8158), (-0.541334,44.842), (-0.569487,44.8576), (-0.60605,44.8433)]]]}}
+# }
+# ]
+    def update_geo_zone(self, id_zone, vehicleId, polygon, refresh=True, **kwargs):
+        zone = SwaggerMapo.models.V01Zone()
+        zone.id = id_zone
+        zone.vehicle_id = vehicleId
+        zone.polygon = polygon
+        zoningId = None
+        for zoning in self.id_zones_tab:
+            if id_zone in self.id_zones_tab[zoning]:
+                zoningId = zoning
+                break
+        print zoningId
+        print id_zone
+        print vehicleId
+        print polygon
+        response = ZoningsApi(self.client).update_zoning(id=zoningId, zones=zone)
         if refresh:#bug table editing
             self.layer_inst.refresh()
 

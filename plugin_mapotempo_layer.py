@@ -544,6 +544,27 @@ class PluginMapotempoLayer:
             if not self.handler.id_zone == idToDraw:
                 self.desactive(layer)
         self.addIcon(layer, 'zone')
+        layer.committedGeometriesChanges.connect(self.changeZoneAttributes)
+
+    def changeZoneAttributes(self, layerId, changedGeometries):
+        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
+        for geo in changedGeometries:
+            polygon = str(changedGeometries[geo].asPolygon())
+            if len(polygon) == 2: # [] is two caracters
+                polygon = str(changedGeometries[geo].asMultiPolygon())
+            cache = QgsVectorLayerCache(lyr, 10000)
+            feat = QgsFeature()
+            cache.featureAtId(geo, feat)
+            try:
+                vehicleId = int(feat['vehicle_id'])
+            except:
+                vehicleId = None
+            try:
+                id_zone = int(feat['id'])
+            except:
+                id_zone = None
+            self.handler.update_geo_zone(id_zone, vehicleId, polygon, refresh=False)
+            cache.removeCachedFeature(feat.id())
 
     # def switchActive(self, layer):
     #     root = QgsProject.instance().layerTreeRoot()
@@ -613,6 +634,8 @@ class PluginMapotempoLayer:
                     layer.committedAttributeValuesChanges.disconnect()
                 elif layer.name() == self.translate.tr("destinations"):
                     layer.committedAttributeValuesChanges.disconnect()
+                elif layer.name().split(' ')[0] == self.translate.tr("Zoning"):
+                    layer.committedGeometriesChanges.disconnect()
                 QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
         self.layerTab = []
         self.dock.label_5.setText(self.translate.tr("Done"))
@@ -675,6 +698,7 @@ class PluginMapotempoLayer:
                 vehiclesLayer = layer
 
         for zoneLayer in zoneLayers:
+            indexesBefore = zoneLayer.pendingAllAttributesList()
             info = QgsVectorJoinInfo()
             info.joinLayerId = vehiclesLayer.id()
             info.joinFieldName = "id"
@@ -684,8 +708,8 @@ class PluginMapotempoLayer:
 
             categories = []
             alreadyHere = []
-            indexes = zoneLayer.pendingAllAttributesList()
-            for i in indexes:
+            indexesAfter = zoneLayer.pendingAllAttributesList()
+            for i in range(len(indexesBefore), len(indexesAfter)):
                 zoneLayer.setEditorWidgetV2(i, 'Hidden')
             for feature in zoneLayer.getFeatures():
                 vehicle_name = feature.attribute(
@@ -1039,4 +1063,16 @@ class PluginMapotempoLayer:
                 if layer.name() == self.translate.tr("Stops") and field.name() != 'active':
                     layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
                 if field.name().split('_').pop() == 'id' or field.name() == 'stop_trace' or field.name() == 'stops':
-                    layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
+                    if not (field.name() == 'vehicle_id' and layer.name().split(' ')[0] == self.translate.tr("Zoning")):
+                        layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'Hidden')
+                if layer.name().split(' ')[0] == self.translate.tr("Zoning"):
+                    if field.name() == 'vehicle_id':
+                        fieldName = layer.fieldNameIndex(field.name())
+                        layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'ValueMap')
+                        dictVehicleValueMap = {}
+                        for layer2 in self.layerTab:
+                            if layer2.name() == self.translate.tr("vehicles"):
+                                for feature in layer2.getFeatures():
+                                    dictVehicleValueMap[feature.attribute('name')] = feature.attribute('id')
+                            
+                        layer.setEditorWidgetV2Config(layer.fieldNameIndex(field.name()), dictVehicleValueMap)
