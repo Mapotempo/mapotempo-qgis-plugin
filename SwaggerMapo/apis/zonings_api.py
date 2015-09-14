@@ -39,18 +39,19 @@ class ZoningsApi(object):
             if not configuration.api_client:
                 configuration.api_client = ApiClient('http://beta.app.mapotempo.com/api')
             self.api_client = configuration.api_client
-
-
+    
+    
     def get_zonings(self, **kwargs):
         """
         Fetch customer's zonings.
+        
 
-
-
+        :param list[int] ids: Select returned zonings by id. 
+        
         :return: list[V01Zoning]
         """
-
-        all_params = []
+        
+        all_params = ['ids']
 
         params = locals()
         for key, val in iteritems(params['kwargs']):
@@ -63,16 +64,19 @@ class ZoningsApi(object):
         method = 'GET'
 
         path_params = {}
-
+        
         query_params = {}
-
+        
+        if 'ids' in params:
+            query_params['ids'] = params['ids']
+        
         header_params = {}
-
+        
         form_params = {}
         files = {}
-
+        
         body_params = None
-
+        
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept([])
         if not header_params['Accept']:
@@ -87,24 +91,24 @@ class ZoningsApi(object):
         response = self.api_client.call_api(resource_path, method, path_params, query_params, header_params,
                                             body=body_params, post_params=form_params, files=files,
                                             response='list[V01Zoning]', auth_settings=auth_settings)
-
+        
         return response
-
+        
     def create_zoning(self, name, **kwargs):
         """
         Create zoning.
-
+        
 
         :param str name:  (required)
-        :param V01Zone zones:
-
+        :param list[V01Zone] zones:  
+        
         :return: V01Zoning
         """
-
+        
         # verify the required parameter 'name' is set
         if name is None:
             raise ValueError("Missing the required parameter `name` when calling `create_zoning`")
-
+        
         all_params = ['name', 'zones']
 
         params = locals()
@@ -118,22 +122,22 @@ class ZoningsApi(object):
         method = 'POST'
 
         path_params = {}
-
+        
         query_params = {}
-
+        
         header_params = {}
-
+        
         form_params = {}
         files = {}
-
+        
         if 'name' in params:
             form_params['name'] = params['name']
-
-        body_params = None
-
+        
         if 'zones' in params:
-            body_params = params['zones']
-
+            form_params['zones'] = params['zones']
+        
+        body_params = None
+        
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept([])
         if not header_params['Accept']:
@@ -148,23 +152,23 @@ class ZoningsApi(object):
         response = self.api_client.call_api(resource_path, method, path_params, query_params, header_params,
                                             body=body_params, post_params=form_params, files=files,
                                             response='V01Zoning', auth_settings=auth_settings)
-
+        
         return response
-
+        
     def delete_zonings(self, ids, **kwargs):
         """
         Delete multiple zonings.
+        
 
-
-        :param list[Integer] ids:  (required)
-
+        :param list[int] ids:  (required)
+        
         :return: str
         """
-
+        
         # verify the required parameter 'ids' is set
         if ids is None:
             raise ValueError("Missing the required parameter `ids` when calling `delete_zonings`")
-
+        
         all_params = ['ids']
 
         params = locals()
@@ -178,19 +182,19 @@ class ZoningsApi(object):
         method = 'DELETE'
 
         path_params = {}
-
+        
         query_params = {}
-
+        
         if 'ids' in params:
             query_params['ids'] = params['ids']
-
+        
         header_params = {}
-
+        
         form_params = {}
         files = {}
-
+        
         body_params = None
-
+        
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept([])
         if not header_params['Accept']:
@@ -205,23 +209,23 @@ class ZoningsApi(object):
         response = self.api_client.call_api(resource_path, method, path_params, query_params, header_params,
                                             body=body_params, post_params=form_params, files=files,
                                             response='str', auth_settings=auth_settings)
-
+        
         return response
-
+        
     def get_zoning(self, id, **kwargs):
         """
         Fetch zoning.
-
+        
 
         :param int id:  (required)
-
+        
         :return: V01Zoning
         """
-
+        
         # verify the required parameter 'id' is set
         if id is None:
             raise ValueError("Missing the required parameter `id` when calling `get_zoning`")
-
+        
         all_params = ['id']
 
         params = locals()
@@ -235,19 +239,19 @@ class ZoningsApi(object):
         method = 'GET'
 
         path_params = {}
-
+        
         if 'id' in params:
-            path_params['id'] = params['id']
-
+            path_params['id'] = params['id']  
+        
         query_params = {}
-
+        
         header_params = {}
-
+        
         form_params = {}
         files = {}
-
+        
         body_params = None
-
+        
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept([])
         if not header_params['Accept']:
@@ -262,25 +266,25 @@ class ZoningsApi(object):
         response = self.api_client.call_api(resource_path, method, path_params, query_params, header_params,
                                             body=body_params, post_params=form_params, files=files,
                                             response='V01Zoning', auth_settings=auth_settings)
-
+        
         return response
-
+        
     def update_zoning(self, id, **kwargs):
         """
         Update zoning.
-
+        
 
         :param int id:  (required)
-        :param str name:
-        :param V01Zone zones:
-
+        :param str name:  
+        :param list[V01Zone] zones:  
+        
         :return: V01Zoning
         """
-
+        
         # verify the required parameter 'id' is set
         if id is None:
             raise ValueError("Missing the required parameter `id` when calling `update_zoning`")
-
+        
         all_params = ['id', 'name', 'zones']
 
         params = locals()
@@ -294,32 +298,32 @@ class ZoningsApi(object):
         method = 'PUT'
 
         path_params = {}
-
+        
         if 'id' in params:
-            path_params['id'] = params['id']
-
+            path_params['id'] = params['id']  
+        
         query_params = {}
-
+        
         header_params = {}
-
+        
         form_params = {}
         files = {}
-
+        
         if 'name' in params:
             form_params['name'] = params['name']
-
-        body_params = None
-
+        
         if 'zones' in params:
-            body_params = params['zones']
-
+            form_params['zones'] = ('', bytes(params['zones']), 'application/json')
+        
+        body_params = None
+        
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept([])
         if not header_params['Accept']:
             del header_params['Accept']
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type([])
+        header_params['Content-Type'] = self.api_client.select_header_content_type(['multipart/form-data'])
 
         # Authentication setting
         auth_settings = ['api_key']
@@ -327,23 +331,23 @@ class ZoningsApi(object):
         response = self.api_client.call_api(resource_path, method, path_params, query_params, header_params,
                                             body=body_params, post_params=form_params, files=files,
                                             response='V01Zoning', auth_settings=auth_settings)
-
+        
         return response
-
+        
     def delete_zoning(self, id, **kwargs):
         """
         Delete zoning.
-
+        
 
         :param int id:  (required)
-
+        
         :return: str
         """
-
+        
         # verify the required parameter 'id' is set
         if id is None:
             raise ValueError("Missing the required parameter `id` when calling `delete_zoning`")
-
+        
         all_params = ['id']
 
         params = locals()
@@ -357,19 +361,19 @@ class ZoningsApi(object):
         method = 'DELETE'
 
         path_params = {}
-
+        
         if 'id' in params:
-            path_params['id'] = params['id']
-
+            path_params['id'] = params['id']  
+        
         query_params = {}
-
+        
         header_params = {}
-
+        
         form_params = {}
         files = {}
-
+        
         body_params = None
-
+        
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept([])
         if not header_params['Accept']:
@@ -384,29 +388,29 @@ class ZoningsApi(object):
         response = self.api_client.call_api(resource_path, method, path_params, query_params, header_params,
                                             body=body_params, post_params=form_params, files=files,
                                             response='str', auth_settings=auth_settings)
-
+        
         return response
-
+        
     def generate_automatic(self, id, planning_id, **kwargs):
         """
         Generate zoning automatically.
-
+        
 
         :param int id:  (required)
         :param int planning_id:  (required)
-        :param int n: Number of produced zones. Default to vehicles number.
-
+        :param int n: Number of produced zones. Default to vehicles number. 
+        
         :return: str
         """
-
+        
         # verify the required parameter 'id' is set
         if id is None:
             raise ValueError("Missing the required parameter `id` when calling `generate_automatic`")
-
+        
         # verify the required parameter 'planning_id' is set
         if planning_id is None:
             raise ValueError("Missing the required parameter `planning_id` when calling `generate_automatic`")
-
+        
         all_params = ['id', 'planning_id', 'n']
 
         params = locals()
@@ -420,25 +424,25 @@ class ZoningsApi(object):
         method = 'PATCH'
 
         path_params = {}
-
+        
         if 'id' in params:
-            path_params['id'] = params['id']
-
+            path_params['id'] = params['id']  
+        
         if 'planning_id' in params:
-            path_params['planning_id'] = params['planning_id']
-
+            path_params['planning_id'] = params['planning_id']  
+        
         query_params = {}
-
+        
         header_params = {}
-
+        
         form_params = {}
         files = {}
-
+        
         if 'n' in params:
             form_params['n'] = params['n']
-
+        
         body_params = None
-
+        
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept([])
         if not header_params['Accept']:
@@ -453,28 +457,28 @@ class ZoningsApi(object):
         response = self.api_client.call_api(resource_path, method, path_params, query_params, header_params,
                                             body=body_params, post_params=form_params, files=files,
                                             response='str', auth_settings=auth_settings)
-
+        
         return response
-
+        
     def generate_from_planning(self, id, planning_id, **kwargs):
         """
         Generate zoning from planning.
-
+        
 
         :param int id:  (required)
         :param int planning_id:  (required)
-
+        
         :return: str
         """
-
+        
         # verify the required parameter 'id' is set
         if id is None:
             raise ValueError("Missing the required parameter `id` when calling `generate_from_planning`")
-
+        
         # verify the required parameter 'planning_id' is set
         if planning_id is None:
             raise ValueError("Missing the required parameter `planning_id` when calling `generate_from_planning`")
-
+        
         all_params = ['id', 'planning_id']
 
         params = locals()
@@ -488,22 +492,22 @@ class ZoningsApi(object):
         method = 'PATCH'
 
         path_params = {}
-
+        
         if 'id' in params:
-            path_params['id'] = params['id']
-
+            path_params['id'] = params['id']  
+        
         if 'planning_id' in params:
-            path_params['planning_id'] = params['planning_id']
-
+            path_params['planning_id'] = params['planning_id']  
+        
         query_params = {}
-
+        
         header_params = {}
-
+        
         form_params = {}
         files = {}
-
+        
         body_params = None
-
+        
         # HTTP header `Accept`
         header_params['Accept'] = self.api_client.select_header_accept([])
         if not header_params['Accept']:
@@ -518,5 +522,80 @@ class ZoningsApi(object):
         response = self.api_client.call_api(resource_path, method, path_params, query_params, header_params,
                                             body=body_params, post_params=form_params, files=files,
                                             response='str', auth_settings=auth_settings)
-
+        
         return response
+        
+    def generate_isochrone(self, id, size, **kwargs):
+        """
+        Generate isochrone.
+        
+
+        :param int id:  (required)
+        :param int size: Area accessible from the start store by this travel time. (required)
+        
+        :return: str
+        """
+        
+        # verify the required parameter 'id' is set
+        if id is None:
+            raise ValueError("Missing the required parameter `id` when calling `generate_isochrone`")
+        
+        # verify the required parameter 'size' is set
+        if size is None:
+            raise ValueError("Missing the required parameter `size` when calling `generate_isochrone`")
+        
+        all_params = ['id', 'size']
+
+        params = locals()
+        for key, val in iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError("Got an unexpected keyword argument '%s' to method generate_isochrone" % key)
+            params[key] = val
+        del params['kwargs']
+
+        resource_path = '/0.1/zonings/{id}/isochrone.{format}'.replace('{format}', 'json')
+        method = 'PATCH'
+
+        path_params = {}
+        
+        if 'id' in params:
+            path_params['id'] = params['id']  
+        
+        query_params = {}
+        
+        header_params = {}
+        
+        form_params = {}
+        files = {}
+        
+        if 'size' in params:
+            form_params['size'] = params['size']
+        
+        body_params = None
+        
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.select_header_accept([])
+        if not header_params['Accept']:
+            del header_params['Accept']
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.select_header_content_type([])
+
+        # Authentication setting
+        auth_settings = ['api_key']
+
+        response = self.api_client.call_api(resource_path, method, path_params, query_params, header_params,
+                                            body=body_params, post_params=form_params, files=files,
+                                            response='str', auth_settings=auth_settings)
+        
+        return response
+        
+
+
+
+
+
+
+
+
+

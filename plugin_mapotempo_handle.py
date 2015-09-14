@@ -6,6 +6,8 @@ from qgis.gui import QgsMessageBar
 
 import json
 import SwaggerMapo
+import string
+import requests
 from SwaggerMapo import configuration
 from SwaggerMapo.apis import TagsApi
 from SwaggerMapo.apis import DestinationsApi
@@ -164,6 +166,7 @@ class PluginMapotempoHandle:
                 self.translate.tr("Processing"), duration=1, level=QgsMessageBar.INFO)
             self.dock.label_5.setText(self.translate.tr("Processing"))
             self.layer_inst.clearLayer()
+            self.dock.comboBox_2.clear()
             self.dock.label_5.repaint()
             if self.client:
                 self.dock.model.clear()
@@ -289,6 +292,11 @@ class PluginMapotempoHandle:
             ZoningsApi(self.client).get_zonings(),
             SwaggerMapo.models.V01Zoning,
             self.translate.tr("zonings"))
+        layers = self.layer_inst.iface.legendInterface().layers()
+        for layer in layers:
+            if layer.name() == self.translate.tr('zonings'):
+                lyr = layer
+        lyr.committedAttributeValuesChanges.connect(self.layer_inst.changeZoningAttributes)
 
     def getZone(self):
         try:
@@ -305,6 +313,7 @@ class PluginMapotempoHandle:
 
     def getZoneId(self, id_plan):
         layers = self.layer_inst.iface.legendInterface().layers()
+        self.id_zones_tab = {}
         planningLayer, zoningLayer = None, None
         for layer in layers:
             if layer.name() == self.translate.tr("planning"):
@@ -406,32 +415,37 @@ class PluginMapotempoHandle:
         response = DestinationsApi(self.client).update_destination(id=destinationId, **kwargs)
         if refresh:#bug table editing
             self.layer_inst.refresh()
-# [{
-# "id": 442,
-# "vehicle_id":46,
-# "polygon": {
-#           "type": "Feature",
-#           "properties": {},
-#           "geometry": {
-#             "type": "Polygon",
-#             "coordinates": [[[(-0.60605,44.8433), (-0.613131,44.8347), (-0.597296,44.8162), (-0.546827,44.8158), (-0.541334,44.842), (-0.569487,44.8576), (-0.60605,44.8433)]]]}}
-# }
-# ]
-    def update_geo_zone(self, id_zone, vehicleId, polygon, refresh=True, **kwargs):
-        zone = SwaggerMapo.models.V01Zone()
-        zone.id = id_zone
-        zone.vehicle_id = vehicleId
-        zone.polygon = polygon
+
+    def update_name_zone(self, zoningId, refresh=True, **kwargs):
+        response = ZoningsApi(self.client).update_zoning(id=zoningId, **kwargs)
+        if refresh:#bug table editing
+            self.layer_inst.refresh()
+
+    def update_geo_zone(self, layer, polygon, removedTab, refresh=True, **kwargs):
         zoningId = None
         for zoning in self.id_zones_tab:
-            if id_zone in self.id_zones_tab[zoning]:
+            if polygon[0].id in self.id_zones_tab[zoning]:
                 zoningId = zoning
                 break
-        print zoningId
-        print id_zone
-        print vehicleId
-        print polygon
-        response = ZoningsApi(self.client).update_zoning(id=zoningId, zones=zone)
+        jsonToSend = self.client.sanitize_for_serialization(polygon)
+        for j in jsonToSend:
+            j["polygon"] = string.replace(j["polygon"], '\'', '"')
+            if not 'id' in j:
+                j['id'] = None
+        for idToRemove in self.layer_inst.removeZoneTab:
+            jsonToSend.append({"id":idToRemove, "_destroy": True})
+        #response = ZoningsApi(self.client).update_zoning(id=zoningId, zones=json.dumps(jsonToSend))
+        
+        headers = {'content-type': 'application/json'}
+        if not SwaggerMapo.configuration.api_client:
+            SwaggerMapo.configuration.api_client = SwaggerMapo.api_client.ApiClient('http://beta.app.mapotempo.com/api')
+        url = SwaggerMapo.configuration.api_client.host + '/0.1/zonings/' + str(zoningId) + '.json?api_key=' + self.keyConnection
+        zoningToSend = SwaggerMapo.models.V01Zoning()
+        zoningToSend.id = zoningId
+        zoningToSend.zones = jsonToSend
+        payload = self.client.sanitize_for_serialization(zoningToSend)
+        r = requests.put(url, data=json.dumps(payload), headers=headers)
+        self.getZoneId(self.id_plan)
         if refresh:#bug table editing
             self.layer_inst.refresh()
 

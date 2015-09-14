@@ -18,6 +18,7 @@ import unicodedata
 import os.path
 import ast
 import binascii
+import json
 
 from polyline.codec import PolylineCodec
 from geojson.utils import coords
@@ -36,6 +37,7 @@ class PluginMapotempoLayer:
         self.client = None
         self.handler = None
         self.hashZone = {}
+        self.removeZoneTab = []
 
     def setClient(self, client):
         self.client = client
@@ -261,6 +263,26 @@ class PluginMapotempoLayer:
                 featId = int(feat['id'])
                  # have to see the API
                 self.handler.update_vehicle(featId, refresh=False, **kwargs)
+                cache.removeCachedFeature(feat.id())
+                #mesage todo
+
+    def changeZoningAttributes(self, layerId, changedAttributesValues):
+        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
+        fields = lyr.pendingFields()
+        for i in changedAttributesValues:
+            kwargs = {}
+            valid = True
+            for a in changedAttributesValues[i]:
+                if unicode(fields[a].name()) == u'name':
+                    kwargs[str(fields[a].name())] = changedAttributesValues[i][a].encode('utf8')
+
+            if valid and len(kwargs) > 0:
+                cache = QgsVectorLayerCache(lyr, 10000)
+                feat = QgsFeature()
+                cache.featureAtId(i, feat)
+                featId = int(feat['id'])
+                 # have to see the API
+                self.handler.update_name_zone(featId, refresh=False, **kwargs)
                 cache.removeCachedFeature(feat.id())
                 #mesage todo
 
@@ -516,62 +538,99 @@ class PluginMapotempoLayer:
         fields = layer.pendingFields()
 
         for i in json:
-            r = []
-            feature = QgsFeature()
-            for field in fields:
-                if field.name() in i:
-                    r.append(i[field.name()])
-                else:
-                    r.append(None)
-
-            feature.setAttributes(r)
-
-            a = ast.literal_eval(i['polygon'])
-            if a['geometry']['type'] == 'Polygon':
-                polygon = list(coords(a))
-                polygonFinal = []
-                for point in polygon:
-                    polygonFinal.append(QgsPoint(point[0], point[1]))
-                form = QgsGeometry.fromPolygon([polygonFinal])
-                feature.setGeometry(form)
-
-            elif a['geometry']['type'] == 'MultiPolygon':
-                feature.setGeometry(QgsGeometry.fromMultiPolygon([[[[QgsPoint(point[0],point[1]) for point in polygon ] for polygon in ring] for ring in a['geometry']['coordinates']]][0]))
-
-            pr.addFeatures([feature])
-            layer.updateFields()
-            layer.updateExtents()
-            if not self.handler.id_zone == idToDraw:
-                self.desactive(layer)
-        self.addIcon(layer, 'zone')
-        layer.committedGeometriesChanges.connect(self.changeZoneAttributes)
-
-    def changeZoneAttributes(self, layerId, changedGeometries):
-        lyr = QgsMapLayerRegistry.instance().mapLayer(layerId)
-        for geo in changedGeometries:
-            polygon = str(changedGeometries[geo].asPolygon())
-            if len(polygon) == 2: # [] is two caracters
-                polygon = str(changedGeometries[geo].asMultiPolygon())
-            cache = QgsVectorLayerCache(lyr, 10000)
-            feat = QgsFeature()
-            cache.featureAtId(geo, feat)
             try:
-                vehicleId = int(feat['vehicle_id'])
+                r = []
+                feature = QgsFeature()
+                for field in fields:
+                    if field.name() in i:
+                        r.append(i[field.name()])
+                    else:
+                        r.append(None)
+
+                feature.setAttributes(r)
+                a = ast.literal_eval(i['polygon'])
+                if a['geometry']['type'] == 'Polygon':
+                    polygon = list(coords(a))
+                    polygonFinal = []
+                    for point in polygon:
+                        polygonFinal.append(QgsPoint(point[0], point[1]))
+                    form = QgsGeometry.fromPolygon([polygonFinal])
+                    feature.setGeometry(form)
+
+                elif a['geometry']['type'] == 'MultiPolygon':
+                    feature.setGeometry(QgsGeometry.fromMultiPolygon([[[[QgsPoint(point[0],point[1]) for point in polygon ] for polygon in ring] for ring in a['geometry']['coordinates']]][0]))
+
+                pr.addFeatures([feature])
+                layer.updateFields()
+                layer.updateExtents()
+                if not self.handler.id_zone == idToDraw:
+                    self.desactive(layer)
+            except:
+                print 'oops'
+        self.addIcon(layer, 'zone')
+        # layer.committedGeometriesChanges.connect(self.changeZoneAttributes)
+        # layer.committedFeaturesAdded.connect(self.changeZoneAttributes)
+        layer.editingStarted.connect(self.reinitTabZoneRemove)
+        layer.editingStopped.connect(self.changeZoneAttributes)
+        layer.committedFeaturesRemoved.connect(self.removedAttributes)
+
+    def reinitTabZoneRemove(self):
+        self.removeZoneTab = []
+
+    def removedAttributes(self, layer, deletedFeatureIds):
+        lyr = self.iface.activeLayer()
+        after_zone_tab = []
+        for feature in lyr.getFeatures():
+            after_zone_tab.append(feature.attribute('id'))
+        for id_zone in self.handler.id_zones_tab[self.handler.id_zone]:
+            if id_zone in after_zone_tab:
+                continue
+            else:
+                self.removeZoneTab.append(id_zone)
+
+    def changeZoneAttributes(self):
+        lyr = self.iface.activeLayer()
+        features = lyr.getFeatures()
+        allGeo = []
+        # features
+        # bug = True
+        for f in features:
+            # qgis bug for feature added
+            typePoly = 'Polygon'
+            geo = f.geometry()
+        # for geo in changedGeometries:
+            polygon = geo.asPolygon()
+            if len(polygon) == 2: # [] is two caracters
+                polygon = geo.asMultiPolygon()
+                typePoly = 'MultiPolygon'
+            # cache = QgsVectorLayerCache(lyr, 10000)
+            # feat = QgsFeature()
+            # cache.featureAtId(geo, feat)
+            try:
+                vehicleId = int(f['vehicle_id'])
             except:
                 vehicleId = None
             try:
-                id_zone = int(feat['id'])
+                id_zone = int(f['id'])
             except:
                 id_zone = None
-            self.handler.update_geo_zone(id_zone, vehicleId, polygon, refresh=False)
-            cache.removeCachedFeature(feat.id())
-
-    # def switchActive(self, layer):
-    #     root = QgsProject.instance().layerTreeRoot()
-    #     node = root.findLayer(layer.id())
-    #     new_state = Qt.Checked
-    #     if node.isVisible() == Qt.Unchecked else Qt.Unchecked
-    #     node.setVisible(new_state)
+            polygon = str(polygon)
+            polygon = string.replace(polygon, '(', '[')
+            polygon = string.replace(polygon, ')', ']')
+            polygonFinal = {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+              "type": typePoly,
+              "coordinates": eval(polygon)
+                }
+                }
+            zone = SwaggerMapo.models.V01Zone()
+            zone.id = id_zone
+            zone.vehicle_id = vehicleId
+            zone.polygon = str(polygonFinal)
+            allGeo.append(zone)
+        self.handler.update_geo_zone(lyr, allGeo, self.removeZoneTab, refresh=False)
 
     def desactive(self, layer):
         root = QgsProject.instance().layerTreeRoot()
@@ -634,8 +693,14 @@ class PluginMapotempoLayer:
                     layer.committedAttributeValuesChanges.disconnect()
                 elif layer.name() == self.translate.tr("destinations"):
                     layer.committedAttributeValuesChanges.disconnect()
+                elif layer.name() == self.translate.tr('zonings'):
+                    layer.committedAttributeValuesChanges.disconnect()
                 elif layer.name().split(' ')[0] == self.translate.tr("Zoning"):
-                    layer.committedGeometriesChanges.disconnect()
+                    # layer.committedGeometriesChanges.disconnect()
+                    # layer.committedFeaturesAdded.disconnect()
+                    layer.editingStopped.disconnect()
+                    layer.editingStarted.disconnect()
+                    layer.committedFeaturesRemoved.disconnect()
                 QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
         self.layerTab = []
         self.dock.label_5.setText(self.translate.tr("Done"))
