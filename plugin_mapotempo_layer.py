@@ -563,10 +563,10 @@ class PluginMapotempoLayer:
                 pr.addFeatures([feature])
                 layer.updateFields()
                 layer.updateExtents()
-                if not self.handler.id_zone == idToDraw:
-                    self.desactive(layer)
             except:
                 print 'oops'
+        if not self.handler.id_zone == idToDraw:
+            self.desactive(layer)
         self.addIcon(layer, 'zone')
         # layer.committedGeometriesChanges.connect(self.changeZoneAttributes)
         # layer.committedFeaturesAdded.connect(self.changeZoneAttributes)
@@ -1136,8 +1136,8 @@ class PluginMapotempoLayer:
                         layer.setEditorWidgetV2(layer.fieldNameIndex(field.name()), 'ValueMap')
                         dictVehicleValueMap = {}
                         for layer2 in self.layerTab:
-                            if layer2.name() == self.translate.tr("vehicles"):
+                            if layer2.name() == self.translate.tr("routes"):
                                 for feature in layer2.getFeatures():
-                                    dictVehicleValueMap[feature.attribute('name')] = feature.attribute('id')
+                                    dictVehicleValueMap[feature.attribute(self.translate.tr("vehicles") + '_name')] = feature.attribute('vehicle_id')
                             
                         layer.setEditorWidgetV2Config(layer.fieldNameIndex(field.name()), dictVehicleValueMap)

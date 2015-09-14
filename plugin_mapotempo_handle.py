@@ -18,12 +18,13 @@ from SwaggerMapo.apis import ZoningsApi
 from SwaggerMapo.rest import ApiException
 
 class PluginMapotempoHandle:
-    def __init__(self, layer, dlg, dock, translate):
+    def __init__(self, layer, dlg, dlg_2, dock, translate):
         self.translate = translate
         self.s = QSettings()
         self.keyConnection = None
         self.hostConnection = None
         self.dlg = dlg
+        self.dlg_2 = dlg_2
         self.dock = dock
 
         self.layer_inst = layer
@@ -180,10 +181,10 @@ class PluginMapotempoHandle:
                 self.getStops(self.id_plan)
                 self.getVehicles()
                 self.getZone()
-                self.layer_inst.hideFields()
                 self.layer_inst.joinZoneVehicle()
                 self.layer_inst.joinStopVehicle()
                 self.layer_inst.joinDestinationVehicle()
+                self.layer_inst.hideFields()
                 root = QgsProject.instance().layerTreeRoot()
                 self.layer_inst.collapseTree(root)
                 self.layer_inst.vehiclesStop()
@@ -310,6 +311,8 @@ class PluginMapotempoHandle:
             for row in json:
                 if 'zones' in row:
                     self.layer_inst.drawZone(row['zones'], row['name'], row['id'])
+                else:
+                    self.layer_inst.drawZone([], row['name'], row['id'])
 
     def getZoneId(self, id_plan):
         layers = self.layer_inst.iface.legendInterface().layers()
@@ -340,6 +343,21 @@ class PluginMapotempoHandle:
             self.id_zones_tab[int(feature.attribute('id'))] = zonesTab
             self.dock.comboBox_2.addItem(
                 self.translate.tr("Zoning")+ ' ' + feature.attribute('name'), int(feature.attribute('id')))
+
+    def newZoningLayer(self):
+        if self.client:
+            self.dlg_2.show()
+
+    def handleButtonNewZoning(self):
+        text = self.dlg_2.lineEdit.text()
+        if text:
+            self.layer_inst.iface.messageBar().pushMessage(
+                self.translate.tr("Processing"), duration=1, level=QgsMessageBar.INFO)
+            response = ZoningsApi(self.client).create_zoning(name=text)
+            self.layer_inst.refresh()
+            self.dlg_2.close()
+        self.layer_inst.iface.messageBar().pushMessage(
+            self.translate.tr("Done"), duration=3, level=QgsMessageBar.INFO)
 
     def listPlannings(self):
         try:
@@ -423,18 +441,31 @@ class PluginMapotempoHandle:
 
     def update_geo_zone(self, layer, polygon, removedTab, refresh=True, **kwargs):
         zoningId = None
-        for zoning in self.id_zones_tab:
-            if polygon[0].id in self.id_zones_tab[zoning]:
-                zoningId = zoning
+        zoningName = layer.name().split(self.translate.tr("Zoning") + ' ', 1).pop()
+        layers = self.layer_inst.iface.legendInterface().layers()
+        zoningLayer = None
+        for layer in layers:
+            if layer.name() == self.translate.tr("zonings"):
+                zoningLayer = layer
+        for feature in zoningLayer.getFeatures():
+            if feature['name'] == zoningName:
+                zoningId = feature['id']
                 break
+        # for zoning in self.id_zones_tab:
+        #     if polygon[0].id in self.id_zones_tab[zoning]:
+        #         zoningId = zoning
+        #         break
+        print polygon[0].vehicle_id
         jsonToSend = self.client.sanitize_for_serialization(polygon)
         for j in jsonToSend:
             j["polygon"] = string.replace(j["polygon"], '\'', '"')
             if not 'id' in j:
                 j['id'] = None
+            if not 'vehicle_id' in j:
+                j['vehicle_id'] = None
+                
         for idToRemove in self.layer_inst.removeZoneTab:
             jsonToSend.append({"id":idToRemove, "_destroy": True})
-        #response = ZoningsApi(self.client).update_zoning(id=zoningId, zones=json.dumps(jsonToSend))
         
         headers = {'content-type': 'application/json'}
         if not SwaggerMapo.configuration.api_client:

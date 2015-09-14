@@ -32,6 +32,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 FORM_CLASS_WIDGET, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'widget_base.ui'))
 
+FORM_CLASS_ADD, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'add_zoning.ui'))
+    
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -267,7 +270,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.label_5.setText(_translate("DockWidget", "", None))
         self.pushButton.setText(_translate("DockWidget", "Connection", None))
         self.pushButton_4.setText(_translate("DockWidget", "Parameter", None))
-        self.pushButton_5.setText(_translate("DockWidget", "Optimize all", None))
+        self.pushButton_5.setText(_translate("CreateZoning", "Create zoning", None))
         self.pushButton_3.setText(_translate("DockWidget", "Apply zoning", None))
 
     def resolve(self, name, basepath=None):
@@ -371,3 +374,35 @@ class QCustomTreeView (QtGui.QTreeView):
             self.newParent = crawler.data()
             self.newPosition = start
             super(QCustomTreeView, self).rowsInserted(parent, start, end)
+
+class CreateZoning(QtGui.QDialog, FORM_CLASS_ADD):
+    def __init__(self, parent=None):
+        """Constructor."""
+        super(CreateZoning, self).__init__(parent)
+        self.setupUi(self)
+        self.verticalLayoutWidget = QtGui.QWidget(self)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 211, 80))
+        self.verticalLayoutWidget.setObjectName(_fromUtf8("verticalLayoutWidget"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.formLayout = QtGui.QFormLayout()
+        self.formLayout.setObjectName(_fromUtf8("formLayout"))
+        self.lineEdit = QtGui.QLineEdit(self.verticalLayoutWidget)
+        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.lineEdit)
+        self.label = QtGui.QLabel(self.verticalLayoutWidget)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.label)
+        self.pushButton = QtGui.QPushButton(self.verticalLayoutWidget)
+        self.pushButton.setObjectName(_fromUtf8("pushButton"))
+        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.pushButton)
+        self.verticalLayout.addLayout(self.formLayout)
+
+        self.retranslateUi(self)
+        QtCore.QMetaObject.connectSlotsByName(self)
+
+    def retranslateUi(self, CreateZoning):
+        CreateZoning.setWindowTitle(_translate("CreateZoning", "Create Zoning", None))
+        self.label.setText(_translate("CreateZoning", "Name", None))
+        self.pushButton.setText(_translate("PluginMapotempoDialogBase", "Save", None))

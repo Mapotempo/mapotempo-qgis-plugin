@@ -37,7 +37,7 @@ except AttributeError:
 
 import resources_rc
 
-from plugin_mapotempo_dialog import PluginMapotempoDialogBase, DockWidget
+from plugin_mapotempo_dialog import PluginMapotempoDialogBase, DockWidget, CreateZoning
 
 from plugin_mapotempo_handle import PluginMapotempoHandle
 from plugin_mapotempo_layer import PluginMapotempoLayer
@@ -65,22 +65,24 @@ class PluginMapotempo:
         self.toolbar.setObjectName(u'PluginMapotempo')
         self.iface.addToolBarWidget(self.toolbar)
         self.dlg = PluginMapotempoDialogBase()
-
+        self.dlg_2 = CreateZoning()
         self.dock = DockWidget()
 
         #instance
         self.layer_inst = PluginMapotempoLayer(
             self.dlg, self.dock, self.iface, self.translate)
         self.handle = PluginMapotempoHandle(
-            self.layer_inst, self.dlg, self.dock, self.translate)
+            self.layer_inst, self.dlg, self.dlg_2, self.dock, self.translate)
         self.layer_inst.setHandler(self.handle)
         self.dock.setHandler(self.handle)
 
         self.dlg.pushButton.clicked.connect(self.handle.handleButtonSave)
+        self.dlg_2.pushButton.clicked.connect(self.handle.handleButtonNewZoning)
 
         self.dock.pushButton.clicked.connect(self.handle.handleButtonConnect)
         self.dock.pushButton_2.clicked.connect(self.layer_inst.refresh)
         self.dock.pushButton_4.clicked.connect(self.handle.HandleParam)
+        self.dock.pushButton_5.clicked.connect(self.handle.newZoningLayer)
         self.dock.comboBox.activated.connect(self.handle.HandleSelect)
         self.dock.pushButton_3.clicked.connect(self.handle.HandleApplyZoning)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dock)

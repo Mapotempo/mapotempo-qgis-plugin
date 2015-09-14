@@ -144,7 +144,7 @@ class ZoningsApi(object):
             del header_params['Accept']
 
         # HTTP header `Content-Type`
-        header_params['Content-Type'] = self.api_client.select_header_content_type([])
+        header_params['Content-Type'] = self.api_client.select_header_content_type(['application/x-www-form-urlencoded'])
 
         # Authentication setting
         auth_settings = ['api_key']

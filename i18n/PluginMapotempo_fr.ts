@@ -121,6 +121,10 @@
         <source>Time out of drive</source>
         <translation>Trajet hors plage horaire</translation>
     </message>
+    <message>
+        <source>No vehicle</source>
+        <translation>Pas de véhicule</translation>
+    </message>
     
 </context>
 <context>
@@ -171,5 +175,15 @@
     </message>
     
 </context>
-
+<context>
+    <name>CreateZoning</name>
+    <message>
+          <source>Create zoning</source>
+          <translation>Créer zonage</translation>
+    </message>
+    <message>
+          <source>Name</source>
+          <translation>Nom</translation>
+    </message>
+</context>
 </TS>
