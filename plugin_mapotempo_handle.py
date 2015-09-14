@@ -455,7 +455,6 @@ class PluginMapotempoHandle:
         #     if polygon[0].id in self.id_zones_tab[zoning]:
         #         zoningId = zoning
         #         break
-        print polygon[0].vehicle_id
         jsonToSend = self.client.sanitize_for_serialization(polygon)
         for j in jsonToSend:
             j["polygon"] = string.replace(j["polygon"], '\'', '"')
