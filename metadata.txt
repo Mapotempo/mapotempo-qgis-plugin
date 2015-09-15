@@ -12,7 +12,7 @@ qgisMinimumVersion=2.0
 description=Plugin for Mapotempo API
 about=Mapotempo QGis Plugin (MapotempoPlugin) is a plugin which can access to Mapotempo data through QGis software.
   Mapotempo is a planning and optimization web software for delivery tours. Effective for light and heavy vehicles (+ 3.5t)
-version=0.2.5
+version=0.2.6
 author=Darius Matboo
 email=darius.matboo@mapotempo.com
 
@@ -21,7 +21,7 @@ email=darius.matboo@mapotempo.com
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=activate or not your destination; move your destination; optimization function added; ui changes; some fixes
+changelog=new functionalities (editing zones, editing attributes, add a zoning...), lots of fix
 
 # Tags are comma separated with spaces allowed
 tags=mapotempo optimization
