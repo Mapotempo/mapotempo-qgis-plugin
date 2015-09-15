@@ -1,7 +1,5 @@
-# from PyQt4.QtCore import *
 from PyQt4.QtCore import Qt, QVariant
 from qgis.gui import QgsMessageBar
-# from qgis.core import *
 from qgis.core import (
     QgsMapLayerRegistry, QgsVectorLayer, QgsField, QgsFeature,
     QgsGeometry, QgsPoint, QgsProject, QgsSvgMarkerSymbolLayerV2,
@@ -568,8 +566,6 @@ class PluginMapotempoLayer:
         if not self.handler.id_zone == idToDraw:
             self.desactive(layer)
         self.addIcon(layer, 'zone')
-        # layer.committedGeometriesChanges.connect(self.changeZoneAttributes)
-        # layer.committedFeaturesAdded.connect(self.changeZoneAttributes)
         layer.editingStarted.connect(self.reinitTabZoneRemove)
         layer.editingStopped.connect(self.changeZoneAttributes)
         layer.committedFeaturesRemoved.connect(self.removedAttributes)
@@ -603,20 +599,13 @@ class PluginMapotempoLayer:
         lyr = self.iface.activeLayer()
         features = lyr.getFeatures()
         allGeo = []
-        # features
-        # bug = True
         for f in features:
-            # qgis bug for feature added
             typePoly = 'Polygon'
             geo = f.geometry()
-        # for geo in changedGeometries:
             polygon = geo.asPolygon()
             if len(polygon) == 0: # [] is two caracters
                 polygon = geo.asMultiPolygon()
                 typePoly = 'MultiPolygon'
-            # cache = QgsVectorLayerCache(lyr, 10000)
-            # feat = QgsFeature()
-            # cache.featureAtId(geo, feat)
             try:
                 vehicleId = int(f['vehicle_id'])
             except:
@@ -707,8 +696,6 @@ class PluginMapotempoLayer:
                 elif layer.name() == self.translate.tr('zonings'):
                     layer.committedAttributeValuesChanges.disconnect()
                 elif layer.name().split(' ')[0] == self.translate.tr("Zoning"):
-                    # layer.committedGeometriesChanges.disconnect()
-                    # layer.committedFeaturesAdded.disconnect()
                     layer.editingStopped.disconnect()
                     layer.editingStarted.disconnect()
                     layer.committedFeaturesRemoved.disconnect()

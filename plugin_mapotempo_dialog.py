@@ -227,7 +227,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
                     if text in nonActiveTab:
                         item.setCheckState(QtCore.Qt.Unchecked)
             elif text in infoVehicle:
-                item = QtGui.QStandardItem() #text + infoVehicle[text]
+                item = QtGui.QStandardItem()
                 idVehicle = infoVehicle[text].split(' ').pop()
                 item.setData(idVehicle)
                 parent.appendRow(item)
