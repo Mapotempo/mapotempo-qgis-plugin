@@ -510,7 +510,7 @@ class PluginMapotempoLayer:
 
     def drawZone(self, json, name, idToDraw):
         layer = QgsVectorLayer(
-            "Polygon?crs=epsg:4326",
+            "MultiPolygon?crs=epsg:4326",
             self.translate.tr("Zoning") + " " + str(name),
             "memory")
         self.hashZone[layer.id()] = idToDraw
@@ -582,7 +582,18 @@ class PluginMapotempoLayer:
         after_zone_tab = []
         for feature in lyr.getFeatures():
             after_zone_tab.append(feature.attribute('id'))
-        for id_zone in self.handler.id_zones_tab[self.handler.id_zone]:
+        zoningId = None
+        zoningName = lyr.name().split(self.translate.tr("Zoning") + ' ', 1).pop()
+        layers = self.iface.legendInterface().layers()
+        zoningLayer = None
+        for layer in layers:
+            if layer.name() == self.translate.tr("zonings"):
+                zoningLayer = layer
+        for feature in zoningLayer.getFeatures():
+            if feature['name'] == zoningName:
+                zoningId = int(feature['id'])
+                break
+        for id_zone in self.handler.id_zones_tab[zoningId]:
             if id_zone in after_zone_tab:
                 continue
             else:
@@ -600,7 +611,7 @@ class PluginMapotempoLayer:
             geo = f.geometry()
         # for geo in changedGeometries:
             polygon = geo.asPolygon()
-            if len(polygon) == 2: # [] is two caracters
+            if len(polygon) == 0: # [] is two caracters
                 polygon = geo.asMultiPolygon()
                 typePoly = 'MultiPolygon'
             # cache = QgsVectorLayerCache(lyr, 10000)

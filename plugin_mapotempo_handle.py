@@ -220,21 +220,21 @@ class PluginMapotempoHandle:
                 id_zoning = int(self.dock.comboBox_2.itemData(index2))
             except:
                 return
-            layers = self.layer_inst.iface.legendInterface().layers()
-            for layer in layers:
-                if layer.name() == self.translate.tr('planning'):
-                    lyr = layer
-                    break
-            for feature in lyr.getFeatures():
-                try:
-                    old_id_zoning = int(feature.attribute('zoning_id'))
-                except:
-                    old_id_zoning = None
-                if old_id_zoning == id_zoning:
-                    return
-                else:
-                    response = PlanningsApi(self.client).update_planning(id=id_planning, zoning_id=id_zoning)
-                    self.layer_inst.refresh()
+            # layers = self.layer_inst.iface.legendInterface().layers()
+            # for layer in layers:
+            #     if layer.name() == self.translate.tr('planning'):
+            #         lyr = layer
+            #         break
+            # for feature in lyr.getFeatures():
+            #     try:
+            #         old_id_zoning = int(feature.attribute('zoning_id'))
+            #     except:
+            #         old_id_zoning = None
+            #     if old_id_zoning == id_zoning:
+            #         return
+            #     else:
+            response = PlanningsApi(self.client).update_planning(id=id_planning, zoning_id=id_zoning)
+            self.layer_inst.refresh()
         self.layer_inst.iface.messageBar().pushMessage(
             self.translate.tr("Done"), duration=3, level=QgsMessageBar.INFO)
 
@@ -451,10 +451,7 @@ class PluginMapotempoHandle:
             if feature['name'] == zoningName:
                 zoningId = feature['id']
                 break
-        # for zoning in self.id_zones_tab:
-        #     if polygon[0].id in self.id_zones_tab[zoning]:
-        #         zoningId = zoning
-        #         break
+
         jsonToSend = self.client.sanitize_for_serialization(polygon)
         for j in jsonToSend:
             j["polygon"] = string.replace(j["polygon"], '\'', '"')
@@ -465,7 +462,7 @@ class PluginMapotempoHandle:
                 
         for idToRemove in self.layer_inst.removeZoneTab:
             jsonToSend.append({"id":idToRemove, "_destroy": True})
-        
+
         headers = {'content-type': 'application/json'}
         if not SwaggerMapo.configuration.api_client:
             SwaggerMapo.configuration.api_client = SwaggerMapo.api_client.ApiClient('http://beta.app.mapotempo.com/api')
