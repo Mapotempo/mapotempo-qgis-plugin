@@ -329,6 +329,7 @@ class PluginMapotempoHandle:
                     self.id_zone = int(feature.attribute('zoning_id'))
                 except:
                     self.id_zone = None
+        self.dock.comboBox_2.clear()
         self.dock.comboBox_2.addItem(
             self.translate.tr("Choose zoning to apply"), None)
         for feature in zoningLayer.getFeatures():
@@ -396,7 +397,7 @@ class PluginMapotempoHandle:
             active = 'true'
         elif state == 'UNCHECKED':
             active = 'false'
-        response = PlanningsApi(self.client).update_stop(planning_id=id_planning, route_id=route_id, id=stop_id, active=active)
+        response = PlanningsApi(self.client).update_stop(planning_id=id_planning, route_id=route_id, id=stop_id, active=bytes(active))
         if refresh:#bug table editing
             self.layer_inst.littleRefresh()
 
