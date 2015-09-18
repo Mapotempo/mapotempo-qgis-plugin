@@ -4,7 +4,7 @@ Afin d'utiliser ce plugin, il faut tout d'abord renseigner la clé et l'adresse 
 Pour cela il suffit de cliquer sur le bouton paramètres dans le panneau du plugin, renseigner les bons champs, et enfin sauvegarder.  
 Plus besoin  de les renseigner à nouveau lors d'une prochaine connexion au même compte utilisateur.
 
-<img>connection.png</img>
+!(./connection.png)
 
 ## Récupérer les éléments de l'API
 Cliquer ensuite sur le bouton connexion, cela va lister les plannings existants. Choisissez ensuite le planning voulu.  
