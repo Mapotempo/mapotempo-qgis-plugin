@@ -37,8 +37,17 @@ header_params['Content-Type'] = self.api_client.select_header_content_type(['app
 Normalement le code généré devrait être fonctionnel.
 ## Le plugin
 
-Le code de ce plugin est en 4 blocs principaux.
+Le code de ce plugin est structuré en 4 blocs principaux.
 ### plugin_mapotempo.py
 
 Cette classe permet d'initier le plugin et d'instancier les autres classes
+Elle a été générée par le plugin QGIS [plugin builder](https://plugins.qgis.org/plugins/pluginbuilder/) puis modifiée afin de satisfaire la réalisation du plugin mapotempo   
+
+### plugin_mapotempo_dialog.py
+
+Il y a 4 objets dans cette classe. Ce sont que des objets d'interfaces graphiques : deux fenêtres et le widget. Il y a en plus un arbre QTreeView personnalisé afin de pouvoir faire ce qui 
+était demandé pour le listing des tournées.
+
+### plugin_mapotempo_handle.py
+
 
