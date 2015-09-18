@@ -50,4 +50,8 @@ Il y a 4 objets dans cette classe. Ce sont que des objets d'interfaces graphique
 
 ### plugin_mapotempo_handle.py
 
+Cette classe permet de faire le lien entre la gestion des layers dans QGIS et la solution Mapotempo. C'est elle qui va appeler le code généré par [swagger-codegen](https://github.com/swagger-api/swagger-codegen)    
 
+### plugin_mapotempo_layer.py
+
+Cette classe s'occupe de la gestion des layers dans QGIS. Dès qu'elle reçoit des information de la classe handle, elle va appeler la classe dialog si jamais il y a des changements de fenêtre à faire ou alors elle va gérer les données dans QGIS que ce soit zonages, points, tracé d'itinéraire. Si il y a une modification des données, elle va les transmettre au handle qui les fera remonter en interrogeant l'API.
