@@ -16,8 +16,8 @@ def auth_settings():
            },
     }
 ```
-Then for each method in apis folder, authentification settings and content-type for PUT PATCH POST method have to be specified.
-for authentification settings, replace:
+Then for each method in apis folder, authentification settings and content-type for PUT PATCH POST method have to be specified.    
+For authentification settings, replace:
 ```python
 auth_settings = []
 ```
