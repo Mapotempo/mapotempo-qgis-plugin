@@ -17,7 +17,7 @@ Then search Plugin Mapotempo and install it. A new mapotempo icon shows up. Clic
 ## For developers
 
 ### Version
-0.2.6
+0.2.7
 
 ### Tech
 
@@ -27,6 +27,7 @@ This plugin uses python and some library :
 * [Polyline python library] v1.1
 * [Geojson python library] v1.2.1
 * [PyQt] - UI for python and [QGis]
+* [requests] - Python HTTP for Humans 2.7.0
 
 ### Dependencies
 
