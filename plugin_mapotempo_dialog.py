@@ -98,6 +98,10 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.label = QtGui.QLabel(self.dockWidgetContents)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.label.setOpenExternalLinks(True)
+        self.verticalLayout.addWidget(self.label)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.pushButton = QtGui.QPushButton(self.dockWidgetContents)
@@ -266,6 +270,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
 
     def retranslateUi(self, DockWidget):
         DockWidget.setWindowTitle(_translate("DockWidget", "Mapotempo", None))
+        self.label.setText('<a href ="' + _translate("DockWidget", 'https://github.com/Mapotempo/mapotempo-qgis-plugin/blob/master/doc/usage_en.md">Documentation', None) + '</a>')
         self.pushButton_2.setText(_translate("DockWidget", "Refresh", None))
         self.label_5.setText(_translate("DockWidget", "", None))
         self.pushButton.setText(_translate("DockWidget", "Connection", None))

@@ -130,6 +130,10 @@
 <context>
     <name>DockWidget</name>
     <message>
+        <source>https://github.com/Mapotempo/mapotempo-qgis-plugin/blob/master/doc/usage_en.md">Documentation</source>
+        <translation>https://github.com/Mapotempo/mapotempo-qgis-plugin/blob/master/doc/usage_fr.md">Documentation</translation>
+    </message>
+    <message>
         <source>Planning choice</source>
         <translation>Choix Planning</translation>
     </message>

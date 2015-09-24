@@ -4,20 +4,20 @@ Afin d'utiliser ce plugin, il faut tout d'abord renseigner la clé et l'adresse 
 Pour cela il suffit de cliquer sur le bouton paramètres dans le panneau du plugin, renseigner les bons champs, et enfin sauvegarder.  
 Plus besoin  de les renseigner à nouveau lors d'une prochaine connexion au même compte utilisateur.
 
-!["texte"](./images/connection.png)
+!["texte"](./images/connexion.png)
 
 ## Récupérer les éléments de l'API
 Cliquer ensuite sur le bouton connexion, cela va lister les plannings existants. Choisissez ensuite le planning voulu.  
 Après le chargement, vous pouvez voir tous les éléments du planning qui sont apparus.  
 Il est possible de rajouter un fond de carte afin de mieux visualiser les éléments du planning. Pour cela il faut ajouter une extension QGIS (Open Layer plugins par exemple)
 
-!["texte"](./images/chooseplanning.png)
+!["texte"](./images/choisirplanning.png)
 
 ## Fonctionnalités
 ### Créer un zonage
 Pour cela cliquer sur créer un zonage. Choisir un nom et sauvegarder
 
-!["texte"](./images/createzoning.png)
+!["texte"](./images/creerzonage.png)
 
 ### Éditer des attributs des jeux de données
 Choisir le layer dans lequel les données à modifier sont présentes. Mettre le layer en mode édition. Ouvrir la table des attributs, puis quand les données ont été modifiées sauvegarder le layer.
@@ -36,9 +36,9 @@ Cocher ou décocher la  case propre à la livraison
 ### Appliquer un zonage
 Choisir un zonage à appliquer dans le menu déroulant et cliquer sur appliquer zonage
 
-!["texte"](./images/applyzoning.png)
+!["texte"](./images/appliquerzonage.png)
 
 ### Optimiser une tournée
 Clic droit sur la tournée à optimiser puis cliquer sur optimiser la tournée
 
-!["texte"](./images/optimize.png)
+!["texte"](./images/optimiser.png)
