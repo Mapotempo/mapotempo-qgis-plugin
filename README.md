@@ -4,6 +4,18 @@
 
 [Mapotempo] is a planning and optimization web software for delivery tours. Effective for light and heavy vehicles (+ 3.5t)
 
+## For user
+
+### Installation
+
+Go to QGIS plugin menu. Manage and Install plugins. Go to setting, check show also experimental plugins.   
+Then search Plugin Mapotempo and install it. A new mapotempo icon shows up. Clic on this icon.
+### Usage
+
+[Documentation](https://github.com/Mapotempo/mapotempo-qgis-plugin/blob/master/doc/usage_en.md)    
+
+## For developers
+
 ### Version
 0.2.6
 
