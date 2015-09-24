@@ -182,7 +182,7 @@
 <context>
     <name>CreateZoning</name>
     <message>
-          <source>Create zoning</source>
+          <source>Create Zoning</source>
           <translation>Créer zonage</translation>
     </message>
     <message>
