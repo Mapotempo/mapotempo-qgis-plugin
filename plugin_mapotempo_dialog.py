@@ -277,7 +277,7 @@ class DockWidget(QtGui.QDockWidget, FORM_CLASS_WIDGET):
         self.label_5.setText(_translate("DockWidget", "", None))
         self.pushButton.setText(_translate("DockWidget", "Connection", None))
         self.pushButton_4.setText(_translate("DockWidget", "Parameter", None))
-        self.pushButton_5.setText(_translate("CreateZoning", "Create zoning", None))
+        self.pushButton_5.setText(_translate("CreateZoning", "Create Zoning", None))
         self.pushButton_3.setText(_translate("DockWidget", "Apply zoning", None))
 
     def resolve(self, name, basepath=None):
