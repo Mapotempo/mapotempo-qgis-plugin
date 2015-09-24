@@ -1,4 +1,4 @@
-from PyQt4.QtCore import Qt, QVariant
+from PyQt4.QtCore import Qt, QVariant, QObject, SIGNAL
 from qgis.gui import QgsMessageBar
 from qgis.core import (
     QgsMapLayerRegistry, QgsVectorLayer, QgsField, QgsFeature,
@@ -568,7 +568,7 @@ class PluginMapotempoLayer:
         self.addIcon(layer, 'zone')
         layer.editingStarted.connect(self.reinitTabZoneRemove)
         layer.editingStopped.connect(self.changeZoneAttributes)
-        layer.committedFeaturesRemoved.connect(self.removedAttributes)
+        QObject.connect(layer, SIGNAL("committedFeaturesRemoved"), self.removedAttributes)
 
     def reinitTabZoneRemove(self):
         self.removeZoneTab = []
@@ -698,7 +698,7 @@ class PluginMapotempoLayer:
                 elif layer.name().split(' ')[0] == self.translate.tr("Zoning"):
                     layer.editingStopped.disconnect()
                     layer.editingStarted.disconnect()
-                    layer.committedFeaturesRemoved.disconnect()
+                    QObject.disconnect(layer, SIGNAL("committedFeaturesRemoved"), self.removedAttributes)
                 QgsMapLayerRegistry.instance().removeMapLayer(layer.id())
         self.layerTab = []
         self.dock.label_5.setText(self.translate.tr("Done"))
