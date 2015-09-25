@@ -53,8 +53,8 @@ class PluginMapotempoDialogBase(QtGui.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(PluginMapotempoDialogBase, self).__init__(parent)
-        self.setupUi(self)
 
+        self.resize(405, 193)
         self.gridLayout = QtGui.QGridLayout(self)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.label = QtGui.QLabel()
@@ -386,7 +386,7 @@ class CreateZoning(QtGui.QDialog, FORM_CLASS_ADD):
     def __init__(self, parent=None):
         """Constructor."""
         super(CreateZoning, self).__init__(parent)
-        self.setupUi(self)
+        self.resize(313, 82)
         self.verticalLayout_2 = QtGui.QVBoxLayout(self)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.verticalLayout = QtGui.QVBoxLayout()
